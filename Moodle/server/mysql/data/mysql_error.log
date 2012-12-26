@@ -1,0 +1,25 @@
+121226 18:53:54 [Note] Plugin 'FEDERATED' is disabled.
+InnoDB: The InnoDB memory heap is disabled
+InnoDB: Mutexes and rw_locks use Windows interlocked functions
+InnoDB: Compressed tables use zlib 1.2.3
+121226 18:53:54  InnoDB: Initializing buffer pool, size = 16.0M
+121226 18:53:54  InnoDB: Completed initialization of buffer pool
+InnoDB: The first specified data file C:\Users\jordi\Desktop\MoodleWindowsInstaller-latest-21\server\mysql\data\ibdata1 did not exist:
+InnoDB: a new database to be created!
+121226 18:53:54  InnoDB: Setting file C:\Users\jordi\Desktop\MoodleWindowsInstaller-latest-21\server\mysql\data\ibdata1 size to 10 MB
+InnoDB: Database physically writes the file full: wait...
+121226 18:53:55  InnoDB: Log file C:\Users\jordi\Desktop\MoodleWindowsInstaller-latest-21\server\mysql\data\ib_logfile0 did not exist: new to be created
+InnoDB: Setting log file C:\Users\jordi\Desktop\MoodleWindowsInstaller-latest-21\server\mysql\data\ib_logfile0 size to 5 MB
+InnoDB: Database physically writes the file full: wait...
+121226 18:53:55  InnoDB: Log file C:\Users\jordi\Desktop\MoodleWindowsInstaller-latest-21\server\mysql\data\ib_logfile1 did not exist: new to be created
+InnoDB: Setting log file C:\Users\jordi\Desktop\MoodleWindowsInstaller-latest-21\server\mysql\data\ib_logfile1 size to 5 MB
+InnoDB: Database physically writes the file full: wait...
+InnoDB: Doublewrite buffer not found: creating new
+InnoDB: Doublewrite buffer created
+InnoDB: 127 rollback segment(s) active.
+InnoDB: Creating foreign key constraint system tables
+InnoDB: Foreign key constraint system tables created
+121226 18:53:56  InnoDB: 1.1.4 started; log sequence number 0
+121226 18:53:56 [Note] Event Scheduler: Loaded 0 events
+121226 18:53:56 [Note] mysql\bin\mysqld.exe: ready for connections.
+Version: '5.5.8'  socket: ''  port: 3306  MySQL Community Server (GPL)

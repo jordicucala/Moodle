@@ -1,0 +1,21 @@
+[Wed Dec 26 18:53:58 2012] [notice] Apache/2.2.17 (Win32) mod_ssl/2.2.17 OpenSSL/0.9.8o PHP/5.3.4 configured -- resuming normal operations
+[Wed Dec 26 18:53:58 2012] [notice] Server built: Oct 18 2010 01:58:12
+[Wed Dec 26 18:53:58 2012] [notice] Parent: Created child process 2308
+[Wed Dec 26 18:54:01 2012] [notice] Child 2308: Child process is running
+[Wed Dec 26 18:54:01 2012] [notice] Child 2308: Acquired the start mutex.
+[Wed Dec 26 18:54:01 2012] [notice] Child 2308: Starting 150 worker threads.
+[Wed Dec 26 18:54:01 2012] [notice] Child 2308: Starting thread to listen on port 443.
+[Wed Dec 26 18:54:01 2012] [notice] Child 2308: Starting thread to listen on port 80.
+[Wed Dec 26 18:54:43 2012] [error] [client 127.0.0.1] (20024)The given path is misformatted or contained invalid characters: Cannot map GET /theme/standard/style/[[pix:theme%7Chgradient]] HTTP/1.1 to file, referer: http://localhost/install.php
+[Wed Dec 26 18:55:06 2012] [error] [client 127.0.0.1] PHP Warning:  mysqli::mysqli() [<a href='mysqli.mysqli'>mysqli.mysqli</a>]: (42000/1049): Unknown database 'moodle' in C:\\Users\\jordi\\Desktop\\MoodleWindowsInstaller-latest-21\\server\\moodle\\lib\\dml\\mysqli_native_moodle_database.php on line 296, referer: http://localhost/install.php
+[Wed Dec 26 19:12:23 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/jordi/Desktop/MoodleWindowsInstaller-latest-21/server/moodle/course/jquery-1.8.3.js, referer: http://localhost/course/view.php?id=2
+[Wed Dec 26 19:12:23 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/jordi/Desktop/MoodleWindowsInstaller-latest-21/server/moodle/favicon.ico
+[Wed Dec 26 19:12:26 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/jordi/Desktop/MoodleWindowsInstaller-latest-21/server/moodle/course/jquery-1.8.3.js, referer: http://localhost/course/view.php?id=2
+[Wed Dec 26 19:12:26 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/jordi/Desktop/MoodleWindowsInstaller-latest-21/server/moodle/favicon.ico
+[Wed Dec 26 19:12:27 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/jordi/Desktop/MoodleWindowsInstaller-latest-21/server/moodle/favicon.ico
+[Wed Dec 26 19:12:29 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/jordi/Desktop/MoodleWindowsInstaller-latest-21/server/moodle/favicon.ico
+[Wed Dec 26 19:12:30 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/jordi/Desktop/MoodleWindowsInstaller-latest-21/server/moodle/course/jquery-1.8.3.js, referer: http://localhost/course/view.php?id=2
+[Wed Dec 26 19:12:31 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/jordi/Desktop/MoodleWindowsInstaller-latest-21/server/moodle/favicon.ico
+[Wed Dec 26 19:12:31 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/jordi/Desktop/MoodleWindowsInstaller-latest-21/server/moodle/favicon.ico
+[Wed Dec 26 19:12:32 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/jordi/Desktop/MoodleWindowsInstaller-latest-21/server/moodle/favicon.ico
+[Wed Dec 26 19:12:32 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/jordi/Desktop/MoodleWindowsInstaller-latest-21/server/moodle/favicon.ico
