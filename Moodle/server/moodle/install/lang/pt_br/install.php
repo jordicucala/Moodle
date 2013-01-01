@@ -34,6 +34,7 @@ $string['admindirname'] = 'Diretório admin';
 $string['availablelangs'] = 'Lista de idiomas disponíveis';
 $string['chooselanguagehead'] = 'Escolha um idioma';
 $string['chooselanguagesub'] = 'Por favor, escolha o idioma para a instalação.Este idioma também será utilizado como idioma padrão do site, embora você possa mudar mais tarde.';
+$string['clialreadyconfigured'] = 'Arquivo config.php já existente. Por favor use admin/cli/install_database.php se você quer instalar este site';
 $string['clialreadyinstalled'] = 'O arquivo config.php já existe, por favor use admin/cli/upgrade.php, se você quiser atualizar o seu site.';
 $string['cliinstallheader'] = 'Programa de instalação por linha de comando do Moodle {$a}';
 $string['databasehost'] = 'Host da base de dados';
@@ -51,16 +52,16 @@ $string['installation'] = 'Instalação';
 $string['langdownloaderror'] = 'Infelizmente não foi possível fazer download do idioma "{$a}". O processo de instalação continuará em Inglês.';
 $string['memorylimithelp'] = '<p>O limite de memória do PHP configurado atualmente no seu servidor é de {$a}.</p>
 
-<p>Este limite pode causar problemas com o Moodle no futuro, especialmente quando muitos módulos estiverem ativados ou em caso de um número elevado de usuários.</p>
+<p>Este limite pode causar problemas no futuro, especialmente quando muitos módulos estiverem ativados ou em caso de um número elevado de usuários.</p>
 
-<p>É aconselhável a configuração do limite de memória com o valor mais alto possível, como 40M. Você pode tentar uma das seguintes opções:</p>
+<p>É aconselhável a configuração do limite de memória com o valor mais alto possível, como 40M. Você pode tentar um dos seguintes caminhos:</p>
 <ol>
 <li>Se você puder, recompile o PHP com <i>--enable-memory-limit</i>.
-Com esta operação Moodle será capaz de configurar o seu limite de memória sózinho.</li>
-<li>Se você tiver acesso ao arquivo php.ini, você pode mudar o parâmetro <b>memory_limit</b> para um valor próximo a 40M. Se você não tiver acesso a este arquivo de configuração, peça ao administrador do sistema para fazer esta configuração para você.</li>
+Com esta operação Moodle será capaz de configurar o limite de memória sózinho.</li>
+<li>Se você tiver acesso ao arquivo php.ini, você pode mudar o parâmetro <b>memory_limit</b> para um valor próximo a 40M. Se você não tiver acesso direto, peça ao administrador do sistema para fazer esta operação.</li>
 <li>Em alguns servidores é possível fazer esta mudança criando um arquivo .htaccess no diretório Moodle. O arquivo deve conter a seguinte expressão:
 <p><blockquote>php_value memory_limit 40M</blockquote></p>
-<p>Entretanto, em alguns servidores não aceitam este procedimento e <b>todas</b> as páginas PHP do servidor ficam bloqueadas ou imprimem mensagens de erro. Neste caso será necessário excluir o arquivo .htaccess .</p>
+<p>Alguns servidores não aceitam este procedimento e <b>todas</b> as páginas PHP do servidor ficam bloqueadas ou imprimem mensagens de erro. Neste caso será necessário excluir o arquivo .htaccess .</p>
 </li></ol>';
 $string['paths'] = 'Caminhos';
 $string['pathserrcreatedataroot'] = 'O diretório de dados ({$a->dataroot}) não pode ser criado pelo instalador.';

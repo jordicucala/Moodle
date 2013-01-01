@@ -53,11 +53,9 @@ $userdetails = array (
     'firstname' => get_string('firstname'),
     'lastname' => get_string('lastname'),
 );
-if (!empty($CFG->extrauserselectorfields)) {
-    $extrafields = explode(',', $CFG->extrauserselectorfields);
-    foreach ($extrafields as $field) {
-        $userdetails[$field] = get_string($field);
-    }
+$extrafields = get_extra_user_fields($context);
+foreach ($extrafields as $field) {
+    $userdetails[$field] = get_user_field_name($field);
 }
 
 $fields = array(

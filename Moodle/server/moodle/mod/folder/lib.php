@@ -42,6 +42,7 @@ function folder_supports($feature) {
         case FEATURE_GRADE_HAS_GRADE:         return false;
         case FEATURE_GRADE_OUTCOMES:          return false;
         case FEATURE_BACKUP_MOODLE2:          return true;
+        case FEATURE_SHOW_DESCRIPTION:        return true;
 
         default: return null;
     }
@@ -203,22 +204,13 @@ function folder_user_complete($course, $user, $mod, $folder) {
 }
 
 /**
- * Returns the users with data in one folder
- *
- * @todo: deprecated - to be deleted in 2.2
- *
- * @param int $folderid
- * @return bool false
- */
-function folder_get_participants($folderid) {
-    return false;
-}
-
-/**
  * Lists all browsable file areas
- * @param object $course
- * @param object $cm
- * @param object $context
+ *
+ * @package  mod_folder
+ * @category files
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
  * @return array
  */
 function folder_get_file_areas($course, $cm, $context) {
@@ -230,16 +222,19 @@ function folder_get_file_areas($course, $cm, $context) {
 
 /**
  * File browsing support for folder module content area.
- * @param object $browser
- * @param object $areas
- * @param object $course
- * @param object $cm
- * @param object $context
- * @param string $filearea
- * @param int $itemid
- * @param string $filepath
- * @param string $filename
- * @return object file_info instance or null if not found
+ *
+ * @package  mod_folder
+ * @category files
+ * @param file_browser $browser file browser instance
+ * @param array $areas file areas
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
+ * @param string $filearea file area
+ * @param int $itemid item ID
+ * @param string $filepath file path
+ * @param string $filename file name
+ * @return file_info instance or null if not found
  */
 function folder_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
     global $CFG;
@@ -278,15 +273,18 @@ function folder_get_file_info($browser, $areas, $course, $cm, $context, $fileare
 /**
  * Serves the folder files.
  *
- * @param object $course
- * @param object $cm
- * @param object $context
- * @param string $filearea
- * @param array $args
- * @param bool $forcedownload
+ * @package  mod_folder
+ * @category files
+ * @param stdClass $course course object
+ * @param stdClass $cm course module
+ * @param stdClass $context context object
+ * @param string $filearea file area
+ * @param array $args extra arguments
+ * @param bool $forcedownload whether or not force download
+ * @param array $options additional options affecting the file serving
  * @return bool false if file not found, does not return if found - just send the file
  */
-function folder_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
+function folder_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     global $CFG, $DB;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
@@ -314,27 +312,7 @@ function folder_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
 
     // finally send the file
     // for folder module, we force download file all the time
-    send_stored_file($file, 86400, 0, true);
-}
-
-/**
- * This function extends the global navigation for the site.
- * It is important to note that you should not rely on PAGE objects within this
- * body of code as there is no guarantee that during an AJAX request they are
- * available
- *
- * @param navigation_node $navigation The folder node within the global navigation
- * @param stdClass $course The course object returned from the DB
- * @param stdClass $module The module object returned from the DB
- * @param stdClass $cm The course module instance returned from the DB
- */
-function folder_extend_navigation($navigation, $course, $module, $cm) {
-    /**
-     * This is currently just a stub so that it can be easily expanded upon.
-     * When expanding just remove this comment and the line below and then add
-     * you content.
-     */
-    $navigation->nodetype = navigation_node::NODETYPE_LEAF;
+    send_stored_file($file, 86400, 0, true, $options);
 }
 
 /**
@@ -346,4 +324,85 @@ function folder_extend_navigation($navigation, $course, $module, $cm) {
 function folder_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array('mod-folder-*'=>get_string('page-mod-folder-x', 'folder'));
     return $module_pagetype;
+}
+
+/**
+ * Export folder resource contents
+ *
+ * @return array of file content
+ */
+function folder_export_contents($cm, $baseurl) {
+    global $CFG, $DB;
+    $contents = array();
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $folder = $DB->get_record('folder', array('id'=>$cm->instance), '*', MUST_EXIST);
+
+    $fs = get_file_storage();
+    $files = $fs->get_area_files($context->id, 'mod_folder', 'content', 0, 'sortorder DESC, id ASC', false);
+
+    foreach ($files as $fileinfo) {
+        $file = array();
+        $file['type'] = 'file';
+        $file['filename']     = $fileinfo->get_filename();
+        $file['filepath']     = $fileinfo->get_filepath();
+        $file['filesize']     = $fileinfo->get_filesize();
+        $file['fileurl']      = file_encode_url("$CFG->wwwroot/" . $baseurl, '/'.$context->id.'/mod_folder/content/'.$folder->revision.$fileinfo->get_filepath().$fileinfo->get_filename(), true);
+        $file['timecreated']  = $fileinfo->get_timecreated();
+        $file['timemodified'] = $fileinfo->get_timemodified();
+        $file['sortorder']    = $fileinfo->get_sortorder();
+        $file['userid']       = $fileinfo->get_userid();
+        $file['author']       = $fileinfo->get_author();
+        $file['license']      = $fileinfo->get_license();
+        $contents[] = $file;
+    }
+
+    return $contents;
+}
+
+/**
+ * Register the ability to handle drag and drop file uploads
+ * @return array containing details of the files / types the mod can handle
+ */
+function folder_dndupload_register() {
+    return array('files' => array(
+                     array('extension' => 'zip', 'message' => get_string('dnduploadmakefolder', 'mod_folder'))
+                 ));
+}
+
+/**
+ * Handle a file that has been uploaded
+ * @param object $uploadinfo details of the file / content that has been uploaded
+ * @return int instance id of the newly created mod
+ */
+function folder_dndupload_handle($uploadinfo) {
+    global $DB, $USER;
+
+    // Gather the required info.
+    $data = new stdClass();
+    $data->course = $uploadinfo->course->id;
+    $data->name = $uploadinfo->displayname;
+    $data->intro = '<p>'.$uploadinfo->displayname.'</p>';
+    $data->introformat = FORMAT_HTML;
+    $data->coursemodule = $uploadinfo->coursemodule;
+    $data->files = null; // We will unzip the file and sort out the contents below.
+
+    $data->id = folder_add_instance($data, null);
+
+    // Retrieve the file from the draft file area.
+    $context = context_module::instance($uploadinfo->coursemodule);
+    file_save_draft_area_files($uploadinfo->draftitemid, $context->id, 'mod_folder', 'temp', 0, array('subdirs'=>true));
+    $fs = get_file_storage();
+    $files = $fs->get_area_files($context->id, 'mod_folder', 'temp', 0, 'sortorder', false);
+    // Only ever one file - extract the contents.
+    $file = reset($files);
+
+    $success = $file->extract_to_storage(new zip_packer(), $context->id, 'mod_folder', 'content', 0, '/', $USER->id);
+    $fs->delete_area_files($context->id, 'mod_folder', 'temp', 0);
+
+    if ($success) {
+        return $data->id;
+    }
+
+    $DB->delete_records('folder', array('id' => $data->id));
+    return false;
 }

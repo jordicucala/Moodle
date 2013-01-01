@@ -648,8 +648,7 @@ class enrol_ldap_plugin extends enrol_plugin {
             return array();
         }
 
-        $textlib = textlib_get_instance();
-        $extmemberuid = $textlib->convert($memberuid, 'utf-8', $this->get_config('ldapencoding'));
+        $extmemberuid = textlib::convert($memberuid, 'utf-8', $this->get_config('ldapencoding'));
 
         if($this->get_config('memberattribute_isdn')) {
             if (!($extmemberuid = $this->ldap_find_userdn ($ldapconnection, $extmemberuid))) {
@@ -885,16 +884,34 @@ class enrol_ldap_plugin extends enrol_plugin {
         require_once("$CFG->dirroot/course/lib.php");
 
         // Override defaults with template course
-        $course = new stdClass();
+        $template = false;
         if ($this->get_config('template')) {
-            if($template = $DB->get_record('course', array('shortname'=>$this->get_config('template')))) {
+            if ($template = $DB->get_record('course', array('shortname'=>$this->get_config('template')))) {
                 unset($template->id); // So we are clear to reinsert the record
                 unset($template->fullname);
                 unset($template->shortname);
                 unset($template->idnumber);
-                $course = $template;
             }
         }
+        if (!$template) {
+            $courseconfig = get_config('moodlecourse');
+            $template = new stdClass();
+            $template->summary        = '';
+            $template->summaryformat  = FORMAT_HTML;
+            $template->format         = $courseconfig->format;
+            $template->numsections    = $courseconfig->numsections;
+            $template->hiddensections = $courseconfig->hiddensections;
+            $template->newsitems      = $courseconfig->newsitems;
+            $template->showgrades     = $courseconfig->showgrades;
+            $template->showreports    = $courseconfig->showreports;
+            $template->maxbytes       = $courseconfig->maxbytes;
+            $template->groupmode      = $courseconfig->groupmode;
+            $template->groupmodeforce = $courseconfig->groupmodeforce;
+            $template->visible        = $courseconfig->visible;
+            $template->lang           = $courseconfig->lang;
+            $template->groupmodeforce = $courseconfig->groupmodeforce;
+        }
+        $course = $template;
 
         $course->category = $this->get_config('category');
         if (!$DB->record_exists('course_categories', array('id'=>$this->get_config('category')))) {

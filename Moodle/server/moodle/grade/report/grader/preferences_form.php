@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,12 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * Form for grader report preferences.
+ * Form for grader report preferences
  *
- * @package    moodlecore
- * @subpackage grade
+ * @package    gradereport_grader
  * @copyright  2009 Nicolas Connault
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -109,9 +106,9 @@ class grader_report_preferences_form extends moodleform {
             $preferences['prefgeneral']['enableajax'] = $checkbox_default;
 
             $preferences['prefshow']['showuserimage'] = $checkbox_default;
-            $preferences['prefshow']['showuseridnumber'] = $checkbox_default;
             $preferences['prefshow']['showactivityicons'] = $checkbox_default;
             $preferences['prefshow']['showranges'] = $checkbox_default;
+            $preferences['prefshow']['showanalysisicon'] = $checkbox_default;
 
             if ($canviewhidden) {
                 $preferences['prefrows']['shownumberofgrades'] = $checkbox_default;

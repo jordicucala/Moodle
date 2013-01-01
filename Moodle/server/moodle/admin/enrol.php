@@ -27,11 +27,11 @@ require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 $action  = required_param('action', PARAM_ACTION);
-$enrol   = required_param('enrol', PARAM_SAFEDIR);
+$enrol   = required_param('enrol', PARAM_PLUGIN);
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
 $PAGE->set_url('/admin/enrol.php');
-$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+$PAGE->set_context(context_system::instance());
 
 require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
@@ -42,10 +42,13 @@ $all     = enrol_get_plugins(false);
 
 $return = new moodle_url('/admin/settings.php', array('section'=>'manageenrols'));
 
+$syscontext = context_system::instance();
+
 switch ($action) {
     case 'disable':
         unset($enabled[$enrol]);
         set_config('enrol_plugins_enabled', implode(',', array_keys($enabled)));
+        $syscontext->mark_dirty(); // resets all enrol caches
         break;
 
     case 'enable':
@@ -55,6 +58,7 @@ switch ($action) {
         $enabled = array_keys($enabled);
         $enabled[] = $enrol;
         set_config('enrol_plugins_enabled', implode(',', $enabled));
+        $syscontext->mark_dirty(); // resets all enrol caches
         break;
 
     case 'up':
@@ -107,6 +111,7 @@ switch ($action) {
 
         } else {  // Delete everything!!
             uninstall_plugin('enrol', $enrol);
+            $syscontext->mark_dirty(); // resets all enrol caches
 
             $a = new stdClass();
             $a->plugin = $strplugin;

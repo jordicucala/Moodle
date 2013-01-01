@@ -162,16 +162,20 @@ TREE.prototype = {
                 switch (e.action) {
                     case 'expand' :
                         target.removeClass('collapsed');
+                        target.set('aria-expanded', true);
                         break;
                     case 'collapse' :
                         target.addClass('collapsed');
+                        target.set('aria-expanded', false);
                         break;
                     default :
                         target.toggleClass('collapsed');
+                        target.set('aria-expanded', !target.hasClass('collapsed'));
                 }
                 e.halt();
             } else {
                 target.toggleClass('collapsed');
+                target.set('aria-expanded', !target.hasClass('collapsed'));
             }
         }
 
@@ -180,6 +184,7 @@ TREE.prototype = {
             target.siblings('li').each(function(){
                 if (this.get('id') !== target.get('id') && !this.hasClass('collapsed')) {
                     this.addClass('collapsed');
+                    this.set('aria-expanded', false);
                 }
             });
         }
@@ -287,6 +292,7 @@ BRANCH.prototype = {
         }
         if (isbranch) {
             branchli.addClass('collapsed').addClass('contains_branch');
+            branchli.set('aria-expanded', false);
             branchp.addClass('branch');
         }
 
@@ -555,4 +561,4 @@ M.block_navigation = M.block_navigation || {
     }
 };
 
-}, '@VERSION@', {requires:['base', 'core_dock', 'io', 'node', 'dom', 'event-custom', 'event-delegate', 'json-parse']});
+}, '@VERSION@', {requires:['base', 'core_dock', 'io-base', 'node', 'dom', 'event-custom', 'event-delegate', 'json-parse']});

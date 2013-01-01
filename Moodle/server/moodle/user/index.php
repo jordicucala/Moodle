@@ -314,7 +314,14 @@
     /// Define a table showing a list of users in the current role selection
 
     $tablecolumns = array('userpic', 'fullname');
+    $extrafields = get_extra_user_fields($context);
     $tableheaders = array(get_string('userpic'), get_string('fullnameuser'));
+    if ($mode === MODE_BRIEF) {
+        foreach ($extrafields as $field) {
+            $tablecolumns[] = $field;
+            $tableheaders[] = get_user_field_name($field);
+        }
+    }
     if ($mode === MODE_BRIEF && !isset($hiddenfields['city'])) {
         $tablecolumns[] = 'city';
         $tableheaders[] = get_string('city');
@@ -334,7 +341,6 @@
     }
 
     $table = new flexible_table('user-index-participants-'.$course->id);
-
     $table->define_columns($tablecolumns);
     $table->define_headers($tableheaders);
     $table->define_baseurl($baseurl->out());
@@ -371,11 +377,15 @@
     $joins = array("FROM {user} u");
     $wheres = array();
 
+    $extrasql = get_extra_user_fields_sql($context, 'u', '', array(
+            'id', 'username', 'firstname', 'lastname', 'email', 'city', 'country',
+            'picture', 'lang', 'timezone', 'maildisplay', 'imagealt', 'lastaccess'));
+
     if ($isfrontpage) {
         $select = "SELECT u.id, u.username, u.firstname, u.lastname,
                           u.email, u.city, u.country, u.picture,
                           u.lang, u.timezone, u.maildisplay, u.imagealt,
-                          u.lastaccess";
+                          u.lastaccess$extrasql";
         $joins[] = "JOIN ($esql) e ON e.id = u.id"; // everybody on the frontpage usually
         if ($accesssince) {
             $wheres[] = get_user_lastaccess_sql($accesssince);
@@ -385,7 +395,7 @@
         $select = "SELECT u.id, u.username, u.firstname, u.lastname,
                           u.email, u.city, u.country, u.picture,
                           u.lang, u.timezone, u.maildisplay, u.imagealt,
-                          COALESCE(ul.timeaccess, 0) AS lastaccess";
+                          COALESCE(ul.timeaccess, 0) AS lastaccess$extrasql";
         $joins[] = "JOIN ($esql) e ON e.id = u.id"; // course enrolled users only
         $joins[] = "LEFT JOIN {user_lastaccess} ul ON (ul.userid = u.id AND ul.courseid = :courseid)"; // not everybody accessed course yet
         $params['courseid'] = $course->id;
@@ -515,7 +525,7 @@
         echo '<form action="action_redir.php" method="post" id="participantsform">';
         echo '<div>';
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-        echo '<input type="hidden" name="returnto" value="'.s(me()).'" />';
+        echo '<input type="hidden" name="returnto" value="'.s($PAGE->url->out(false)).'" />';
     }
 
     if ($mode === MODE_USERDETAILS) {    // Print simple listing
@@ -607,8 +617,19 @@
                         $row->cells[1]->text .= get_string('role').get_string('labelsep', 'langconfig').$user->role.'<br />';
                     }
                     if ($user->maildisplay == 1 or ($user->maildisplay == 2 and ($course->id != SITEID) and !isguestuser()) or
-                                has_capability('moodle/course:viewhiddenuserfields', $context)) {
+                                has_capability('moodle/course:viewhiddenuserfields', $context) or
+                                in_array('email', $extrafields)) {
                         $row->cells[1]->text .= get_string('email').get_string('labelsep', 'langconfig').html_writer::link("mailto:$user->email", $user->email) . '<br />';
+                    }
+                    foreach ($extrafields as $field) {
+                        if ($field === 'email') {
+                            // Skip email because it was displayed with different
+                            // logic above (because this page is intended for
+                            // students too)
+                            continue;
+                        }
+                        $row->cells[1]->text .= get_user_field_name($field) .
+                                get_string('labelsep', 'langconfig') . s($user->{$field}) . '<br />';
                     }
                     if (($user->city or $user->country) and (!isset($hiddenfields['city']) or !isset($hiddenfields['country']))) {
                         $row->cells[1]->text .= get_string('city').get_string('labelsep', 'langconfig');
@@ -717,6 +738,11 @@
 
                 $data = array ($OUTPUT->user_picture($user, array('size' => 35, 'courseid'=>$course->id)), $profilelink);
 
+                if ($mode === MODE_BRIEF) {
+                    foreach ($extrafields as $field) {
+                        $data[] = $user->{$field};
+                    }
+                }
                 if ($mode === MODE_BRIEF && !isset($hiddenfields['city'])) {
                     $data[] = $user->city;
                 }
@@ -752,7 +778,6 @@
                     $data[] = '<input type="checkbox" class="usercheckbox" name="user'.$user->id.'" />';
                 }
                 $table->add_data($data);
-
             }
         }
 
@@ -787,8 +812,9 @@
     }
 
     if (has_capability('moodle/site:viewparticipants', $context) && $totalcount > ($perpage*3)) {
-        echo '<form action="index.php" class="searchform"><div><input type="hidden" name="id" value="'.$course->id.'" />'.get_string('search').':&nbsp;'."\n";
-        echo '<input type="text" name="search" value="'.s($search).'" />&nbsp;<input type="submit" value="'.get_string('search').'" /></div></form>'."\n";
+        echo '<form action="index.php" class="searchform"><div><input type="hidden" name="id" value="'.$course->id.'" />';
+        echo '<label for="search">' . get_string('search', 'search') . ' </label>';
+        echo '<input type="text" id="search" name="search" value="'.s($search).'" />&nbsp;<input type="submit" value="'.get_string('search').'" /></div></form>'."\n";
     }
 
     $perpageurl = clone($baseurl);

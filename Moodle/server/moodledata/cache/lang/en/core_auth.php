@@ -104,6 +104,8 @@ If you are not sure what the words are, you can try getting another CAPTCHA or a
   'stdchangepassword' => 'Use standard page for changing password',
   'stdchangepassword_expl' => 'If the external authentication system allows password changes through Moodle, switch this to Yes. This setting overrides \'Change Password URL\'.',
   'stdchangepassword_explldap' => 'NOTE: It is recommended that you use LDAP over an SSL encrypted tunnel (ldaps://) if the LDAP server is remote.',
+  'suspended' => 'Suspended account',
+  'suspended_help' => 'Suspended user accounts cannot log in or use web services, and any outgoing messages are discarded.',
   'unlocked' => 'Unlocked',
   'unlockedifempty' => 'Unlocked if empty',
   'update_never' => 'Never',

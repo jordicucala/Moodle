@@ -85,7 +85,7 @@ echo $OUTPUT->doctype() ?>
 
                 <div id="report-region-main">
                     <div class="region-content">
-                        <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
+                        <?php echo $OUTPUT->main_content() ?>
                     </div>
                 </div>
 

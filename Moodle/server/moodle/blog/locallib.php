@@ -247,10 +247,10 @@ class blog_entry {
 
             // First find and show the associated course
             foreach ($blogassociations as $assocrec) {
-                $contextrec = $DB->get_record('context', array('id' => $assocrec->contextid));
-                if ($contextrec->contextlevel ==  CONTEXT_COURSE) {
-                    $assocurl = new moodle_url('/course/view.php', array('id' => $contextrec->instanceid));
-                    $text = $DB->get_field('course', 'shortname', array('id' => $contextrec->instanceid)); //TODO: performance!!!!
+                $context = get_context_instance_by_id($assocrec->contextid);
+                if ($context->contextlevel ==  CONTEXT_COURSE) {
+                    $assocurl = new moodle_url('/course/view.php', array('id' => $context->instanceid));
+                    $text = $DB->get_field('course', 'shortname', array('id' => $context->instanceid)); //TODO: performance!!!!
                     $assocstr .= $OUTPUT->action_icon($assocurl, new pix_icon('i/course', $text), null, array(), true);
                     $hascourseassocs = true;
                     $assoctype = get_string('course');
@@ -259,15 +259,15 @@ class blog_entry {
 
             // Now show mod association
             foreach ($blogassociations as $assocrec) {
-                $contextrec = $DB->get_record('context', array('id' => $assocrec->contextid));
+                $context = get_context_instance_by_id($assocrec->contextid);
 
-                if ($contextrec->contextlevel ==  CONTEXT_MODULE) {
+                if ($context->contextlevel ==  CONTEXT_MODULE) {
                     if ($hascourseassocs) {
                         $assocstr .= ', ';
                         $hascourseassocs = false;
                     }
 
-                    $modinfo = $DB->get_record('course_modules', array('id' => $contextrec->instanceid));
+                    $modinfo = $DB->get_record('course_modules', array('id' => $context->instanceid));
                     $modname = $DB->get_field('modules', 'name', array('id' => $modinfo->module));
 
                     $assocurl = new moodle_url('/mod/'.$modname.'/view.php', array('id' => $modinfo->id));
@@ -405,11 +405,10 @@ class blog_entry {
      * @return void
      */
     public function delete() {
-        global $DB, $USER;
-
-        $returnurl = '';
+        global $DB;
 
         $this->delete_attachments();
+        $this->remove_associations();
 
         $DB->delete_records('post', array('id' => $this->id));
         tag_set('post', $this->id, array());
@@ -513,10 +512,7 @@ class blog_entry {
             $ffurl    = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.SYSCONTEXTID.'/blog/attachment/'.$this->id.'/'.$filename);
             $mimetype = $file->get_mimetype();
 
-            $icon     = mimeinfo_from_type("icon", $mimetype);
-            $type     = mimeinfo_from_type("type", $mimetype);
-
-            $image = $OUTPUT->pix_icon("f/$icon", $filename, 'moodle', array('class'=>'icon'));
+            $image = $OUTPUT->pix_icon(file_file_icon($file), $filename, 'moodle', array('class'=>'icon'));
 
             if ($return == "html") {
                 $output .= html_writer::link($ffurl, $image);
@@ -526,7 +522,7 @@ class blog_entry {
                 $output .= "$strattachment $filename:\n$ffurl\n";
 
             } else {
-                if (in_array($type, array('image/gif', 'image/jpeg', 'image/png'))) {    // Image attachments don't get printed as links
+                if (file_mimetype_in_typegroup($file->get_mimetype(), 'web_image')) {    // Image attachments don't get printed as links
                     $imagereturn .= '<br /><img src="'.$ffurl.'" alt="" />';
                 } else {
                     $imagereturn .= html_writer::link($ffurl, $image);
@@ -1139,13 +1135,13 @@ class blog_filter_entry extends blog_filter {
 }
 
 /**
- * This filter restricts the results to a time interval in seconds up to mktime()
+ * This filter restricts the results to a time interval in seconds up to time()
  */
 class blog_filter_since extends blog_filter {
     public function __construct($interval) {
         $this->conditions[] = 'p.lastmodified >= ? AND p.lastmodified <= ?';
-        $this->params[] = mktime() - $interval;
-        $this->params[] = mktime();
+        $this->params[] = time() - $interval;
+        $this->params[] = time();
     }
 }
 

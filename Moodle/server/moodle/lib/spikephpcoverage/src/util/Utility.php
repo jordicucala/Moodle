@@ -1,6 +1,6 @@
 <?php
     /*
-    *  $Id: Utility.php,v 1.3 2010/12/14 17:36:05 moodlerobot Exp $
+    *  $Id: Utility.php,v 1.4 2012/04/06 12:15:49 moodlerobot Exp $
     *  
     *  Copyright(c) 2004-2006, SpikeSource Inc. All Rights Reserved.
     *  Licensed under the Open Software License version 2.1
@@ -22,7 +22,7 @@
     * Utility functions 
     * 
     * @author Nimish Pachapurkar <npac@spikesource.com>
-    * @version $Revision: 1.3 $
+    * @version $Revision: 1.4 $
     * @package SpikePHPCoverage_Util
     */
     class Utility {
@@ -208,13 +208,13 @@
         /*}}}*/
         /*{{{ public function getLogger() */
 
-        public function getLogger($package=false) {
+        public static function getLogger($package=false) {
             global $spc_config;
-            if(!isset($this->logger) || $this->logger == NULL) {
-                $this->logger = new CoverageLogger();
-                $this->logger->setLevel($spc_config["log_level"]);
+            if(!isset(self::$logger) || self::$logger == NULL) {
+                self::$logger = new CoverageLogger();
+                self::$logger->setLevel($spc_config["log_level"]);
             }
-            return $this->logger;
+            return self::$logger;
         }
 
         /*}}}*/

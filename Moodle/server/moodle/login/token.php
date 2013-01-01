@@ -35,7 +35,7 @@ echo $OUTPUT->header();
 if (!$CFG->enablewebservices) {
     throw new moodle_exception('enablewsdescription', 'webservice');
 }
-$username = trim(moodle_strtolower($username));
+$username = trim(textlib::strtolower($username));
 if (is_restored_user($username)) {
     throw new moodle_exception('restoredaccountresetpassword', 'webservice');
 }
@@ -62,6 +62,9 @@ if (!empty($user)) {
             throw new moodle_exception('passwordisexpired', 'webservice');
         }
     }
+
+    // let enrol plugins deal with new enrolments if necessary
+    enrol_check_plugins($user);
 
     // setup user session to check capability
     session_set_user($user);
@@ -157,7 +160,7 @@ if (!empty($user)) {
             $token->timecreated = time();
             $token->externalserviceid = $service_record->id;
             $tokenid = $DB->insert_record('external_tokens', $token);
-            add_to_log(SITEID, 'webservice', get_string('createtokenforuserauto', 'webservice'), '' , 'User ID: ' . $user->id);
+            add_to_log(SITEID, 'webservice', 'automatically create user token', '' , 'User ID: ' . $user->id);
             $token->id = $tokenid;
         } else {
             throw new moodle_exception('cannotcreatetoken', 'webservice', '', $serviceshortname);

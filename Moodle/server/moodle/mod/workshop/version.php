@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,17 +17,14 @@
 /**
  * Defines the version of workshop
  *
- * This code fragment is called by moodle_needs_upgrading() and
- * /admin/index.php
- *
- * @package    mod
- * @subpackage workshop
+ * @package    mod_workshop
  * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version  = 2011061003;
-$module->requires = 2011020900;  // Requires this Moodle version
-//$module->cron     = 60;
+$module->version   = 2012061700;        // the current module version (YYYYMMDDXX)
+$module->requires  = 2012061700;        // requires this Moodle version
+$module->component = 'mod_workshop';    // full name of the plugin (used for diagnostics)
+$module->cron      = 60;                // give as a chance every minute

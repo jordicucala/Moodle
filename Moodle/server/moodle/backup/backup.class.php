@@ -41,7 +41,8 @@ abstract class backup implements checksumable {
     // Backup format
     const FORMAT_MOODLE  = 'moodle2';
     const FORMAT_MOODLE1 = 'moodle1';
-    const FORMAT_IMSCC   = 'imscc';
+    const FORMAT_IMSCC1  = 'imscc1';
+    const FORMAT_IMSCC11 = 'imscc11';
     const FORMAT_UNKNOWN = 'unknown';
 
     // Interactive
@@ -108,8 +109,8 @@ abstract class backup implements checksumable {
     const OPERATION_RESTORE ='restore';// We are performing one restore
 
     // Version (to keep CFG->backup_version (and release) updated automatically)
-    const VERSION = 2011063000;
-    const RELEASE = '2.1';
+    const VERSION = 2012061800;
+    const RELEASE = '2.3';
 }
 
 /*

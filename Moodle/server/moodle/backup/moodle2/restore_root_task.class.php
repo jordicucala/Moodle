@@ -16,11 +16,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
- * @subpackage backup-moodle2
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Defines restore_root_task class
+ * @package     core_backup
+ * @subpackage  moodle2
+ * @category    backup
+ * @copyright   2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Start task that provides all the settings common to all restores and other initial steps
@@ -36,6 +40,10 @@ class restore_root_task extends restore_task {
 
         // Conditionally create the temp table (can exist from prechecks) and delete old stuff
         $this->add_step(new restore_create_and_clean_temp_stuff('create_and_clean_temp_stuff'));
+
+        // Now make sure the user that is running the restore can actually access the course
+        // before executing any other step (potentially performing permission checks)
+        $this->add_step(new restore_fix_restorer_access_step('fix_restorer_access'));
 
         // If we haven't preloaded information, load all the included inforef records to temp_ids table
         $this->add_step(new restore_load_included_inforef_records('load_inforef_records'));

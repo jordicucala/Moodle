@@ -139,7 +139,10 @@ class restore_ui extends base_ui {
             throw new restore_ui_exception('restoreuifinalisedbeforeexecute');
         }
         if ($this->controller->get_target() == backup::TARGET_CURRENT_DELETING || $this->controller->get_target() == backup::TARGET_EXISTING_DELETING) {
-            restore_dbops::delete_course_content($this->controller->get_courseid());
+            $options = array();
+            $options['keep_roles_and_enrolments'] = $this->get_setting_value('keep_roles_and_enrolments');
+            $options['keep_groups_and_groupings'] = $this->get_setting_value('keep_groups_and_groupings');
+            restore_dbops::delete_course_content($this->controller->get_courseid(), $options);
         }
         $this->controller->execute_plan();
         $this->progress = self::PROGRESS_EXECUTED;
@@ -232,12 +235,6 @@ class restore_ui extends base_ui {
         parent::cancel_process();
     }
     /**
-     * wrapper of cancel_process, kept for avoiding regression.
-     */
-    public function cancel_restore() {
-        $this->cancel_process();
-    }
-    /**
      * Gets an array of progress bar items that can be displayed through the restore renderer.
      * @return array Array of items for the progress bar
      */
@@ -292,7 +289,7 @@ class restore_ui extends base_ui {
      * @param core_backup_renderer $renderer
      * @return string HTML code to echo
      */
-    public function display($renderer) {
+    public function display(core_backup_renderer $renderer) {
         if ($this->progress < self::PROGRESS_SAVED) {
             throw new base_ui_exception('backupsavebeforedisplay');
         }

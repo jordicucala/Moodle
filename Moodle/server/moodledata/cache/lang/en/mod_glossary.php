@@ -18,6 +18,10 @@ Enter each keyword on a new line (not separated by commas).',
   'andmorenewentries' => 'and {$a} more new entries.',
   'answer' => 'Answer',
   'approve' => 'Approve',
+  'approvaldisplayformat' => 'Approval display format',
+  'approvaldisplayformat_help' => 'When approving glossary items you may wish to use a different display format',
+  'areaattachment' => 'Attachments',
+  'areaentry' => 'Definitions',
   'areyousuredelete' => 'Are you sure you want to delete this entry?',
   'areyousuredeletecomment' => 'Are you sure you want to delete this comment?',
   'areyousureexport' => 'Are you sure you want to export this entry to',
@@ -91,6 +95,7 @@ Enter each keyword on a new line (not separated by commas).',
 * Entry list - Concepts are listed as links
 * FAQ - The words QUESTION and ANSWER are appended to the concept and definition respectively',
   'displayformatcontinuous' => 'Continuous without author',
+  'displayformatdefault' => 'Default to same as display format',
   'displayformatdictionary' => 'Simple, dictionary style',
   'displayformatencyclopedia' => 'Encyclopedia',
   'displayformatentrylist' => 'Entry list',
@@ -143,6 +148,7 @@ Enter each keyword on a new line (not separated by commas).',
   'filtername' => 'Glossary auto-linking',
   'fullmatch' => 'Match whole words only',
   'fullmatch_help' => 'This setting specifies whether only whole words will be linked, for example, a glossary entry named "construct" will not create a link inside the word "constructivism".',
+  'glossary:addinstance' => 'Add a new glossary',
   'glossary:approve' => 'Approve unapproved entries',
   'glossary:comment' => 'Create comments',
   'glossary:export' => 'Export entries',
@@ -154,9 +160,9 @@ Enter each keyword on a new line (not separated by commas).',
   'glossary:managecomments' => 'Manage comments',
   'glossary:manageentries' => 'Manage entries',
   'glossary:rate' => 'Rate entries',
+  'glossary:view' => 'View glossary',
   'glossarytype' => 'Glossary type',
   'glossarytype_help' => 'A main glossary is a glossary in which entries from secondary glossaries can be imported. There can only be one main glossary in a course. if glossary entry import is not required, all glossaries in the course can be secondary glossaries.',
-  'glossary:view' => 'View glossary',
   'glossary:viewallratings' => 'View all raw ratings given by individuals',
   'glossary:viewanyrating' => 'View total ratings that anyone received',
   'glossary:viewrating' => 'View the total rating you received',
@@ -178,7 +184,22 @@ Enter each keyword on a new line (not separated by commas).',
   'mainglossary' => 'Main glossary',
   'maxtimehaspassed' => 'Sorry, but the maximum time for editing this comment ({$a}) has passed!',
   'modulename' => 'Glossary',
-  'modulename_help' => 'The glossary module enables participants to create and maintain a list of definitions, like a dictionary. Glossary entries may be automatically linked wherever the concept words and phrases appear throughout the course.',
+  'modulename_help' => 'The glossary activity module enables participants to create and maintain a list of definitions, like a dictionary, or to collect and organise resources or information.
+
+A teacher can allow files to be attached to glossary entries. Attached images are displayed in the entry. Entries can be searched or browsed alphabetically or by category, date or author. Entries can be approved by default or require approval by a teacher before they are viewable by everyone.
+
+If the glossary auto-linking filter is enabled, entries will be automatically linked where the concept words and/or phrases appear within the course.
+
+A teacher can allow comments on entries. Entries can also be rated by teachers or students (peer evaluation). Ratings can be aggregated to form a final grade which is recorded in the gradebook.
+
+Glossaries have many uses, such as
+
+* A collaborative bank of key terms
+* A ‘getting to know you’ space where new students add their name and personal details
+* A ‘handy tips’ resource of best practice in a practical subject
+* A sharing area of useful videos, images or sound files
+* A revision resource of facts to remember',
+  'modulename_link' => 'mod/glossary/view',
   'modulenameplural' => 'Glossaries',
   'newentries' => 'New glossary entries',
   'newglossary' => 'New glossary',

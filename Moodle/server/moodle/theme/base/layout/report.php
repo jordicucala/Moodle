@@ -58,7 +58,7 @@ echo $OUTPUT->doctype() ?>
     <div id="page-content" class="clearfix">
         <div id="report-main-content">
             <div class="region-content">
-                <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
+                <?php echo $OUTPUT->main_content() ?>
             </div>
         </div>
         <?php if ($hassidepre) { ?>
@@ -83,6 +83,7 @@ echo $OUTPUT->doctype() ?>
         ?>
     </div>
     <?php } ?>
+    <div class="clearfix"></div>
 </div>
 <?php echo $OUTPUT->standard_end_of_body_html() ?>
 </body>

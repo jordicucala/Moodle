@@ -269,10 +269,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
         $mform->closeHeaderBefore('addgrp1');
         //----------------------------------------------------------------------
         $j = $this->noofitems * count($this->datasetdefs);
-        $k = 1;
-        if ("" != optional_param('selectshow', '', PARAM_INT)) {
-            $k = optional_param('selectshow', '', PARAM_INT);
-        }
+        $k = optional_param('selectshow', 1, PARAM_INT);
         for ($i = $this->noofitems; $i >= 1; $i--) {
             if ($k > 0) {
                 $mform->addElement('header', '', "<b>" .
@@ -349,8 +346,8 @@ class question_dataset_dependent_items_form extends question_wizard_form {
         if (isset($question->options)) {
             $answers = $question->options->answers;
             if (count($answers)) {
-                if (optional_param('updateanswers', '', PARAM_RAW) != '' ||
-                        optional_param('updatedatasets', '', PARAM_RAW) != '') {
+                if (optional_param('updateanswers', false, PARAM_BOOL) ||
+                        optional_param('updatedatasets', false, PARAM_BOOL)) {
                     foreach ($answers as $key => $answer) {
                         $fromform->tolerance[$key]= $this->_form->getElementValue(
                                 'tolerance['.$key.']');
@@ -422,8 +419,8 @@ class question_dataset_dependent_items_form extends question_wizard_form {
         if ($this->qtypeobj->supports_dataset_item_generation()) {
             $itemnumber = $this->noofitems+1;
             foreach ($this->datasetdefs as $defid => $datasetdef) {
-                if (optional_param('updatedatasets', '', PARAM_RAW) == '' &&
-                        optional_param('updateanswers', '', PARAM_RAW)== '') {
+                if (!optional_param('updatedatasets', false, PARAM_BOOL) &&
+                        !optional_param('updateanswers', false, PARAM_BOOL)) {
                     $formdata["number[$j]"] = $this->qtypeobj->generate_dataset_item(
                             $datasetdef->options);
                 } else {
@@ -438,11 +435,11 @@ class question_dataset_dependent_items_form extends question_wizard_form {
         }
 
         //existing records override generated data depending on radio element
-        $j = $this->noofitems * count($this->datasetdefs)+1;
-        if (!$this->regenerate && (optional_param('updatedatasets', '', PARAM_RAW) == '' &&
-                optional_param('updateanswers', '', PARAM_RAW)== '')) {
+        $j = $this->noofitems * count($this->datasetdefs) + 1;
+        if (!$this->regenerate && !optional_param('updatedatasets', false, PARAM_BOOL) &&
+                !optional_param('updateanswers', false, PARAM_BOOL)) {
             $idx = 1;
-            $itemnumber = $this->noofitems+1;
+            $itemnumber = $this->noofitems + 1;
             foreach ($this->datasetdefs as $defid => $datasetdef) {
                 if (isset($datasetdef->items[$itemnumber])) {
                     $formdata["number[$j]"] = $datasetdef->items[$itemnumber]->value;
@@ -456,7 +453,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
 
         $comment = $this->qtypeobj->comment_on_datasetitems($this->qtypeobj, $question->id,
                 $question->questiontext, $answers, $data, ($this->noofitems + 1));
-        if (isset($comment->outsidelimit)&&$comment->outsidelimit) {
+        if (isset($comment->outsidelimit) && $comment->outsidelimit) {
             $this->outsidelimit=$comment->outsidelimit;
         }
         $key1 = 1;

@@ -34,7 +34,6 @@ $string['admindirname'] = 'Administrator kataloqu';
 $string['availablelangs'] = 'Mümkün dillərin siyahısı';
 $string['chooselanguagehead'] = 'Dili seçin';
 $string['chooselanguagesub'] = 'İndi ancaq proqramın qurulması üçün dili seçin. İstifadəçi interfeysi üçün dili sonradan, qurulma prosesində seçmək olar.';
-$string['clialreadyinstalled'] = ' config.php faylı artıq mövcuddur. Əgər saytı yeniləmək istəyirsinizsə, xahiş edirik, admin/cli/upgrade.php skriptindən istifadə edin.';
 $string['cliinstallheader'] = 'Moodlun {$a} əmr sətri rejimində qurulma proqramı';
 $string['databasehost'] = 'Verilənlər bazasının serveri';
 $string['databasename'] = 'Verilənlər bazasının adı';

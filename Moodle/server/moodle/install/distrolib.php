@@ -5,7 +5,7 @@ function distro_get_config() {
     $config = new stdClass();
 
     $config->installername = 'Moodle Windows Installer';
-    $config->installerversion = '2011070100';
+    $config->installerversion = '2011061900';
     $config->packname = 'Xampp Lite';
     $config->packversion = '1.7.4';
     $config->webname = 'Apache';
@@ -14,8 +14,8 @@ function distro_get_config() {
     $config->phpversion = '5.3.5 (VC6 X86 32bit) + PEAR ';
     $config->dbname = 'MySQL';
     $config->dbversion = '5.5.8 (Community Server)';
-    $config->moodlerelease = '2.1.9+ (Build: 20121220)';
-    $config->moodleversion = '2011070109.05';
+    $config->moodlerelease = '2.3.2+ (Build: 20120927)';
+    $config->moodleversion = '2012062502.04';
     $config->dbtype='mysqli';
     $config->dbhost='localhost';
     $config->dbuser='root';

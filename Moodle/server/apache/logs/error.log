@@ -1,21 +1,279 @@
-[Wed Dec 26 18:53:58 2012] [notice] Apache/2.2.17 (Win32) mod_ssl/2.2.17 OpenSSL/0.9.8o PHP/5.3.4 configured -- resuming normal operations
-[Wed Dec 26 18:53:58 2012] [notice] Server built: Oct 18 2010 01:58:12
-[Wed Dec 26 18:53:58 2012] [notice] Parent: Created child process 2308
-[Wed Dec 26 18:54:01 2012] [notice] Child 2308: Child process is running
-[Wed Dec 26 18:54:01 2012] [notice] Child 2308: Acquired the start mutex.
-[Wed Dec 26 18:54:01 2012] [notice] Child 2308: Starting 150 worker threads.
-[Wed Dec 26 18:54:01 2012] [notice] Child 2308: Starting thread to listen on port 443.
-[Wed Dec 26 18:54:01 2012] [notice] Child 2308: Starting thread to listen on port 80.
-[Wed Dec 26 18:54:43 2012] [error] [client 127.0.0.1] (20024)The given path is misformatted or contained invalid characters: Cannot map GET /theme/standard/style/[[pix:theme%7Chgradient]] HTTP/1.1 to file, referer: http://localhost/install.php
-[Wed Dec 26 18:55:06 2012] [error] [client 127.0.0.1] PHP Warning:  mysqli::mysqli() [<a href='mysqli.mysqli'>mysqli.mysqli</a>]: (42000/1049): Unknown database 'moodle' in C:\\Users\\jordi\\Desktop\\MoodleWindowsInstaller-latest-21\\server\\moodle\\lib\\dml\\mysqli_native_moodle_database.php on line 296, referer: http://localhost/install.php
-[Wed Dec 26 19:12:23 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/jordi/Desktop/MoodleWindowsInstaller-latest-21/server/moodle/course/jquery-1.8.3.js, referer: http://localhost/course/view.php?id=2
-[Wed Dec 26 19:12:23 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/jordi/Desktop/MoodleWindowsInstaller-latest-21/server/moodle/favicon.ico
-[Wed Dec 26 19:12:26 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/jordi/Desktop/MoodleWindowsInstaller-latest-21/server/moodle/course/jquery-1.8.3.js, referer: http://localhost/course/view.php?id=2
-[Wed Dec 26 19:12:26 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/jordi/Desktop/MoodleWindowsInstaller-latest-21/server/moodle/favicon.ico
-[Wed Dec 26 19:12:27 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/jordi/Desktop/MoodleWindowsInstaller-latest-21/server/moodle/favicon.ico
-[Wed Dec 26 19:12:29 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/jordi/Desktop/MoodleWindowsInstaller-latest-21/server/moodle/favicon.ico
-[Wed Dec 26 19:12:30 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/jordi/Desktop/MoodleWindowsInstaller-latest-21/server/moodle/course/jquery-1.8.3.js, referer: http://localhost/course/view.php?id=2
-[Wed Dec 26 19:12:31 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/jordi/Desktop/MoodleWindowsInstaller-latest-21/server/moodle/favicon.ico
-[Wed Dec 26 19:12:31 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/jordi/Desktop/MoodleWindowsInstaller-latest-21/server/moodle/favicon.ico
-[Wed Dec 26 19:12:32 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/jordi/Desktop/MoodleWindowsInstaller-latest-21/server/moodle/favicon.ico
-[Wed Dec 26 19:12:32 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/jordi/Desktop/MoodleWindowsInstaller-latest-21/server/moodle/favicon.ico
+[Tue Nov 27 16:49:36 2012] [notice] Apache/2.2.17 (Win32) mod_ssl/2.2.17 OpenSSL/0.9.8o PHP/5.3.4 configured -- resuming normal operations
+[Tue Nov 27 16:49:36 2012] [notice] Server built: Oct 18 2010 01:58:12
+[Tue Nov 27 16:49:36 2012] [notice] Parent: Created child process 5568
+[Tue Nov 27 16:49:38 2012] [notice] Child 5568: Child process is running
+[Tue Nov 27 16:49:39 2012] [notice] Child 5568: Acquired the start mutex.
+[Tue Nov 27 16:49:39 2012] [notice] Child 5568: Starting 150 worker threads.
+[Tue Nov 27 16:49:39 2012] [notice] Child 5568: Starting thread to listen on port 443.
+[Tue Nov 27 16:49:39 2012] [notice] Child 5568: Starting thread to listen on port 80.
+[Tue Nov 27 16:50:19 2012] [error] [client 127.0.0.1] PHP Warning:  mysqli::mysqli() [<a href='mysqli.mysqli'>mysqli.mysqli</a>]: (42000/1049): Unknown database 'moodle' in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\lib\\dml\\mysqli_native_moodle_database.php on line 377, referer: http://localhost/install.php
+[Tue Nov 27 16:54:22 2012] [notice] Parent: Received shutdown signal -- Shutting down the server.
+[Tue Nov 27 16:54:22 2012] [notice] Child 5568: Exit event signaled. Child process is ending.
+[Tue Nov 27 16:54:23 2012] [notice] Child 5568: Released the start mutex
+[Tue Nov 27 16:54:24 2012] [notice] Child 5568: All worker threads have exited.
+[Tue Nov 27 16:54:24 2012] [notice] Child 5568: Child process is exiting
+[Tue Nov 27 16:54:24 2012] [notice] Parent: Child process exited successfully.
+[Sun Dec 02 20:19:56 2012] [notice] Apache/2.2.17 (Win32) mod_ssl/2.2.17 OpenSSL/0.9.8o PHP/5.3.4 configured -- resuming normal operations
+[Sun Dec 02 20:19:56 2012] [notice] Server built: Oct 18 2010 01:58:12
+[Sun Dec 02 20:19:56 2012] [notice] Parent: Created child process 4732
+[Sun Dec 02 20:20:00 2012] [notice] Child 4732: Child process is running
+[Sun Dec 02 20:20:00 2012] [notice] Child 4732: Acquired the start mutex.
+[Sun Dec 02 20:20:00 2012] [notice] Child 4732: Starting 150 worker threads.
+[Sun Dec 02 20:20:00 2012] [notice] Child 4732: Starting thread to listen on port 443.
+[Sun Dec 02 20:20:00 2012] [notice] Child 4732: Starting thread to listen on port 80.
+[Sun Dec 02 20:56:46 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/moodle
+[Sun Dec 02 21:18:51 2012] [notice] Parent: Received shutdown signal -- Shutting down the server.
+[Sun Dec 02 21:18:51 2012] [notice] Child 4732: Exit event signaled. Child process is ending.
+[Sun Dec 02 21:18:52 2012] [notice] Child 4732: Released the start mutex
+[Sun Dec 02 21:18:53 2012] [notice] Child 4732: All worker threads have exited.
+[Sun Dec 02 21:18:53 2012] [notice] Child 4732: Child process is exiting
+[Sun Dec 02 21:18:53 2012] [notice] Parent: Child process exited successfully.
+[Mon Dec 03 11:53:10 2012] [notice] Apache/2.2.17 (Win32) mod_ssl/2.2.17 OpenSSL/0.9.8o PHP/5.3.4 configured -- resuming normal operations
+[Mon Dec 03 11:53:10 2012] [notice] Server built: Oct 18 2010 01:58:12
+[Mon Dec 03 11:53:10 2012] [notice] Parent: Created child process 2260
+[Mon Dec 03 11:53:13 2012] [notice] Child 2260: Child process is running
+[Mon Dec 03 11:53:13 2012] [notice] Child 2260: Acquired the start mutex.
+[Mon Dec 03 11:53:13 2012] [notice] Child 2260: Starting 150 worker threads.
+[Mon Dec 03 11:53:13 2012] [notice] Child 2260: Starting thread to listen on port 443.
+[Mon Dec 03 11:53:13 2012] [notice] Child 2260: Starting thread to listen on port 80.
+[Mon Dec 03 14:25:25 2012] [notice] Parent: Received shutdown signal -- Shutting down the server.
+[Mon Dec 03 14:25:25 2012] [notice] Child 2260: Exit event signaled. Child process is ending.
+[Mon Dec 03 14:25:26 2012] [notice] Child 2260: Released the start mutex
+[Mon Dec 03 14:25:27 2012] [notice] Child 2260: All worker threads have exited.
+[Mon Dec 03 14:25:29 2012] [notice] Child 2260: Child process is exiting
+[Mon Dec 03 14:25:31 2012] [notice] Parent: Child process exited successfully.
+[Mon Dec 03 15:38:27 2012] [notice] Apache/2.2.17 (Win32) mod_ssl/2.2.17 OpenSSL/0.9.8o PHP/5.3.4 configured -- resuming normal operations
+[Mon Dec 03 15:38:27 2012] [notice] Server built: Oct 18 2010 01:58:12
+[Mon Dec 03 15:38:27 2012] [notice] Parent: Created child process 4072
+[Mon Dec 03 15:38:30 2012] [notice] Child 4072: Child process is running
+[Mon Dec 03 15:38:31 2012] [notice] Child 4072: Acquired the start mutex.
+[Mon Dec 03 15:38:31 2012] [notice] Child 4072: Starting 150 worker threads.
+[Mon Dec 03 15:38:31 2012] [notice] Child 4072: Starting thread to listen on port 443.
+[Mon Dec 03 15:38:31 2012] [notice] Child 4072: Starting thread to listen on port 80.
+[Mon Dec 03 15:52:46 2012] [notice] Parent: Received shutdown signal -- Shutting down the server.
+[Mon Dec 03 15:52:46 2012] [notice] Child 4072: Exit event signaled. Child process is ending.
+[Mon Dec 03 15:52:47 2012] [notice] Child 4072: Released the start mutex
+[Mon Dec 03 15:52:48 2012] [notice] Child 4072: All worker threads have exited.
+[Mon Dec 03 15:52:48 2012] [notice] Child 4072: Child process is exiting
+[Mon Dec 03 15:52:48 2012] [notice] Parent: Child process exited successfully.
+[Thu Dec 13 10:34:36 2012] [notice] Apache/2.2.17 (Win32) mod_ssl/2.2.17 OpenSSL/0.9.8o PHP/5.3.4 configured -- resuming normal operations
+[Thu Dec 13 10:34:36 2012] [notice] Server built: Oct 18 2010 01:58:12
+[Thu Dec 13 10:34:36 2012] [notice] Parent: Created child process 3112
+[Thu Dec 13 10:34:39 2012] [notice] Child 3112: Child process is running
+[Thu Dec 13 10:34:39 2012] [notice] Child 3112: Acquired the start mutex.
+[Thu Dec 13 10:34:39 2012] [notice] Child 3112: Starting 150 worker threads.
+[Thu Dec 13 10:34:39 2012] [notice] Child 3112: Starting thread to listen on port 443.
+[Thu Dec 13 10:34:39 2012] [notice] Child 3112: Starting thread to listen on port 80.
+[Thu Dec 13 15:20:07 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: course in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 28, referer: http://localhost/
+[Thu Dec 13 15:20:07 2012] [error] [client 127.0.0.1] PHP Notice:  Trying to get property of non-object in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 28, referer: http://localhost/
+[Thu Dec 13 15:20:07 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: array2 in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:24:18 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: course in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 28, referer: http://localhost/
+[Thu Dec 13 15:24:18 2012] [error] [client 127.0.0.1] PHP Notice:  Trying to get property of non-object in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 28, referer: http://localhost/
+[Thu Dec 13 15:24:18 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: array2 in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:30:20 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: course in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:30:20 2012] [error] [client 127.0.0.1] PHP Notice:  Trying to get property of non-object in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:30:20 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: array2 in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 30, referer: http://localhost/
+[Thu Dec 13 15:30:20 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: array2 in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 31, referer: http://localhost/
+[Thu Dec 13 15:32:43 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: course in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:32:43 2012] [error] [client 127.0.0.1] PHP Notice:  Trying to get property of non-object in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:33:31 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: course in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:33:31 2012] [error] [client 127.0.0.1] PHP Notice:  Trying to get property of non-object in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:33:31 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: array2 in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 30, referer: http://localhost/
+[Thu Dec 13 15:33:31 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: array2 in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 31, referer: http://localhost/
+[Thu Dec 13 15:35:29 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: course in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:35:29 2012] [error] [client 127.0.0.1] PHP Notice:  Trying to get property of non-object in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:35:29 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: array2 in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 30, referer: http://localhost/
+[Thu Dec 13 15:35:29 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: array2 in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 31, referer: http://localhost/
+[Thu Dec 13 15:35:44 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: course in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:35:44 2012] [error] [client 127.0.0.1] PHP Notice:  Trying to get property of non-object in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:35:44 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: array2 in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 30, referer: http://localhost/
+[Thu Dec 13 15:35:44 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: array2 in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 31, referer: http://localhost/
+[Thu Dec 13 15:36:03 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: course in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:36:03 2012] [error] [client 127.0.0.1] PHP Notice:  Trying to get property of non-object in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:36:03 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: array2 in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 30, referer: http://localhost/
+[Thu Dec 13 15:36:03 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: array2 in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 31, referer: http://localhost/
+[Thu Dec 13 15:36:39 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: course in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:36:39 2012] [error] [client 127.0.0.1] PHP Notice:  Trying to get property of non-object in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:36:39 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: array2 in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 30, referer: http://localhost/
+[Thu Dec 13 15:36:39 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: array2 in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 31, referer: http://localhost/
+[Thu Dec 13 15:36:54 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: course in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:36:54 2012] [error] [client 127.0.0.1] PHP Notice:  Trying to get property of non-object in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:36:54 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: array2 in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 30, referer: http://localhost/
+[Thu Dec 13 15:36:54 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: array2 in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 31, referer: http://localhost/
+[Thu Dec 13 15:37:32 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: course in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:37:32 2012] [error] [client 127.0.0.1] PHP Notice:  Trying to get property of non-object in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:37:32 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: array2 in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 30, referer: http://localhost/
+[Thu Dec 13 15:37:32 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: array2 in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 31, referer: http://localhost/
+[Thu Dec 13 15:39:35 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: course in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:39:35 2012] [error] [client 127.0.0.1] PHP Notice:  Trying to get property of non-object in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:39:35 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: array2 in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 30, referer: http://localhost/
+[Thu Dec 13 15:39:35 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: array2 in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 31, referer: http://localhost/
+[Thu Dec 13 15:39:54 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: course in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:39:54 2012] [error] [client 127.0.0.1] PHP Notice:  Trying to get property of non-object in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:40:52 2012] [error] [client 127.0.0.1] PHP Notice:  Undefined variable: course in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 15:40:52 2012] [error] [client 127.0.0.1] PHP Notice:  Trying to get property of non-object in C:\\Users\\Akareshi\\Desktop\\MOODLE\\MoodleWindowsInstaller-latest-23\\server\\moodle\\course\\view.php on line 29, referer: http://localhost/
+[Thu Dec 13 16:24:38 2012] [notice] Parent: Received shutdown signal -- Shutting down the server.
+[Thu Dec 13 16:24:38 2012] [notice] Child 3112: Exit event signaled. Child process is ending.
+[Thu Dec 13 16:24:39 2012] [notice] Child 3112: Released the start mutex
+[Thu Dec 13 16:24:40 2012] [notice] Child 3112: All worker threads have exited.
+[Thu Dec 13 16:24:41 2012] [notice] Child 3112: Child process is exiting
+[Thu Dec 13 16:24:42 2012] [notice] Parent: Child process exited successfully.
+[Thu Dec 13 18:58:51 2012] [notice] Apache/2.2.17 (Win32) mod_ssl/2.2.17 OpenSSL/0.9.8o PHP/5.3.4 configured -- resuming normal operations
+[Thu Dec 13 18:58:51 2012] [notice] Server built: Oct 18 2010 01:58:12
+[Thu Dec 13 18:58:51 2012] [notice] Parent: Created child process 1144
+Apache server shutdown initiated...
+Child 1144: Child process is running
+[Thu Dec 13 18:58:54 2012] [notice] Child 1144: Acquired the start mutex.
+[Thu Dec 13 18:58:54 2012] [notice] Child 1144: Starting 150 worker threads.
+[Thu Dec 13 18:58:54 2012] [notice] Child 1144: Starting thread to listen on port 443.
+[Thu Dec 13 18:58:54 2012] [notice] Child 1144: Starting thread to listen on port 80.
+[Thu Dec 13 19:18:52 2012] [notice] Parent: Received shutdown signal -- Shutting down the server.
+[Thu Dec 13 19:18:52 2012] [notice] Child 1144: Exit event signaled. Child process is ending.
+[Thu Dec 13 19:18:53 2012] [notice] Child 1144: Released the start mutex
+[Thu Dec 13 19:18:54 2012] [notice] Child 1144: All worker threads have exited.
+[Thu Dec 13 19:18:54 2012] [notice] Child 1144: Child process is exiting
+[Thu Dec 13 19:18:54 2012] [notice] Parent: Child process exited successfully.
+[Sun Dec 23 14:32:55 2012] [notice] Apache/2.2.17 (Win32) mod_ssl/2.2.17 OpenSSL/0.9.8o PHP/5.3.4 configured -- resuming normal operations
+[Sun Dec 23 14:32:56 2012] [notice] Server built: Oct 18 2010 01:58:12
+[Sun Dec 23 14:32:56 2012] [notice] Parent: Created child process 3976
+[Sun Dec 23 14:32:59 2012] [notice] Child 3976: Child process is running
+[Sun Dec 23 14:32:59 2012] [notice] Child 3976: Acquired the start mutex.
+[Sun Dec 23 14:32:59 2012] [notice] Child 3976: Starting 150 worker threads.
+[Sun Dec 23 14:32:59 2012] [notice] Child 3976: Starting thread to listen on port 80.
+[Sun Dec 23 14:32:59 2012] [notice] Child 3976: Starting thread to listen on port 443.
+[Sun Dec 23 15:12:57 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 15:18:57 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 15:21:05 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 15:23:59 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 15:24:57 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 15:25:09 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 15:27:17 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 15:27:35 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 15:27:40 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 15:27:44 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 15:28:56 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 15:29:01 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 15:30:06 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 15:30:09 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 15:30:54 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 15:31:01 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 15:31:21 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 15:32:12 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 15:32:14 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 16:18:16 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 16:18:44 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 16:19:03 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 16:19:20 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 16:19:26 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 16:19:38 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 16:19:47 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 16:19:53 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 16:19:58 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 16:20:10 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 16:23:52 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 16:24:21 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 16:24:33 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 16:24:48 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 16:24:57 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 16:30:56 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 16:30:58 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 16:31:41 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 16:31:47 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 16:32:26 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 16:33:00 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Sun Dec 23 17:34:20 2012] [notice] Parent: Received shutdown signal -- Shutting down the server.
+[Sun Dec 23 17:34:21 2012] [notice] Child 3976: Exit event signaled. Child process is ending.
+[Sun Dec 23 17:34:22 2012] [notice] Child 3976: Released the start mutex
+[Sun Dec 23 17:34:23 2012] [notice] Child 3976: All worker threads have exited.
+[Sun Dec 23 17:34:24 2012] [notice] Child 3976: Child process is exiting
+[Sun Dec 23 17:34:25 2012] [notice] Parent: Child process exited successfully.
+[Tue Dec 25 11:49:40 2012] [notice] Apache/2.2.17 (Win32) mod_ssl/2.2.17 OpenSSL/0.9.8o PHP/5.3.4 configured -- resuming normal operations
+[Tue Dec 25 11:49:40 2012] [notice] Server built: Oct 18 2010 01:58:12
+[Tue Dec 25 11:49:40 2012] [notice] Parent: Created child process 2780
+[Tue Dec 25 11:49:43 2012] [notice] Child 2780: Child process is running
+[Tue Dec 25 11:49:43 2012] [notice] Child 2780: Acquired the start mutex.
+[Tue Dec 25 11:49:43 2012] [notice] Child 2780: Starting 150 worker threads.
+[Tue Dec 25 11:49:43 2012] [notice] Child 2780: Starting thread to listen on port 443.
+[Tue Dec 25 11:49:43 2012] [notice] Child 2780: Starting thread to listen on port 80.
+[Tue Dec 25 11:51:24 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 11:51:41 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 11:51:49 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 11:51:54 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 11:52:13 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 12:03:26 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 12:20:29 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 12:20:34 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 12:25:27 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 12:44:25 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 12:44:30 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 12:44:34 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 12:48:03 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 12:48:58 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 12:49:45 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 12:52:26 2012] [error] [client 127.0.0.1] script 'C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/course/view.php' not found or unable to stat, referer: http://localhost/
+[Tue Dec 25 12:52:26 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 12:52:38 2012] [error] [client 127.0.0.1] script 'C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/course/view.php' not found or unable to stat, referer: http://localhost/
+[Tue Dec 25 12:52:38 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 12:52:53 2012] [error] [client 127.0.0.1] script 'C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/course/view.php' not found or unable to stat, referer: http://localhost/
+[Tue Dec 25 12:52:54 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 12:53:36 2012] [error] [client 127.0.0.1] script 'C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/course/view.php' not found or unable to stat, referer: http://localhost/
+[Tue Dec 25 12:53:36 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 12:54:15 2012] [error] [client 127.0.0.1] script 'C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/course/view.php' not found or unable to stat, referer: http://localhost/
+[Tue Dec 25 12:54:15 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 12:54:49 2012] [notice] Parent: Received shutdown signal -- Shutting down the server.
+[Tue Dec 25 12:54:49 2012] [notice] Child 2780: Exit event signaled. Child process is ending.
+[Tue Dec 25 12:54:50 2012] [notice] Child 2780: Released the start mutex
+[Tue Dec 25 12:54:51 2012] [notice] Child 2780: All worker threads have exited.
+[Tue Dec 25 12:54:51 2012] [notice] Child 2780: Child process is exiting
+[Tue Dec 25 12:54:51 2012] [notice] Parent: Child process exited successfully.
+[Tue Dec 25 12:55:28 2012] [notice] Apache/2.2.17 (Win32) mod_ssl/2.2.17 OpenSSL/0.9.8o PHP/5.3.4 configured -- resuming normal operations
+[Tue Dec 25 12:55:28 2012] [notice] Server built: Oct 18 2010 01:58:12
+[Tue Dec 25 12:55:28 2012] [notice] Parent: Created child process 4492
+[Tue Dec 25 12:55:31 2012] [notice] Child 4492: Child process is running
+[Tue Dec 25 12:55:31 2012] [notice] Child 4492: Acquired the start mutex.
+[Tue Dec 25 12:55:31 2012] [notice] Child 4492: Starting 150 worker threads.
+[Tue Dec 25 12:55:31 2012] [notice] Child 4492: Starting thread to listen on port 443.
+[Tue Dec 25 12:55:31 2012] [notice] Child 4492: Starting thread to listen on port 80.
+[Tue Dec 25 12:55:58 2012] [error] [client 127.0.0.1] script 'C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/course/view.php' not found or unable to stat, referer: http://localhost/
+[Tue Dec 25 12:55:58 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 12:57:13 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 13:00:07 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 13:00:24 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 13:01:39 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 13:01:51 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 13:03:22 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 13:03:34 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 13:03:59 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 13:06:05 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 13:06:50 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 13:06:55 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 13:11:30 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 13:11:42 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 13:12:23 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 13:12:27 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 13:12:46 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 13:12:52 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 13:13:00 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 13:13:12 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 13:13:17 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 13:13:20 2012] [error] [client 127.0.0.1] File does not exist: C:/Users/Akareshi/Desktop/MOODLE/MoodleWindowsInstaller-latest-23/server/moodle/favicon.ico
+[Tue Dec 25 13:40:30 2012] [notice] Parent: Received shutdown signal -- Shutting down the server.
+[Tue Dec 25 13:40:30 2012] [notice] Child 4492: Exit event signaled. Child process is ending.
+[Tue Dec 25 13:40:31 2012] [notice] Child 4492: Released the start mutex
+[Tue Dec 25 13:40:34 2012] [notice] Child 4492: All worker threads have exited.
+[Tue Dec 25 13:40:35 2012] [notice] Child 4492: Child process is exiting
+[Tue Dec 25 13:40:36 2012] [notice] Parent: Child process exited successfully.
+[Wed Dec 26 19:34:35 2012] [notice] Apache/2.2.17 (Win32) mod_ssl/2.2.17 OpenSSL/0.9.8o PHP/5.3.4 configured -- resuming normal operations
+[Wed Dec 26 19:34:35 2012] [notice] Server built: Oct 18 2010 01:58:12
+[Wed Dec 26 19:34:35 2012] [notice] Parent: Created child process 2096
+[Wed Dec 26 19:34:40 2012] [notice] Child 2096: Child process is running
+[Wed Dec 26 19:34:40 2012] [notice] Child 2096: Acquired the start mutex.
+[Wed Dec 26 19:34:40 2012] [notice] Child 2096: Starting 150 worker threads.
+[Wed Dec 26 19:34:40 2012] [notice] Child 2096: Starting thread to listen on port 80.
+[Wed Dec 26 19:34:40 2012] [notice] Child 2096: Starting thread to listen on port 443.
+[Wed Dec 26 19:40:10 2012] [notice] Parent: Received shutdown signal -- Shutting down the server.
+[Wed Dec 26 19:40:10 2012] [notice] Child 2096: Exit event signaled. Child process is ending.
+[Wed Dec 26 19:40:11 2012] [notice] Child 2096: Released the start mutex
+[Wed Dec 26 19:40:12 2012] [notice] Child 2096: All worker threads have exited.
+[Wed Dec 26 19:40:12 2012] [notice] Child 2096: Child process is exiting
+[Wed Dec 26 19:40:12 2012] [notice] Parent: Child process exited successfully.

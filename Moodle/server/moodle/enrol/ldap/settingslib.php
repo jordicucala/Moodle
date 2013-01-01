@@ -63,7 +63,7 @@ class admin_setting_configtext_trim_lower extends admin_setting_configtext {
             return $validated;
         }
         if ($this->lowercase) {
-            $data = moodle_strtolower($data);
+            $data = textlib::strtolower($data);
         }
         return ($this->config_write($this->name, trim($data)) ? '' : get_string('errorsetting', 'admin'));
     }
@@ -118,7 +118,7 @@ class admin_setting_ldap_rolemapping extends admin_setting {
             if (!$this->config_write('contexts_role'.$roleid, trim($data['contexts']))) {
                 $return = get_string('errorsetting', 'admin');
             }
-            if (!$this->config_write('memberattribute_role'.$roleid, moodle_strtolower(trim($data['memberattribute'])))) {
+            if (!$this->config_write('memberattribute_role'.$roleid, textlib::strtolower(trim($data['memberattribute'])))) {
                 $return = get_string('errorsetting', 'admin');
             }
         }
@@ -151,7 +151,8 @@ class admin_setting_ldap_rolemapping extends admin_setting {
         foreach ($data as $role) {
             $contextid = $this->get_id().'['.$role['id'].'][contexts]';
             $contextname = $this->get_full_name().'['.$role['id'].'][contexts]';
-            $return .= '<div style="height: 2em;"><input type="text" size="40" id="'.$contextid.'" name="'.$contextname.'" value="'.s($role['contexts']).'"/></div>';
+            $return .= '<div style="height: 2em;"><label class="accesshide" for="'.$contextid.'">'.get_string('role_mapping_context', 'enrol_ldap', $role['name']).'</label>';
+            $return .= '<input type="text" size="40" id="'.$contextid.'" name="'.$contextname.'" value="'.s($role['contexts']).'"/></div>';
         }
         $return .= '</div>';
 
@@ -160,7 +161,8 @@ class admin_setting_ldap_rolemapping extends admin_setting {
         foreach ($data as $role) {
             $memberattrid = $this->get_id().'['.$role['id'].'][memberattribute]';
             $memberattrname = $this->get_full_name().'['.$role['id'].'][memberattribute]';
-            $return .= '<div style="height: 2em;"><input type="text" size="15" id="'.$memberattrid.'" name="'.$memberattrname.'" value="'.s($role['memberattribute']).'"/></div>';
+            $return .= '<div style="height: 2em;"><label class="accesshide" for="'.$memberattrid.'">'.get_string('role_mapping_attribute', 'enrol_ldap', $role['name']).'</label>';
+            $return .= '<input type="text" size="15" id="'.$memberattrid.'" name="'.$memberattrname.'" value="'.s($role['memberattribute']).'"/></div>';
         }
         $return .= '</div>';
         $return .= '<div style="clear:both;"></div>';

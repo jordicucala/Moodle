@@ -27,9 +27,9 @@ require_once("../config.php");
 require_once($CFG->dirroot .'/notes/lib.php');
 
 $id    = required_param('id', PARAM_INT);              // course id
-$users = optional_param('userid', array(), PARAM_INT); // array of user id
-$contents = optional_param('contents', array(), PARAM_RAW); // array of user notes
-$states = optional_param('states', array(), PARAM_ALPHA); // array of notes states
+$users = optional_param_array('userid', array(), PARAM_INT); // array of user id
+$contents = optional_param_array('contents', array(), PARAM_RAW); // array of user notes
+$states = optional_param_array('states', array(), PARAM_ALPHA); // array of notes states
 
 $PAGE->set_url('/user/addnote.php', array('id'=>$id));
 
@@ -38,7 +38,7 @@ if (! $course = $DB->get_record('course', array('id'=>$id))) {
 }
 
 $context = get_context_instance(CONTEXT_COURSE, $id);
-require_login($course->id);
+require_login($course);
 
 // to create notes the current user needs a capability
 require_capability('moodle/notes:manage', $context);
@@ -79,7 +79,6 @@ $PAGE->set_title("$course->shortname: ".get_string('extendenrol'));
 $PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
-
 // this will contain all available the based On select options, but we'll disable some on them on a per user basis
 
 echo $OUTPUT->heading($straddnote);
@@ -97,19 +96,19 @@ $table->align = array ('left', 'center', 'center');
 $state_names = note_get_state_names();
 
 // the first time list hack
-if (empty($users)) {
-    foreach ($_POST as $k => $v) {
+if (empty($users) and $post = data_submitted()) {
+    foreach ($post as $k => $v) {
         if (preg_match('/^user(\d+)$/',$k,$m)) {
             $users[] = $m[1];
         }
     }
 }
-
 foreach ($users as $k => $v) {
     if(!$user = $DB->get_record('user', array('id'=>$v))) {
         continue;
     }
-    $checkbox = html_writer::select($state_names, 'states[' . $k . ']', empty($states[$k]) ? NOTES_STATE_PUBLIC : $states[$k], false);
+    $checkbox = html_writer::label(get_string('selectnotestate', 'notes'), 'menustates', false, array('class' => 'accesshide'));
+    $checkbox .= html_writer::select($state_names, 'states[' . $k . ']', empty($states[$k]) ? NOTES_STATE_PUBLIC : $states[$k], false, array('id' => 'menustates'));
     $table->data[] = array(
         '<input type="hidden" name="userid['.$k.']" value="'.$v.'" />'. fullname($user, true),
         '<textarea name="contents['. $k . ']" rows="2" cols="40">' . strip_tags(@$contents[$k]) . '</textarea>',

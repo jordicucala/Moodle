@@ -10,4 +10,5 @@
   'upload_error_no_tmp_dir' => 'PHP is missing a temporary folder.',
   'upload_error_cant_write' => 'Failed to write file to disk.',
   'upload_error_extension' => 'A PHP extension stopped the file upload.',
+  'upload_error_invalid_file' => 'The file \'{$a}\' has no data in it - did you try to upload a folder?',
 );

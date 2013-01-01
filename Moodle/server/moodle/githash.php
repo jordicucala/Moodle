@@ -28,4 +28,4 @@
  * and administration at http://docs.moodle.org/en/Git
  */
 
-$githash = '7e71b80f1ef08446f2a5f0150b2af0adc92ae6ca';
+$githash = '9273bd1abb534cbcc02cd5baf1482165fcbae2b5';

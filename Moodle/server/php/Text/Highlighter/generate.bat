@@ -26,7 +26,7 @@ shift
 if -%1- == -- GOTO noshift
 GOTO doshift
 :noshift
-C:\Users\jordi\Desktop\MoodleWindowsInstaller-latest-21\server\php\.\php.exe -q -d output_buffering=1 -d include_path="\xampp\php\pear" \xampp\php/Text/Highlighter/generate.bat %MHL_PARAMS%
+C:\Users\Akareshi\Desktop\MOODLE\MoodleWindowsInstaller-latest-23\server\php\.\php.exe -q -d output_buffering=1 -d include_path="\xampp\php\pear" \xampp\php/Text/Highlighter/generate.bat %MHL_PARAMS%
 
 GOTO finish
 <?php

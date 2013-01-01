@@ -18,8 +18,8 @@
 /**
  * A page to display a list of ratings for a given item (forum post etc)
  *
- * @package    core
- * @subpackage rating
+ * @package    core_rating
+ * @category   rating
  * @copyright  2010 Andrew Davis
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,8 +28,8 @@ require_once("../config.php");
 require_once("lib.php");
 
 $contextid  = required_param('contextid', PARAM_INT);
-$component  = required_param('component', PARAM_ALPHAEXT);
-$ratingarea = optional_param('ratingarea', null, PARAM_ALPHANUMEXT);
+$component  = required_param('component', PARAM_COMPONENT);
+$ratingarea = optional_param('ratingarea', null, PARAM_AREA);
 $itemid     = required_param('itemid', PARAM_INT);
 $scaleid    = required_param('scaleid', PARAM_INT);
 $sort       = optional_param('sort', '', PARAM_ALPHA);

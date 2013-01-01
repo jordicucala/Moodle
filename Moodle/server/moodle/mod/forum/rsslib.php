@@ -16,20 +16,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
-* This file adds support to rss feeds generation
-*
-* @package mod-forum
-* @copyright 2001 Eloy Lafuente (stronk7) http://contiento.com
-* @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * This file adds support to rss feeds generation
+ *
+ * @package mod_forum
+ * @category rss
+ * @copyright 2001 Eloy Lafuente (stronk7) http://contiento.com
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 /**
  * Returns the path to the cached rss feed contents. Creates/updates the cache if necessary.
- * @global object $CFG
- * @global object $DB
- * @param object $context the context
- * @param int $forumid the ID of the forum
- * @param array $args the arguments received in the url
+ * @param stdClass $context the context
+ * @param array    $args    the arguments received in the url
  * @return string the full path to the cached RSS feed directory. Null if there is a problem.
  */
 function forum_rss_get_feed($context, $args) {
@@ -45,7 +43,7 @@ function forum_rss_get_feed($context, $args) {
 
     $forumid  = clean_param($args[3], PARAM_INT);
     $cm = get_coursemodule_from_instance('forum', $forumid, 0, false, MUST_EXIST);
-    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $modcontext = context_module::instance($cm->id);
 
     //context id from db should match the submitted one
     if ($context->id != $modcontext->id || !has_capability('mod/forum:viewdiscussion', $modcontext)) {
@@ -68,7 +66,6 @@ function forum_rss_get_feed($context, $args) {
     } else {
         $filename = rss_get_file_name($forum, $sql);
     }
-
     $cachedfilepath = rss_get_file_full_name('mod_forum', $filename);
 
     //Is the cache out of date?
@@ -93,8 +90,7 @@ function forum_rss_get_feed($context, $args) {
 /**
  * Given a forum object, deletes all cached RSS files associated with it.
  *
- * @param object $forum
- * @return void
+ * @param stdClass $forum
  */
 function forum_rss_delete_file($forum) {
     rss_delete_file('mod_forum', $forum);
@@ -107,10 +103,10 @@ function forum_rss_delete_file($forum) {
  * If there is new stuff in the forum since $time this returns true
  * Otherwise it returns false.
  *
- * @param object $forum the forum object
- * @param object $cm
- * @param int $time timestamp
- * @return bool
+ * @param stdClass $forum the forum object
+ * @param stdClass $cm    Course Module object
+ * @param int      $time  check for items since this epoch timestamp
+ * @return bool True for new items
  */
 function forum_rss_newstuff($forum, $cm, $time) {
     global $DB;
@@ -121,6 +117,14 @@ function forum_rss_newstuff($forum, $cm, $time) {
     return ($recs && !empty($recs));
 }
 
+/**
+ * Determines which type of SQL query is required, one for posts or one for discussions, and returns the appropriate query
+ *
+ * @param stdClass $forum the forum object
+ * @param stdClass $cm    Course Module object
+ * @param int      $time  check for items since this epoch timestamp
+ * @return string the SQL query to be used to get the Discussion/Post details from the forum table of the database
+ */
 function forum_rss_get_sql($forum, $cm, $time=0) {
     $sql = null;
 
@@ -135,6 +139,14 @@ function forum_rss_get_sql($forum, $cm, $time=0) {
     return $sql;
 }
 
+/**
+ * Generates the SQL query used to get the Discussion details from the forum table of the database
+ *
+ * @param stdClass $forum     the forum object
+ * @param stdClass $cm        Course Module object
+ * @param int      $newsince  check for items since this epoch timestamp
+ * @return string the SQL query to be used to get the Discussion details from the forum table of the database
+ */
 function forum_rss_feed_discussions_sql($forum, $cm, $newsince=0) {
     global $CFG, $DB, $USER;
 
@@ -145,7 +157,7 @@ function forum_rss_feed_discussions_sql($forum, $cm, $newsince=0) {
     $now = round(time(), -2);
     $params = array($cm->instance);
 
-    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $modcontext = context_module::instance($cm->id);
 
     if (!empty($CFG->forum_enabletimedposts)) { /// Users must fulfill timed posts
         if (!has_capability('mod/forum:viewhiddentimedposts', $modcontext)) {
@@ -190,8 +202,16 @@ function forum_rss_feed_discussions_sql($forum, $cm, $newsince=0) {
     return $sql;
 }
 
+/**
+ * Generates the SQL query used to get the Post details from the forum table of the database
+ *
+ * @param stdClass $forum     the forum object
+ * @param stdClass $cm        Course Module object
+ * @param int      $newsince  check for items since this epoch timestamp
+ * @return string the SQL query to be used to get the Post details from the forum table of the database
+ */
 function forum_rss_feed_posts_sql($forum, $cm, $newsince=0) {
-    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $modcontext = context_module::instance($cm->id);
 
     //get group enforcement SQL
     $groupmode    = groups_get_activity_groupmode($cm);
@@ -233,6 +253,15 @@ function forum_rss_feed_posts_sql($forum, $cm, $newsince=0) {
     return $sql;
 }
 
+/**
+ * Retrieve the correct SQL snippet for group-only forums
+ *
+ * @param stdClass $cm           Course Module object
+ * @param int      $groupmode    the mode in which the forum's groups are operating
+ * @param bool     $currentgroup true if the user is from the a group enabled on the forum
+ * @param stdClass $modcontext   The context instance of the forum module
+ * @return string SQL Query for group details of the forum
+ */
 function forum_rss_get_group_sql($cm, $groupmode, $currentgroup, $modcontext=null) {
     $groupselect = '';
 
@@ -256,9 +285,6 @@ function forum_rss_get_group_sql($cm, $groupmode, $currentgroup, $modcontext=nul
     return $groupselect;
 }
 
-
-
-
 /**
  * This function return the XML rss contents about the forum
  * It returns false if something is wrong
@@ -267,9 +293,13 @@ function forum_rss_get_group_sql($cm, $groupmode, $currentgroup, $modcontext=nul
  * @param string   $sql   The SQL used to retrieve the contents from the database
  * @param object $context the context this forum relates to
  * @return bool|string false if the contents is empty, otherwise the contents of the feed is returned
+ *
+ * @Todo MDL-31129 implement post attachment handling
  */
-function forum_rss_feed_contents($forum, $sql, $context) {
+
+function forum_rss_feed_contents($forum, $sql) {
     global $CFG, $DB, $USER;
+
 
     $status = true;
 
@@ -286,7 +316,7 @@ function forum_rss_feed_contents($forum, $sql, $context) {
     if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
         print_error('invalidcoursemodule');
     }
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
 
     $formatoptions = new stdClass();
     $items = array();
@@ -321,10 +351,7 @@ function forum_rss_feed_contents($forum, $sql, $context) {
                         'mod_forum', 'post', $rec->postid);
                 $formatoptions->trusted = $rec->posttrust;
             }
-            $user->firstname = $rec->userfirstname;
-            $user->lastname = $rec->userlastname;
-            $item->author = fullname($user);
-            $item->pubdate = $rec->postcreated;
+
             if ($isdiscussion) {
                 $item->link = $CFG->wwwroot."/mod/forum/discuss.php?d=".$rec->discussionid;
             } else {
@@ -334,7 +361,7 @@ function forum_rss_feed_contents($forum, $sql, $context) {
             $formatoptions->trusted = $rec->posttrust;
             $item->description = format_text($message, $rec->postformat, $formatoptions, $forum->course);
 
-            //TODO: implement post attachment handling
+            //TODO: MDL-31129 implement post attachment handling
             /*if (!$isdiscussion) {
                 $post_file_area_name = str_replace('//', '/', "$forum->course/$CFG->moddata/forum/$forum->id/$rec->postid");
                 $post_files = get_directory_list("$CFG->dataroot/$post_file_area_name");

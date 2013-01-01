@@ -36,4 +36,4 @@ REM
 REM $Id: pear-phpunit.bat,v 1.3.2.2 2005/12/17 16:04:56 sebastian Exp $
 REM
 
-"C:\Users\jordi\Desktop\MoodleWindowsInstaller-latest-21\server\php\.\php.exe" ".\pear\PHPUnit2\TextUI\TestRunner.php" %*
+"C:\Users\Akareshi\Desktop\MOODLE\MoodleWindowsInstaller-latest-23\server\php\.\php.exe" ".\pear\PHPUnit2\TextUI\TestRunner.php" %*

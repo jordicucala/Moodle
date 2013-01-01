@@ -45,10 +45,6 @@ require_once(dirname(__FILE__) . '/../deferredfeedback/behaviour.php');
 class qbehaviour_deferredcbm extends qbehaviour_deferredfeedback {
     const IS_ARCHETYPAL = true;
 
-    public static function get_required_behaviours() {
-        return array('deferredfeedback');
-    }
-
     public static function get_unused_display_options() {
         return array('correctness', 'marks', 'specificfeedback', 'generalfeedback',
                 'rightanswer');
@@ -86,13 +82,13 @@ class qbehaviour_deferredcbm extends qbehaviour_deferredfeedback {
         }
     }
 
-    protected function is_same_response($pendingstep) {
+    protected function is_same_response(question_attempt_step $pendingstep) {
         return parent::is_same_response($pendingstep) &&
                 $this->qa->get_last_behaviour_var('certainty') ==
                         $pendingstep->get_behaviour_var('certainty');
     }
 
-    protected function is_complete_response($pendingstep) {
+    protected function is_complete_response(question_attempt_step $pendingstep) {
         return parent::is_complete_response($pendingstep) &&
                 $pendingstep->has_behaviour_var('certainty');
     }

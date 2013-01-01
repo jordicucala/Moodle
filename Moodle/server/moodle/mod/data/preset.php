@@ -44,9 +44,9 @@ if ($id) {
     $course = $DB->get_record('course', array('id'=>$data->course), '*', MUST_EXIST);
     $cm = get_coursemodule_from_instance('data', $data->id, $course->id, null, MUST_EXIST);
 }
-$context = get_context_instance(CONTEXT_MODULE, $cm->id, MUST_EXIST);
-require_login($course, false, $cm);
 
+$context = context_module::instance($cm->id, MUST_EXIST);
+require_login($course, false, $cm);
 require_capability('mod/data:managetemplates', $context);
 $PAGE->set_url(new moodle_url('/mod/data/preset.php', array('d'=>$data->id)));
 $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
@@ -216,7 +216,7 @@ if (optional_param('sesskey', false, PARAM_BOOL) && confirm_sesskey()) {
         } else if ($action == 'finishimport') {
             $overwritesettings = optional_param('overwritesettings', false, PARAM_BOOL);
             if (!$fullname) {
-                $presetdir = $CFG->dataroot.'/temp/forms/'.required_param('directory', PARAM_ALPHANUMEXT);
+                $presetdir = $CFG->tempdir.'/forms/'.required_param('directory', PARAM_ALPHANUMEXT);
                 if (!file_exists($presetdir) || !is_dir($presetdir)) {
                     print_error('cannotimport');
                 }

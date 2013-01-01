@@ -7,11 +7,11 @@
   'displaymode' => 'Display mode',
   'displayvertical' => 'Display vertically',
   'expired' => 'Sorry, this activity closed on {$a} and is no longer available',
-  'fillinatleastoneoption' => 'You need to provide at least two possible answers.',
   'atleastoneoption' => 'You need to provide at least one possible answer.',
   'full' => '(Full)',
   'havetologin' => 'You have to log in before you can submit your choice',
   'choice' => 'Choice',
+  'choice:addinstance' => 'Add a new choice',
   'choiceclose' => 'Until',
   'choice:deleteresponses' => 'Delete responses',
   'choice:downloadresponses' => 'Download responses',
@@ -33,7 +33,16 @@ If limits are disabled then any number of participants can select each of the op
   'limit' => 'Limit',
   'limitanswers' => 'Limit the number of responses allowed',
   'modulename' => 'Choice',
-  'modulename_help' => 'The choice module enables the teacher to ask a question and specify a choice of multiple responses.',
+  'modulename_help' => 'The choice activity module enables a teacher to ask a single question and offer a selection of possible responses.
+
+Choice results may be published after students have answered, after a certain date, or not at all. Results may be published with student names or anonymously.
+
+A choice activity may be used
+
+* As a quick poll to stimulate thinking about a topic
+* To quickly test students\' understanding
+* To facilitate student decision-making, for example allowing students to vote on a direction for the course',
+  'modulename_link' => 'mod/choice/view',
   'modulenameplural' => 'Choices',
   'moveselectedusersto' => 'Move selected users to...',
   'mustchooseone' => 'You must choose an answer before saving.  Nothing was saved.',

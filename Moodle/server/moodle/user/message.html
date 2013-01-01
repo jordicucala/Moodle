@@ -14,7 +14,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><b><?php print_string("formattexttype"); ?>:</b></td>
+    <td align="right"><label for="menuformat"><b><?php print_string("formattexttype"); ?>:</b></label></td>
     <td>
     <?php
         if ($usehtmleditor) {   /// Trying this out for a while
@@ -37,7 +37,7 @@
             echo '<tr><td>'.fullname($user,true).'</td>';
             // Check to see if we should be showing the email address.
             if ($user->maildisplay == 0) { // 0 = don't display my email to anyone.
-                echo '<td>'. get_string('emaildisplayhidden') .'</td><td>';
+                echo '<td>' . get_string('emaildisplayhidden') . '</td><td>';
             } else {
                 echo '<td>'.$user->email.'</td><td>';
             }

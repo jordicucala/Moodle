@@ -94,6 +94,7 @@ if ($mform->is_cancelled()) {
 } else if ($data = $mform->get_data()) {
     $newcategory = new stdClass();
     $newcategory->name = $data->name;
+    $newcategory->idnumber = $data->idnumber;
     $newcategory->description_editor = $data->description_editor;
     $newcategory->parent = $data->parent; // if $data->parent = 0, the new category will be a top-level category
 
@@ -113,11 +114,11 @@ if ($mform->is_cancelled()) {
     } else {
         // Create a new category.
         $newcategory->description = $data->description_editor['text'];
-        $newcategory->sortorder = 999;
-        $newcategory->id = $DB->insert_record('course_categories', $newcategory);
-        $newcategory->context = get_context_instance(CONTEXT_COURSECAT, $newcategory->id);
-        $categorycontext = $newcategory->context;
-        mark_context_dirty($newcategory->context->path);
+
+        // Don't overwrite the $newcategory object as it'll be processed by file_postupdate_standard_editor in a moment
+        $category = create_course_category($newcategory);
+        $newcategory->id = $category->id;
+        $categorycontext = $category->context;
     }
 
     $newcategory = file_postupdate_standard_editor($newcategory, 'description', $editoroptions, $categorycontext, 'coursecat', 'description', 0);

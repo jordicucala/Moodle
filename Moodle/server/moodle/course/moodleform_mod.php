@@ -84,8 +84,10 @@ abstract class moodleform_mod extends moodleform {
         $this->_features->introeditor       = plugin_supports('mod', $this->_modname, FEATURE_MOD_INTRO, true);
         $this->_features->defaultcompletion = plugin_supports('mod', $this->_modname, FEATURE_MODEDIT_DEFAULT_COMPLETION, true);
         $this->_features->rating            = plugin_supports('mod', $this->_modname, FEATURE_RATE, false);
+        $this->_features->showdescription   = plugin_supports('mod', $this->_modname, FEATURE_SHOW_DESCRIPTION, false);
 
         $this->_features->gradecat          = ($this->_features->outcomes or $this->_features->hasgrades);
+        $this->_features->advancedgrading   = plugin_supports('mod', $this->_modname, FEATURE_ADVANCED_GRADING, false);
     }
 
     /**
@@ -250,10 +252,10 @@ abstract class moodleform_mod extends moodleform {
             foreach($fullcm->conditionsgrade as $gradeitemid=>$minmax) {
                 $groupelements=$mform->getElement('conditiongradegroup['.$num.']')->getElements();
                 $groupelements[0]->setValue($gradeitemid);
-                // These numbers are always in the format 0.00000 - the rtrims remove any final zeros and,
-                // if it is a whole number, the decimal place.
-                $groupelements[2]->setValue(is_null($minmax->min)?'':rtrim(rtrim($minmax->min,'0'),'.'));
-                $groupelements[4]->setValue(is_null($minmax->max)?'':rtrim(rtrim($minmax->max,'0'),'.'));
+                $groupelements[2]->setValue(is_null($minmax->min) ? '' :
+                        format_float($minmax->min, 5, true, true));
+                $groupelements[4]->setValue(is_null($minmax->max) ? '' :
+                        format_float($minmax->max, 5, true, true));
                 $num++;
             }
 
@@ -312,23 +314,25 @@ abstract class moodleform_mod extends moodleform {
         // Conditions: Don't let them set dates which make no sense
         if (array_key_exists('availablefrom', $data) &&
             $data['availablefrom'] && $data['availableuntil'] &&
-            $data['availablefrom'] > $data['availableuntil']) {
+            $data['availablefrom'] >= $data['availableuntil']) {
             $errors['availablefrom'] = get_string('badavailabledates', 'condition');
         }
 
         // Conditions: Verify that the grade conditions are numbers, and make sense.
         if (array_key_exists('conditiongradegroup', $data)) {
             foreach ($data['conditiongradegroup'] as $i => $gradedata) {
-                if ($gradedata['conditiongrademin'] !== '' && !is_numeric($gradedata['conditiongrademin'])) {
+                if ($gradedata['conditiongrademin'] !== '' &&
+                        !is_numeric(unformat_float($gradedata['conditiongrademin']))) {
                     $errors["conditiongradegroup[{$i}]"] = get_string('gradesmustbenumeric', 'condition');
                     continue;
                 }
-                if ($gradedata['conditiongrademax'] !== '' && !is_numeric($gradedata['conditiongrademax'])) {
+                if ($gradedata['conditiongrademax'] !== '' &&
+                        !is_numeric(unformat_float($gradedata['conditiongrademax']))) {
                     $errors["conditiongradegroup[{$i}]"] = get_string('gradesmustbenumeric', 'condition');
                     continue;
                 }
                 if ($gradedata['conditiongrademin'] !== '' && $gradedata['conditiongrademax'] !== '' &&
-                        $gradedata['conditiongrademax'] < $gradedata['conditiongrademin']) {
+                        unformat_float($gradedata['conditiongrademax']) < unformat_float($gradedata['conditiongrademin'])) {
                     $errors["conditiongradegroup[{$i}]"] = get_string('badgradelimits', 'condition');
                     continue;
                 }
@@ -454,6 +458,12 @@ abstract class moodleform_mod extends moodleform {
         }
 
         $mform->addElement('modvisible', 'visible', get_string('visible'));
+        if (!empty($this->_cm)) {
+            $context = get_context_instance(CONTEXT_MODULE, $this->_cm->id);
+            if (!has_capability('moodle/course:activityvisibility', $context)) {
+                $mform->hardFreeze('visible');
+            }
+        }
 
         if ($this->_features->idnumber) {
             $mform->addElement('text', 'cmidnumber', get_string('idnumbermod'));
@@ -462,10 +472,23 @@ abstract class moodleform_mod extends moodleform {
 
         if (!empty($CFG->enableavailability)) {
             // Conditional availability
-            $mform->addElement('header', 'availabilityconditionsheader', get_string('availabilityconditions', 'condition'));
-            $mform->addElement('date_selector', 'availablefrom', get_string('availablefrom', 'condition'), array('optional'=>true));
+
+            // Available from/to defaults to midnight because then the display
+            // will be nicer where it tells users when they can access it (it
+            // shows only the date and not time).
+            $date = usergetdate(time());
+            $midnight = make_timestamp($date['year'], $date['mon'], $date['mday']);
+
+            // From/until controls
+            $mform->addElement('header', 'availabilityconditionsheader',
+                    get_string('availabilityconditions', 'condition'));
+            $mform->addElement('date_time_selector', 'availablefrom',
+                    get_string('availablefrom', 'condition'),
+                    array('optional' => true, 'defaulttime' => $midnight));
             $mform->addHelpButton('availablefrom', 'availablefrom', 'condition');
-            $mform->addElement('date_selector', 'availableuntil', get_string('availableuntil', 'condition'), array('optional'=>true));
+            $mform->addElement('date_time_selector', 'availableuntil',
+                    get_string('availableuntil', 'condition'),
+                    array('optional' => true, 'defaulttime' => $midnight));
 
             // Conditions based on grades
             $gradeoptions = array();
@@ -635,7 +658,7 @@ abstract class moodleform_mod extends moodleform {
      * @return bool True if one or more rules is enabled, false if none are;
      *   default returns false
      */
-    function completion_rule_enabled(&$data) {
+    function completion_rule_enabled($data) {
         return false;
     }
 
@@ -654,7 +677,7 @@ abstract class moodleform_mod extends moodleform {
         $mform->setType('module', PARAM_INT);
 
         $mform->addElement('hidden', 'modulename', '');
-        $mform->setType('modulename', PARAM_SAFEDIR);
+        $mform->setType('modulename', PARAM_PLUGIN);
 
         $mform->addElement('hidden', 'instance', 0);
         $mform->setType('instance', PARAM_INT);
@@ -667,6 +690,9 @@ abstract class moodleform_mod extends moodleform {
 
         $mform->addElement('hidden', 'return', 0);
         $mform->setType('return', PARAM_BOOL);
+
+        $mform->addElement('hidden', 'sr', 0);
+        $mform->setType('sr', PARAM_INT);
     }
 
     public function standard_grading_coursemodule_elements() {
@@ -683,6 +709,33 @@ abstract class moodleform_mod extends moodleform {
             if (!$this->_features->rating) {
                 $mform->addElement('modgrade', 'grade', get_string('grade'));
                 $mform->setDefault('grade', 100);
+            }
+
+            if ($this->_features->advancedgrading
+                    and !empty($this->current->_advancedgradingdata['methods'])
+                    and !empty($this->current->_advancedgradingdata['areas'])) {
+
+                if (count($this->current->_advancedgradingdata['areas']) == 1) {
+                    // if there is just one gradable area (most cases), display just the selector
+                    // without its name to make UI simplier
+                    $areadata = reset($this->current->_advancedgradingdata['areas']);
+                    $areaname = key($this->current->_advancedgradingdata['areas']);
+                    $mform->addElement('select', 'advancedgradingmethod_'.$areaname,
+                        get_string('gradingmethod', 'core_grading'), $this->current->_advancedgradingdata['methods']);
+                    $mform->addHelpButton('advancedgradingmethod_'.$areaname, 'gradingmethod', 'core_grading');
+
+                } else {
+                    // the module defines multiple gradable areas, display a selector
+                    // for each of them together with a name of the area
+                    $areasgroup = array();
+                    foreach ($this->current->_advancedgradingdata['areas'] as $areaname => $areadata) {
+                        $areasgroup[] = $mform->createElement('select', 'advancedgradingmethod_'.$areaname,
+                            $areadata['title'], $this->current->_advancedgradingdata['methods']);
+                        $areasgroup[] = $mform->createElement('static', 'advancedgradingareaname_'.$areaname, '', $areadata['title']);
+                    }
+                    $mform->addGroup($areasgroup, 'advancedgradingmethodsgroup', get_string('gradingmethods', 'core_grading'),
+                        array(' ', '<br />'), false);
+                }
             }
 
             if ($this->_features->gradecat) {
@@ -707,6 +760,13 @@ abstract class moodleform_mod extends moodleform {
         $mform->setType('introeditor', PARAM_RAW); // no XSS prevention here, users must be trusted
         if ($required) {
             $mform->addRule('introeditor', get_string('required'), 'required', null, 'client');
+        }
+
+        // If the 'show description' feature is enabled, this checkbox appears
+        // below the intro.
+        if ($this->_features->showdescription) {
+            $mform->addElement('checkbox', 'showdescription', get_string('showdescription'));
+            $mform->addHelpButton('showdescription', 'showdescription');
         }
     }
 

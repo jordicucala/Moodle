@@ -10,7 +10,7 @@
     }
 
     $PAGE->set_url('/admin/timezone.php');
-    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+    $PAGE->set_context(context_system::instance());
 
     require_login();
 
@@ -44,7 +44,7 @@
     $timezones = get_list_of_timezones();
 
     echo '<center><form action="timezone.php" method="post">';
-    echo "$strusers ($strall): ";
+    echo html_writer::label($strusers . ' (' . $strall . '): ', 'menuzone');
     echo html_writer::select($timezones, "zone", $current, array('99'=>get_string("serverlocaltime")));
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
     echo '<input type="submit" value="'.s($strsavechanges).'" />';

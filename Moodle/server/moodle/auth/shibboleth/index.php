@@ -30,6 +30,7 @@
 
 /// If we can find the Shibboleth attribute, save it in session and return to main login page
     if (!empty($_SERVER[$pluginconfig->user_attribute])) {    // Shibboleth auto-login
+        $frm = new stdClass();
         $frm->username = strtolower($_SERVER[$pluginconfig->user_attribute]);
         $frm->password = substr(base64_encode($_SERVER[$pluginconfig->user_attribute]),0,8);
         // The random password consists of the first 8 letters of the base 64 encoded user ID
@@ -39,7 +40,9 @@
 
         if ($shibbolethauth->user_login($frm->username, $frm->password)) {
 
-            $USER = authenticate_user_login($frm->username, $frm->password);
+            $user = authenticate_user_login($frm->username, $frm->password);
+            enrol_check_plugins($user);
+            session_set_user($user);
 
             $USER->loggedin = true;
             $USER->site     = $CFG->wwwroot; // for added security, store the site in the
@@ -47,7 +50,6 @@
             update_user_login_times();
 
             // Don't show previous shibboleth username on login page
-            set_moodle_cookie('');
 
             set_login_session_preferences();
 
@@ -75,9 +77,6 @@
                     $urltogo = $CFG->wwwroot.'/my/';
                 }
             }
-
-            enrol_check_plugins($USER);
-            load_all_capabilities();     /// This is what lets the user do anything on the site  :-)
 
             redirect($urltogo);
 

@@ -5,5 +5,5 @@
   'confighideallcourseslink' => 'Hide "All courses" link at the bottom of the block. Link hiding does not affects Admin\'s view',
   'hideallcourseslink' => 'Hide All courses link',
   'owncourses' => 'Admin user sees own courses',
-  'pluginname' => 'Course list',
+  'pluginname' => 'Courses',
 );

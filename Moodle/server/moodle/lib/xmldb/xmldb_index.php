@@ -1,55 +1,68 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.com                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
-//           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+/**
+ * This class represent one XMLDB Index
+ *
+ * @package    core_xmldb
+ * @copyright  1999 onwards Martin Dougiamas     http://dougiamas.com
+ *             2001-3001 Eloy Lafuente (stronk7) http://contiento.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-/// This class represent one XMLDB Index
+defined('MOODLE_INTERNAL') || die();
+
 
 class xmldb_index extends xmldb_object {
 
-    var $unique;
-    var $fields;
+    /** @var bool is unique? */
+    protected $unique;
+
+    /** @var array index fields */
+    protected $fields;
+
+    /**
+     * Note:
+     *  - MySQL: MyISAM has a limit of 1000 bytes for any key including composed, InnoDB has limit 3500 bytes.
+     *
+     * @const max length of composed indexes, one utf-8 char is 3 bytes in the worst case
+     */
+    const INDEX_COMPOSED_MAX_BYTES = 999;
+
+    /**
+     * Note:
+     *  - MySQL: InnoDB limits size of index on single column to 767bytes (256 chars)
+     *
+     * @const single column index length limit, one utf-8 char is 3 bytes in the worst case
+     */
+    const INDEX_MAX_BYTES = 765;
 
     /**
      * Creates one new xmldb_index
+     *
+     * @param string $name
+     * @param string type XMLDB_INDEX_UNIQUE, XMLDB_INDEX_NOTUNIQUE
+     * @param array fields an array of fieldnames to build the index over
      */
-    function __construct($name, $type=null, $fields=array()) {
+    public function __construct($name, $type=null, $fields=array()) {
         $this->unique = false;
         $this->fields = array();
         parent::__construct($name);
-        return $this->set_attributes($type, $fields);
+        $this->set_attributes($type, $fields);
     }
-
-/// TODO: Delete for 2.1 (deprecated in 2.0).
-/// Deprecated API starts here
-    function setAttributes($type, $fields) {
-
-        debugging('XMLDBIndex->setAttributes() has been deprecated in Moodle 2.0. Will be out in Moodle 2.1. Please use xmldb_index->set_attributes() instead.', DEBUG_DEVELOPER);
-
-        return $this->set_attributes($type, $fields);
-    }
-/// Deprecated API ends here
 
     /**
      * Set all the attributes of one xmldb_index
@@ -57,52 +70,58 @@ class xmldb_index extends xmldb_object {
      * @param string type XMLDB_INDEX_UNIQUE, XMLDB_INDEX_NOTUNIQUE
      * @param array fields an array of fieldnames to build the index over
      */
-    function set_attributes($type, $fields) {
+    public function set_attributes($type, $fields) {
         $this->unique = !empty($type) ? true : false;
         $this->fields = $fields;
     }
 
     /**
      * Get the index unique
+     * @return bool
      */
-    function getUnique() {
+    public function getUnique() {
         return $this->unique;
     }
 
     /**
      * Set the index unique
+     * @param bool $unique
      */
-    function setUnique($unique = true) {
+    public function setUnique($unique = true) {
         $this->unique = $unique;
     }
 
     /**
      * Set the index fields
+     * @param array $fields
      */
-    function setFields($fields) {
+    public function setFields($fields) {
         $this->fields = $fields;
     }
 
     /**
      * Get the index fields
+     * @return array
      */
-    function &getFields() {
+    public function getFields() {
         return $this->fields;
     }
 
     /**
      * Load data from XML to the index
+     * @param $xmlarr array
+     * @return bool
      */
-    function arr2xmldb_index($xmlarr) {
+    public function arr2xmldb_index($xmlarr) {
 
         $result = true;
 
-    /// Debug the table
-    /// traverse_xmlize($xmlarr);                   //Debug
-    /// print_object ($GLOBALS['traverse_array']);  //Debug
-    /// $GLOBALS['traverse_array']="";              //Debug
+        // Debug the table
+        // traverse_xmlize($xmlarr);                   //Debug
+        // print_object ($GLOBALS['traverse_array']);  //Debug
+        // $GLOBALS['traverse_array']="";              //Debug
 
-    /// Process key attributes (name, unique, fields, comment, previous, next)
+        // Process key attributes (name, unique, fields, comment, previous, next)
         if (isset($xmlarr['@']['NAME'])) {
             $this->name = trim($xmlarr['@']['NAME']);
         } else {
@@ -151,7 +170,7 @@ class xmldb_index extends xmldb_object {
             $this->debug($this->errormsg);
             $result = false;
         }
-    /// Finally, set the array of fields
+        // Finally, set the array of fields
         $this->fields = $fieldsarr;
 
         if (isset($xmlarr['@']['COMMENT'])) {
@@ -166,7 +185,7 @@ class xmldb_index extends xmldb_object {
             $this->next = trim($xmlarr['@']['NEXT']);
         }
 
-    /// Set some attributes
+        // Set some attributes
         if ($result) {
             $this->loaded = true;
         }
@@ -176,10 +195,11 @@ class xmldb_index extends xmldb_object {
 
     /**
      * This function calculate and set the hash of one xmldb_index
+     * @retur nvoid, changes $this->hash
      */
-     function calculateHash($recursive = false) {
+     public function calculateHash($recursive = false) {
         if (!$this->loaded) {
-            $this->hash = NULL;
+            $this->hash = null;
         } else {
             $key = $this->unique . implode (', ', $this->fields);
             $this->hash = md5($key);
@@ -188,8 +208,9 @@ class xmldb_index extends xmldb_object {
 
     /**
      *This function will output the XML text for one index
+     * @return string
      */
-    function xmlOutput() {
+    public function xmlOutput() {
         $o = '';
         $o.= '        <INDEX NAME="' . $this->name . '"';
         if ($this->unique) {
@@ -216,69 +237,130 @@ class xmldb_index extends xmldb_object {
     /**
      * This function will set all the attributes of the xmldb_index object
      * based on information passed in one ADOindex
+     * @param array
+     * @return void
      */
-    function setFromADOIndex($adoindex) {
+    public function setFromADOIndex($adoindex) {
 
-    /// Set the unique field
+        // Set the unique field
         $this->unique = false;
-    /// Set the fields, converting all them to lowercase
+        // Set the fields, converting all them to lowercase
         $fields = array_flip(array_change_key_case(array_flip($adoindex['columns'])));
         $this->fields = $fields;
-    /// Some more fields
+        // Some more fields
         $this->loaded = true;
         $this->changed = true;
     }
 
     /**
      * Returns the PHP code needed to define one xmldb_index
+     * @return string
      */
-    function getPHP() {
+    public function getPHP() {
 
         $result = '';
 
-    /// The type
+        // The type
         $unique = $this->getUnique();
         if (!empty($unique)) {
             $result .= 'XMLDB_INDEX_UNIQUE, ';
         } else {
             $result .= 'XMLDB_INDEX_NOTUNIQUE, ';
         }
-    /// The fields
+        // The fields
         $indexfields = $this->getFields();
         if (!empty($indexfields)) {
             $result .= 'array(' . "'".  implode("', '", $indexfields) . "')";
         } else {
             $result .= 'null';
         }
-    /// Return result
+        // Return result
         return $result;
     }
 
     /**
      * Shows info in a readable format
+     * @return string
      */
-    function readableInfo() {
+    public function readableInfo() {
         $o = '';
-    /// unique
+        // unique
         if ($this->unique) {
             $o .= 'unique';
         } else {
             $o .= 'not unique';
         }
-    /// fields
+        // fields
         $o .= ' (' . implode(', ', $this->fields) . ')';
 
         return $o;
     }
-}
 
-/// TODO: Delete for 2.1 (deprecated in 2.0).
-/// Deprecated API starts here
-class XMLDBIndex extends xmldb_index {
+    /**
+     * Validates the index restrictions.
+     *
+     * The error message should not be localised because it is intended for developers,
+     * end users and admins should never see these problems!
+     *
+     * @param xmldb_table $xmldb_table optional when object is table
+     * @return string null if ok, error message if problem found
+     */
+    public function validateDefinition(xmldb_table $xmldb_table=null) {
+        if (!$xmldb_table) {
+            return 'Invalid xmldb_index->validateDefinition() call, $xmldb_table si required.';
+        }
 
-    function __construct($name) {
-        parent::__construct($name);
+        $total = 0;
+        foreach ($this->getFields() as $fieldname) {
+            if (!$field = $xmldb_table->getField($fieldname)) {
+                // argh, we do not have the fields loaded yet, this should not happen during install
+                continue;
+            }
+
+            switch ($field->getType()) {
+                case XMLDB_TYPE_INTEGER:
+                    $total += 8; // big int
+                    break;
+
+                case XMLDB_TYPE_NUMBER:
+                    $total += 12; // this is just a guess
+                    break;
+
+                case XMLDB_TYPE_FLOAT:
+                    $total += 8; // double precision
+                    break;
+
+                case XMLDB_TYPE_CHAR:
+                    if ($field->getLength() > self::INDEX_MAX_BYTES / 3) {
+                        return 'Invalid index definition in table {'.$xmldb_table->getName(). '}: XMLDB_TYPE_CHAR field "'.$field->getName().'" can not be indexed because it is too long.'
+                                .' Limit is '.(self::INDEX_MAX_BYTES/3).' chars.';
+                    }
+                    $total += ($field->getLength() * 3); // the most complex utf-8 chars have 3 bytes
+                    break;
+
+                case XMLDB_TYPE_TEXT:
+                    return 'Invalid index definition in table {'.$xmldb_table->getName(). '}: XMLDB_TYPE_TEXT field "'.$field->getName().'" can not be indexed';
+                    break;
+
+                case XMLDB_TYPE_BINARY:
+                    return 'Invalid index definition in table {'.$xmldb_table->getName(). '}: XMLDB_TYPE_BINARY field "'.$field->getName().'" can not be indexed';
+                    break;
+
+                case XMLDB_TYPE_DATETIME:
+                    $total += 8; // this is just a guess
+                    break;
+
+                case XMLDB_TYPE_TIMESTAMP:
+                    $total += 8; // this is just a guess
+                    break;
+            }
+        }
+
+        if ($total > self::INDEX_COMPOSED_MAX_BYTES) {
+            return 'Invalid index definition in table {'.$xmldb_table->getName(). '}: the composed index on fields "'.implode(',', $this->getFields()).'" is too long.'
+                    .' Limit is '.self::INDEX_COMPOSED_MAX_BYTES.' bytes / '.(self::INDEX_COMPOSED_MAX_BYTES/3).' chars.';
+        }
+
+        return null;
     }
-
 }
-/// Deprecated API ends here

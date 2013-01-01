@@ -35,7 +35,7 @@
     $notes   = optional_param('notes', '', PARAM_RAW);    // Save teachers notes
 
     $qids = explode(',', $qid);
-    $qids = clean_param($qids, PARAM_INT);
+    $qids = clean_param_array($qids, PARAM_INT);
     $qid = implode (',', $qids);
 
     if (! $cm = get_coursemodule_from_id('survey', $id)) {
@@ -61,7 +61,7 @@
     }
     $PAGE->set_url($url);
 
-    require_login($course->id, false, $cm);
+    require_login($course, false, $cm);
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 

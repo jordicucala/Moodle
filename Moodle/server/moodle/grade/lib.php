@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * Functions used by gradebook plugins and reports.
  *
- * @package   moodlecore
+ * @package   core_grades
  * @copyright 2009 Petr Skoda and Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,16 +32,61 @@ require_once $CFG->libdir.'/gradelib.php';
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class graded_users_iterator {
-    public $course;
-    public $grade_items;
-    public $groupid;
-    public $users_rs;
-    public $grades_rs;
-    public $gradestack;
-    public $sortfield1;
-    public $sortorder1;
-    public $sortfield2;
-    public $sortorder2;
+
+    /**
+     * The couse whose users we are interested in
+     */
+    protected $course;
+
+    /**
+     * An array of grade items or null if only user data was requested
+     */
+    protected $grade_items;
+
+    /**
+     * The group ID we are interested in. 0 means all groups.
+     */
+    protected $groupid;
+
+    /**
+     * A recordset of graded users
+     */
+    protected $users_rs;
+
+    /**
+     * A recordset of user grades (grade_grade instances)
+     */
+    protected $grades_rs;
+
+    /**
+     * Array used when moving to next user while iterating through the grades recordset
+     */
+    protected $gradestack;
+
+    /**
+     * The first field of the users table by which the array of users will be sorted
+     */
+    protected $sortfield1;
+
+    /**
+     * Should sortfield1 be ASC or DESC
+     */
+    protected $sortorder1;
+
+    /**
+     * The second field of the users table by which the array of users will be sorted
+     */
+    protected $sortfield2;
+
+    /**
+     * Should sortfield2 be ASC or DESC
+     */
+    protected $sortorder2;
+
+    /**
+     * Should users whose enrolment has been suspended be ignored?
+     */
+    protected $onlyactive = false;
 
     /**
      * Constructor
@@ -55,7 +99,7 @@ class graded_users_iterator {
      * @param string $sortfield2 The second field of the users table by which the array of users will be sorted
      * @param string $sortorder2 The order in which the second sorting field will be sorted (ASC or DESC)
      */
-    public function graded_users_iterator($course, $grade_items=null, $groupid=0,
+    public function __construct($course, $grade_items=null, $groupid=0,
                                           $sortfield1='lastname', $sortorder1='ASC',
                                           $sortfield2='firstname', $sortorder2='ASC') {
         $this->course      = $course;
@@ -71,6 +115,7 @@ class graded_users_iterator {
 
     /**
      * Initialise the iterator
+     *
      * @return boolean success
      */
     public function init() {
@@ -90,9 +135,7 @@ class graded_users_iterator {
 
         list($gradebookroles_sql, $params) =
             $DB->get_in_or_equal(explode(',', $CFG->gradebookroles), SQL_PARAMS_NAMED, 'grbr');
-
-        //limit to users with an active enrolment
-        list($enrolledsql, $enrolledparams) = get_enrolled_sql($coursecontext);
+        list($enrolledsql, $enrolledparams) = get_enrolled_sql($coursecontext, '', 0, $this->onlyactive);
 
         $params = array_merge($params, $enrolledparams);
 
@@ -175,7 +218,7 @@ class graded_users_iterator {
      * Returns information about the next user
      * @return mixed array of user info, all grades and feedback or null when no more users found
      */
-    function next_user() {
+    public function next_user() {
         if (!$this->users_rs) {
             return false; // no users present
         }
@@ -216,6 +259,9 @@ class graded_users_iterator {
 
         if (!empty($this->grade_items)) {
             foreach ($this->grade_items as $grade_item) {
+                if (!isset($feedbacks[$grade_item->id])) {
+                    $feedbacks[$grade_item->id] = new stdClass();
+                }
                 if (array_key_exists($grade_item->id, $grade_records)) {
                     $feedbacks[$grade_item->id]->feedback       = $grade_records[$grade_item->id]->feedback;
                     $feedbacks[$grade_item->id]->feedbackformat = $grade_records[$grade_item->id]->feedbackformat;
@@ -239,10 +285,9 @@ class graded_users_iterator {
     }
 
     /**
-     * Close the iterator, do not forget to call this function.
-     * @return void
+     * Close the iterator, do not forget to call this function
      */
-    function close() {
+    public function close() {
         if ($this->users_rs) {
             $this->users_rs->close();
             $this->users_rs = null;
@@ -254,25 +299,37 @@ class graded_users_iterator {
         $this->gradestack = array();
     }
 
+    /**
+     * Should all enrolled users be exported or just those with an active enrolment?
+     *
+     * @param bool $onlyactive True to limit the export to users with an active enrolment
+     */
+    public function require_active_enrolment($onlyactive = true) {
+        if (!empty($this->users_rs)) {
+            debugging('Calling require_active_enrolment() has no effect unless you call init() again', DEBUG_DEVELOPER);
+        }
+        $this->onlyactive  = $onlyactive;
+    }
+
 
     /**
-     * _push
+     * Add a grade_grade instance to the grade stack
      *
      * @param grade_grade $grade Grade object
      *
      * @return void
      */
-    function _push($grade) {
+    private function _push($grade) {
         array_push($this->gradestack, $grade);
     }
 
 
     /**
-     * _pop
+     * Remove a grade_grade instance from the grade stack
      *
-     * @return object current grade object
+     * @return grade_grade current grade object
      */
-    function _pop() {
+    private function _pop() {
         global $DB;
         if (empty($this->gradestack)) {
             if (empty($this->grades_rs) || !$this->grades_rs->valid()) {
@@ -380,7 +437,7 @@ function print_grade_plugin_selector($plugin_info, $active_type, $active_plugin,
     // finally print/return the popup form
     if ($count > 1) {
         $select = new url_select($menu, $active, null, 'choosepluginreport');
-
+        $select->set_label(get_string('gradereport', 'grades'), array('class' => 'accesshide'));
         if ($return) {
             return $OUTPUT->render($select);
         } else {
@@ -563,7 +620,7 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
  * A simple class containing info about grade plugins.
  * Can be subclassed for special rules
  *
- * @package moodlecore
+ * @package core_grades
  * @copyright 2009 Nicolas Connault
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -694,7 +751,7 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
 /**
  * Utility class used for return tracking when using edit and other forms in grade plugins
  *
- * @package moodlecore
+ * @package core_grades
  * @copyright 2009 Nicolas Connault
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -713,7 +770,7 @@ class grade_plugin_return {
     public function grade_plugin_return($params = null) {
         if (empty($params)) {
             $this->type     = optional_param('gpr_type', null, PARAM_SAFEDIR);
-            $this->plugin   = optional_param('gpr_plugin', null, PARAM_SAFEDIR);
+            $this->plugin   = optional_param('gpr_plugin', null, PARAM_PLUGIN);
             $this->courseid = optional_param('gpr_courseid', null, PARAM_INT);
             $this->userid   = optional_param('gpr_userid', null, PARAM_INT);
             $this->page     = optional_param('gpr_page', null, PARAM_INT);
@@ -845,7 +902,7 @@ class grade_plugin_return {
 
         if (!empty($this->plugin)) {
             $mform->addElement('hidden', 'gpr_plugin', $this->plugin);
-            $mform->setType('gpr_plugin', PARAM_SAFEDIR);
+            $mform->setType('gpr_plugin', PARAM_PLUGIN);
         }
 
         if (!empty($this->courseid)) {
@@ -1000,7 +1057,7 @@ function grade_build_nav($path, $pagename=null, $id=null) {
 /**
  * General structure representing grade items in course
  *
- * @package moodlecore
+ * @package core_grades
  * @copyright 2009 Nicolas Connault
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1032,6 +1089,7 @@ class grade_structure {
      */
     public function get_element_icon(&$element, $spacerifnone=false) {
         global $CFG, $OUTPUT;
+        require_once $CFG->libdir.'/filelib.php';
 
         switch ($element['type']) {
             case 'item':
@@ -1097,7 +1155,7 @@ class grade_structure {
 
             case 'category':
                 $strcat = get_string('category', 'grades');
-                return '<img src="'.$OUTPUT->pix_url('f/folder') . '" class="icon itemicon" ' .
+                return '<img src="'.$OUTPUT->pix_url(file_folder_icon()) . '" class="icon itemicon" ' .
                         'title="'.s($strcat).'" alt="'.s($strcat).'" />';
         }
 
@@ -1148,10 +1206,13 @@ class grade_structure {
 
     private function get_activity_link($element) {
         global $CFG;
+        /** @var array static cache of the grade.php file existence flags */
+        static $hasgradephp = array();
 
         $itemtype = $element['object']->itemtype;
         $itemmodule = $element['object']->itemmodule;
         $iteminstance = $element['object']->iteminstance;
+        $itemnumber = $element['object']->itemnumber;
 
         // Links only for module items that have valid instance, module and are
         // called from grade_tree with valid modinfo
@@ -1171,13 +1232,104 @@ class grade_structure {
             return null;
         }
 
+        if (!array_key_exists($itemmodule, $hasgradephp)) {
+            if (file_exists($CFG->dirroot . '/mod/' . $itemmodule . '/grade.php')) {
+                $hasgradephp[$itemmodule] = true;
+            } else {
+                $hasgradephp[$itemmodule] = false;
+            }
+        }
+
         // If module has grade.php, link to that, otherwise view.php
-        $dir = $CFG->dirroot . '/mod/' . $itemmodule;
-        if (file_exists($dir.'/grade.php')) {
-            return new moodle_url('/mod/' . $itemmodule . '/grade.php', array('id' => $cm->id));
+        if ($hasgradephp[$itemmodule]) {
+            $args = array('id' => $cm->id, 'itemnumber' => $itemnumber);
+            if (isset($element['userid'])) {
+                $args['userid'] = $element['userid'];
+            }
+            return new moodle_url('/mod/' . $itemmodule . '/grade.php', $args);
         } else {
             return new moodle_url('/mod/' . $itemmodule . '/view.php', array('id' => $cm->id));
         }
+    }
+
+    /**
+     * Returns URL of a page that is supposed to contain detailed grade analysis
+     *
+     * At the moment, only activity modules are supported. The method generates link
+     * to the module's file grade.php with the parameters id (cmid), itemid, itemnumber,
+     * gradeid and userid. If the grade.php does not exist, null is returned.
+     *
+     * @return moodle_url|null URL or null if unable to construct it
+     */
+    public function get_grade_analysis_url(grade_grade $grade) {
+        global $CFG;
+        /** @var array static cache of the grade.php file existence flags */
+        static $hasgradephp = array();
+
+        if (empty($grade->grade_item) or !($grade->grade_item instanceof grade_item)) {
+            throw new coding_exception('Passed grade without the associated grade item');
+        }
+        $item = $grade->grade_item;
+
+        if (!$item->is_external_item()) {
+            // at the moment, only activity modules are supported
+            return null;
+        }
+        if ($item->itemtype !== 'mod') {
+            throw new coding_exception('Unknown external itemtype: '.$item->itemtype);
+        }
+        if (empty($item->iteminstance) or empty($item->itemmodule) or empty($this->modinfo)) {
+            return null;
+        }
+
+        if (!array_key_exists($item->itemmodule, $hasgradephp)) {
+            if (file_exists($CFG->dirroot . '/mod/' . $item->itemmodule . '/grade.php')) {
+                $hasgradephp[$item->itemmodule] = true;
+            } else {
+                $hasgradephp[$item->itemmodule] = false;
+            }
+        }
+
+        if (!$hasgradephp[$item->itemmodule]) {
+            return null;
+        }
+
+        $instances = $this->modinfo->get_instances();
+        if (empty($instances[$item->itemmodule][$item->iteminstance])) {
+            return null;
+        }
+        $cm = $instances[$item->itemmodule][$item->iteminstance];
+        if (!$cm->uservisible) {
+            return null;
+        }
+
+        $url = new moodle_url('/mod/'.$item->itemmodule.'/grade.php', array(
+            'id'         => $cm->id,
+            'itemid'     => $item->id,
+            'itemnumber' => $item->itemnumber,
+            'gradeid'    => $grade->id,
+            'userid'     => $grade->userid,
+        ));
+
+        return $url;
+    }
+
+    /**
+     * Returns an action icon leading to the grade analysis page
+     *
+     * @param grade_grade $grade
+     * @return string
+     */
+    public function get_grade_analysis_icon(grade_grade $grade) {
+        global $OUTPUT;
+
+        $url = $this->get_grade_analysis_url($grade);
+        if (is_null($url)) {
+            return '';
+        }
+
+        return $OUTPUT->action_icon($url, new pix_icon('t/preview',
+            get_string('gradeanalysis', 'core_grades')));
     }
 
     /**
@@ -1463,7 +1615,7 @@ class grade_structure {
  * Flat structure similar to grade tree.
  *
  * @uses grade_structure
- * @package moodlecore
+ * @package core_grades
  * @copyright 2009 Nicolas Connault
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1600,7 +1752,7 @@ class grade_seq extends grade_structure {
  * deletion and moving of items and categories within the tree.
  *
  * @uses grade_structure
- * @package moodlecore
+ * @package core_grades
  * @copyright 2009 Nicolas Connault
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2422,6 +2574,7 @@ abstract class grade_helper {
      * @return array
      */
     public static function get_info_letters($courseid) {
+        global $SITE;
         if (self::$letterinfo !== null) {
             return self::$letterinfo;
         }
@@ -2429,9 +2582,15 @@ abstract class grade_helper {
         $canmanage = has_capability('moodle/grade:manage', $context);
         $canmanageletters = has_capability('moodle/grade:manageletters', $context);
         if ($canmanage || $canmanageletters) {
+            // Redirect to system context when report is accessed from admin settings MDL-31633
+            if ($context->instanceid == $SITE->id) {
+                $param = array('edit' => 1);
+            } else {
+                $param = array('edit' => 1,'id' => $context->id);
+            }
             self::$letterinfo = array(
                 'view' => new grade_plugin_info('view', new moodle_url('/grade/edit/letter/index.php', array('id'=>$context->id)), get_string('view')),
-                'edit' => new grade_plugin_info('edit', new moodle_url('/grade/edit/letter/index.php', array('edit'=>1,'id'=>$context->id)), get_string('edit'))
+                'edit' => new grade_plugin_info('edit', new moodle_url('/grade/edit/letter/index.php', $param), get_string('edit'))
             );
         } else {
             self::$letterinfo = false;

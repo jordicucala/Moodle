@@ -22,7 +22,7 @@
 require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
-$choose = optional_param('choose', '', PARAM_SAFEDIR);
+$choose = optional_param('choose', '', PARAM_PLUGIN);
 $reset  = optional_param('reset', 0, PARAM_BOOL);
 $device = optional_param('device', '', PARAM_TEXT);
 $unsettheme = optional_param('unsettheme', 0, PARAM_BOOL);

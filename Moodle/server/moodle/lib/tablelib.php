@@ -132,17 +132,6 @@ class flexible_table {
     }
 
     /**
-     * Backwards-compatible constructor, so that legacy code subclassing
-     * flexible_table does not break.
-     * @deprecated since Moodle 2.0. Will be removed in Moodle 2.1.
-     */
-    function flexible_table($uniqueid) {
-        debugging('Please update your code to user PHP5-style parent::__construct(...), ' .
-                'not parent::flexible_table(...).');
-        $this->__construct($uniqueid);
-    }
-
-    /**
      * Call this to pass the download type. Use :
      *         $download = optional_param('download', '', PARAM_ALPHA);
      * To get the download type. We assume that if you call this function with
@@ -462,9 +451,13 @@ class flexible_table {
             $this->sess->sortby = array_slice($this->sess->sortby, 0, $this->maxsortkeys);
         }
 
-        // If we didn't sort just now, then use the default sort order if one is defined and the column exists
-        if (empty($this->sess->sortby) && !empty($this->sort_default_column))  {
-            $this->sess->sortby = array ($this->sort_default_column => ($this->sort_default_order == SORT_DESC ? SORT_DESC : SORT_ASC));
+        // MDL-35375 - If a default order is defined and it is not in the current list of order by columns, add it at the end.
+        // This prevents results from being returned in a random order if the only order by column contains equal values.
+        if (!empty($this->sort_default_column))  {
+            if (!array_key_exists($this->sort_default_column, $this->sess->sortby)) {
+                $defaultsort = array($this->sort_default_column => $this->sort_default_order);
+                $this->sess->sortby = array_merge($this->sess->sortby, $defaultsort);
+            }
         }
 
         $ilast = optional_param($this->request[TABLE_VAR_ILAST], null, PARAM_RAW);
@@ -929,6 +922,7 @@ class flexible_table {
             $html = '<form action="'. $this->baseurl .'" method="post">';
             $html .= '<div class="mdl-align">';
             $html .= '<input type="submit" value="'.get_string('downloadas', 'table').'"/>';
+            $html .= html_writer::label(get_string('downloadoptions', 'table'), 'menudownload', false, array('class' => 'accesshide'));
             $html .= html_writer::select($downloadoptions, 'download', $this->defaultdownloadformat, false);
             $html .= '</div></form>';
 
@@ -1268,17 +1262,6 @@ class table_sql extends flexible_table {
         // some sensible defaults
         $this->set_attribute('cellspacing', '0');
         $this->set_attribute('class', 'generaltable generalbox');
-    }
-
-    /**
-     * Backwards-compatible constructor, so that legacy code subclassing
-     * table_sql does not break.
-     * @deprecated since Moodle 2.0. Will be removed in Moodle 2.1.
-     */
-    function table_sql($uniqueid) {
-        debugging('Please update your code to user PHP5-style parent::__construct(...), ' .
-                'not parent::table_sql(...).');
-        $this->__construct($uniqueid);
     }
 
     /**

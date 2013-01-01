@@ -5,6 +5,7 @@
   'configrolesinparams' => 'Enable if you want to include localized role names in list of available parameter variables.',
   'configsecretphrase' => 'This secret phrase is used to produce encrypted code value that can be sent to some servers as a parameter.  The encrypted code is produced by an md5 value of the current user IP address concatenated with your secret phrase. ie code = md5(IP.secretphrase). Please note that this is not reliable because IP address may change and is often shared by different computers.',
   'contentheader' => 'Content',
+  'createurl' => 'Create a URL',
   'displayoptions' => 'Available display options',
   'displayselect' => 'Display',
   'displayselect_help' => 'This setting, together with the URL file type and whether the browser allows embedding, determines how the URL is displayed. Options may include:
@@ -23,6 +24,12 @@
   'chooseavariable' => 'Choose a variable...',
   'invalidurl' => 'Entered URL is invalid',
   'modulename' => 'URL',
+  'modulename_help' => 'The URL module enables a teacher to provide a web link as a course resource. Anything that is freely available online, such as documents or images, can be linked to; the URL doesn’t have to be the home page of a website. The URL of a particular web page may be copied and pasted or a teacher can use the file picker and choose a link from a repository such as Flickr, YouTube or Wikimedia (depending upon which repositories are enabled for the site).
+
+There are a number of display options for the URL, such as embedded or opening in a new window and advanced options for passing information, such as a student\'s name, to the URL if required.
+
+Note that URLs can also be added to any other resource or activity type through the text editor.',
+  'modulename_link' => 'mod/url/view',
   'modulenameplural' => 'URLs',
   'neverseen' => 'Never seen',
   'optionsheader' => 'Options',
@@ -42,5 +49,6 @@
   'printintroexplain' => 'Display URL description below content? Some display types may not display description even if enabled.',
   'rolesinparams' => 'Include role names in parameters',
   'serverurl' => 'Server URL',
+  'url:addinstance' => 'Add a new URL resource',
   'url:view' => 'View URL',
 );

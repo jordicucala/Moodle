@@ -56,7 +56,7 @@ class external_service_form extends moodleform {
 
     function definition() {
         $mform = $this->_form;
-        $service = $this->_customdata;
+        $service = isset($this->_customdata) ? $this->_customdata : new stdClass();
 
         $mform->addElement('header', 'extservice',
                 get_string('externalservice', 'webservice'));
@@ -68,6 +68,11 @@ class external_service_form extends moodleform {
         $mform->addElement('advcheckbox', 'restrictedusers',
                 get_string('restrictedusers', 'webservice'));
         $mform->addHelpButton('restrictedusers', 'restrictedusers', 'webservice');
+
+        //can users download files
+        $mform->addElement('advcheckbox', 'downloadfiles', get_string('downloadfiles', 'webservice'));
+        $mform->setAdvanced('downloadfiles');
+        $mform->addHelpButton('downloadfiles', 'downloadfiles', 'webservice');
 
         /// needed to select automatically the 'No required capability" option
         $currentcapabilityexist = false;
@@ -192,9 +197,9 @@ class web_service_token_form extends moodleform {
                 //user searchable selector - get all users (admin and guest included)
                 //user must be confirmed, not deleted, not suspended, not guest
                 $sql = "SELECT u.id, u.firstname, u.lastname
-                FROM {user} u
-                WHERE u.deleted = 0 AND u.confirmed = 1 AND u.suspended = 0 AND u.id != ?
-                ORDER BY u.lastname";
+                            FROM {user} u
+                            WHERE u.deleted = 0 AND u.confirmed = 1 AND u.suspended = 0 AND u.id != ?
+                            ORDER BY u.lastname";
                 $users = $DB->get_records_sql($sql, array($CFG->siteguest));
                 $options = array();
                 foreach ($users as $userid => $user) {
@@ -250,7 +255,7 @@ class web_service_token_form extends moodleform {
         return $data;
     }
 
-    function validation(&$data, $files) {
+    function validation($data, $files) {
         global $DB;
 
         $errors = parent::validation($data, $files);

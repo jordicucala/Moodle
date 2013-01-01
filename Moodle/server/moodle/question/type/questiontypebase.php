@@ -74,7 +74,7 @@ class question_type {
      * You should not need to override this method, the default behaviour should be fine.
      */
     public function local_name() {
-        return get_string($this->name(), $this->plugin_name());
+        return get_string('pluginname', $this->plugin_name());
     }
 
     /**
@@ -87,20 +87,6 @@ class question_type {
      */
     public function menu_name() {
         return $this->local_name();
-    }
-
-    /**
-     * Returns a list of other question types that this one requires in order to
-     * work. For example, the calculated question type is a subclass of the
-     * numerical question type, which is a subclass of the shortanswer question
-     * type; and the randomsamatch question type requires the shortanswer type
-     * to be installed.
-     *
-     * @return array any other question types that this one relies on. An empty
-     * array if none.
-     */
-    public function requires_qtypes() {
-        return array();
     }
 
     /**
@@ -175,7 +161,7 @@ class question_type {
      * If you use extra_question_fields, overload this function to return question id field name
      *  in case you table use another name for this column
      */
-    protected function questionid_column_name() {
+    public function questionid_column_name() {
         return 'questionid';
     }
 
@@ -186,7 +172,7 @@ class question_type {
      *
      * @return mixed array as above, or null to tell the base class to do nothing.
      */
-    protected function extra_answer_fields() {
+    public function extra_answer_fields() {
         return null;
     }
 
@@ -259,7 +245,7 @@ class question_type {
         global $OUTPUT;
         $heading = $this->get_heading(empty($question->id));
 
-        echo $OUTPUT->heading_with_help($heading, $this->name(), $this->plugin_name());
+        echo $OUTPUT->heading_with_help($heading, 'pluginname', $this->plugin_name());
 
         $permissionstrs = array();
         if (!empty($question->id)) {
@@ -293,11 +279,11 @@ class question_type {
      */
     public function get_heading($adding = false) {
         if ($adding) {
-            $action = 'adding';
+            $string = 'pluginnameadding';
         } else {
-            $action = 'editing';
+            $string = 'pluginnameediting';
         }
-        return get_string($action . $this->name(), $this->plugin_name());
+        return get_string($string, $this->plugin_name());
     }
 
     /**
@@ -873,22 +859,9 @@ class question_type {
     }
 
     /**
-     * Like @see{get_html_head_contributions}, but this method is for CSS and
-     * JavaScript required on the question editing page question/question.php.
-     */
-    public function get_editing_head_contributions() {
-        // By default, we link to any of the files styles.css, styles.php,
-        // script.js or script.php that exist in the plugin folder.
-        // Core question types should not use this mechanism. Their styles
-        // should be included in the standard theme.
-        $this->find_standard_scripts();
-    }
-
-    /**
-     * Utility method used by @see{get_html_head_contributions} and
-     * @see{get_editing_head_contributions}. This looks for any of the files
-     * script.js or script.php that exist in the plugin folder and ensures they
-     * get included.
+     * Utility method used by {@link qtype_renderer::head_code()}. It looks
+     * for any of the files script.js or script.php that exist in the plugin
+     * folder and ensures they get included.
      */
     public function find_standard_scripts() {
         global $PAGE;
@@ -933,7 +906,7 @@ class question_type {
      * Imports question using information from extra_question_fields function
      * If some of you fields contains id's you'll need to reimplement this
      */
-    public function import_from_xml($data, $question, $format, $extra=null) {
+    public function import_from_xml($data, $question, qformat_xml $format, $extra=null) {
         $question_type = $data['@']['type'];
         if ($question_type != $this->name()) {
             return false;
@@ -986,7 +959,7 @@ class question_type {
      * Export question using information from extra_question_fields function
      * If some of you fields contains id's you'll need to reimplement this
      */
-    public function export_to_xml($question, $format, $extra=null) {
+    public function export_to_xml($question, qformat_xml $format, $extra=null) {
         $extraquestionfields = $this->extra_question_fields();
         if (!is_array($extraquestionfields)) {
             return false;
@@ -1274,8 +1247,10 @@ class question_possible_response {
      * {@link question_type::get_possible_responses()}.
      */
     public $responseclass;
-    /** @var string the actual response the student gave to this part. */
+
+    /** @var string the (partial) credit awarded for this responses. */
     public $fraction;
+
     /**
      * Constructor, just an easy way to set the fields.
      * @param string $responseclassid see the field descriptions above.

@@ -183,6 +183,7 @@
   'jumpsto' => 'Jumps to <em>{$a}</em>',
   'leftduringtimed' => 'You have left during a timed lesson.<br />Please click on Continue to restart the lesson.',
   'leftduringtimednoretake' => 'You have left during a timed lesson and you are<br />not allowed to retake or continue the lesson.',
+  'lesson:addinstance' => 'Add a new lesson',
   'lessonattempted' => 'Lesson attempted',
   'lessonclosed' => 'This lesson closed on {$a}.',
   'lessoncloses' => 'Lesson closes',
@@ -231,7 +232,16 @@ If set to say 20, it is suggested that the following text is added to the openin
   'modattempts_help' => 'If enabled, students can navigate through the lesson again from the start.',
   'modattemptsnoteacher' => 'Student review only works for students.',
   'modulename' => 'Lesson',
-  'modulename_help' => 'The lesson module enables the teacher to create an adaptive learning experience consisting of a series of pages containing questions.',
+  'modulename_help' => 'The lesson activity module enables a teacher to deliver content and/or practice activities in  interesting and flexible ways. A teacher can use the lesson to create a linear set of content pages or instructional activities that offer a variety of paths or options for the learner. In either case, teachers can choose to increase engagement and ensure understanding by including a variety of questions, such as multiple choice, matching and short answer. Depending on the student\'s choice of answer and how the teacher develops the lesson, students may progress to the next page, be taken back to a previous page or redirected down a different path entirely.
+
+A lesson may be graded, with the grade recorded in the gradebook.
+
+Lessons may be used
+
+* For self-directed learning of a new topic
+* For  scenarios or simulations/decision-making exercises
+* For differentiated revision, with different sets of revision questions depending upon answers given to initial questions',
+  'modulename_link' => 'mod/lesson/view',
   'modulenameplural' => 'Lessons',
   'move' => 'Move page',
   'movedpage' => 'Moved page',

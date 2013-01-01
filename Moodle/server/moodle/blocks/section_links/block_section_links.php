@@ -55,6 +55,7 @@ class block_section_links extends block_base {
         if(isset($this->config)){
             $config = $this->config;
         } else{
+            // TODO: Move these config settings to proper ones using component name
             $config = get_config('blocks/section_links');
         }
 
@@ -101,15 +102,6 @@ class block_section_links extends block_base {
             }
         }
 
-        if (isloggedin()) {
-            $display = $DB->get_field('course_display', 'display', array('course'=>$this->page->course->id, 'userid'=>$USER->id));
-        }
-        if (!empty($display)) {
-            $link = $CFG->wwwroot.'/course/view.php?id='.$this->page->course->id.'&amp;'.$sectionname.'=';
-        } else {
-            $link = '#section-';
-        }
-
         $sql = "SELECT section, visible
                   FROM {course_sections}
                  WHERE course = ? AND
@@ -128,9 +120,9 @@ class block_section_links extends block_base {
                 }
                 $style = ($isvisible) ? '' : ' class="dimmed"';
                 if ($i == $highlight) {
-                    $text .= "<li><a href=\"$link$i\"$style><strong>$i</strong></a></li>\n";
+                    $text .= '<li><a href="'.course_get_url($course, $i)."\"$style><strong>$i</strong></a></li>\n";
                 } else {
-                    $text .= "<li><a href=\"$link$i\"$style>$i</a></li>\n";
+                    $text .= '<li><a href="'.course_get_url($course, $i)."\"$style>$i</a></li>\n";
                 }
             }
             $text .= '</ol>';
@@ -138,7 +130,7 @@ class block_section_links extends block_base {
                 $isvisible = $sections[$highlight]->visible;
                 if ($isvisible or has_capability('moodle/course:update', $context)) {
                     $style = ($isvisible) ? '' : ' class="dimmed"';
-                    $text .= "\n<a href=\"$link$highlight\"$style>$linktext</a>";
+                    $text .= "\n<a href=\"".course_get_url($course, $highlight)."\"$style>$linktext</a>";
                 }
             }
         }
@@ -155,6 +147,7 @@ class block_section_links extends block_base {
     }
     function before_delete() {
         global $DB;
+        // TODO: Move these config settings to proper ones using component name
         $DB->delete_records('config_plugins', array('plugin' => 'blocks/section_links'));
     }
 

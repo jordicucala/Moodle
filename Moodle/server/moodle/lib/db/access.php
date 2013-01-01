@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -43,10 +42,14 @@
  *
  * The variable name for the capability definitions array is $capabilities
  *
- * @package    core
- * @subpackage role
- * @copyright  2006 onwards Martin Dougiamas  http://dougiamas.com
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * For more information, take a look to the documentation available:
+ *     - Access API: {@link http://docs.moodle.org/dev/Access_API}
+ *     - Upgrade API: {@link http://docs.moodle.org/dev/Upgrade_API}
+ *
+ * @package   core_access
+ * @category  access
+ * @copyright 2006 onwards Martin Dougiamas  http://dougiamas.com
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -375,6 +378,20 @@ $capabilities = array(
     ),
 
     'moodle/site:viewfullnames' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
+    // In reports that give lists of users, extra information about each user's
+    // identity (the fields configured in site option showuseridentity) will be
+    // displayed to users who have this capability.
+    'moodle/site:viewuseridentity' => array(
 
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
@@ -837,12 +854,20 @@ $capabilities = array(
         )
     ),
 
+    'moodle/course:ignorefilesizelimits' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+        )
+    ),
+
     'moodle/course:manageactivities' => array(
 
         'riskbitmask' => RISK_XSS,
 
         'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
@@ -852,7 +877,7 @@ $capabilities = array(
     'moodle/course:activityvisibility' => array(
 
         'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
@@ -862,7 +887,7 @@ $capabilities = array(
     'moodle/course:viewhiddenactivities' => array(
 
         'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
@@ -1485,6 +1510,41 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         ),
         'clonepermissionsfrom' => 'moodle/course:managegrades'
+    ),
+
+    // ability to define advanced grading forms in activities either from scratch
+    // or from a shared template
+    'moodle/grade:managegradingforms' => array(
+        'riskbitmask' => RISK_PERSONAL | RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/course:managegrades'
+    ),
+
+    // ability to save a grading form as a new shared template and eventually edit
+    // and remove own templates (templates originally shared by that user)
+    'moodle/grade:sharegradingforms' => array(
+        'riskbitmask' => RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW
+        ),
+    ),
+
+    // ability to edit and remove any shared template, even those originally shared
+    // by other users
+    'moodle/grade:managesharedforms' => array(
+        'riskbitmask' => RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW
+        ),
     ),
 
     'moodle/grade:manageoutcomes' => array(

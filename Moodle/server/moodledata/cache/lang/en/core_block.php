@@ -13,6 +13,8 @@
   'defaultregion_help' => 'Themes may define one or more named block regions where blocks are displayed. This setting defines which of these you want this block to appear in by default. The region may be overridden on specific pages if required.',
   'defaultweight' => 'Default weight',
   'defaultweight_help' => 'The default weight allows you to choose roughly where you want the block to appear in the chosen region, either at the top or the bottom. The final location is calculated from all the blocks in that region (for example, only one block can actually be at the top). This value can be overridden on specific pages if required.',
+  'deletecheck' => 'Delete {$a} block?',
+  'deleteblockcheck' => 'Are you sure that you want to delete this block titled {$a}?',
   'moveblockhere' => 'Move block here',
   'movingthisblockcancel' => 'Moving this block ({$a})',
   'onthispage' => 'On this page',

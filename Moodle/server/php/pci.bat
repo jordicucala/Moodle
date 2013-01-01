@@ -12,4 +12,4 @@ rem @version    CVS: $Id: compatinfo.bat,v 1.9 2008/07/22 20:26:59 farell Exp $
 rem @link       http://pear.php.net/package/PHP_CompatInfo
 rem @since      File available since Release 1.3.0
 
-"C:\Users\jordi\Desktop\MoodleWindowsInstaller-latest-21\server\php\.\php.exe" -f "pci" -- %*
+"C:\Users\Akareshi\Desktop\MOODLE\MoodleWindowsInstaller-latest-23\server\php\.\php.exe" -f "pci" -- %*

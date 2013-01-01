@@ -46,8 +46,8 @@ switch ($action) {
     // used by course file tree viewer
     case 'getfiletree':
         $contextid  = required_param('contextid', PARAM_INT);
-        $component  = required_param('component', PARAM_ALPHAEXT);
-        $filearea   = required_param('filearea', PARAM_ALPHAEXT);
+        $component  = required_param('component', PARAM_COMPONENT);
+        $filearea   = required_param('filearea', PARAM_AREA);
         $itemid     = required_param('itemid', PARAM_INT);
         $filepath   = required_param('filepath', PARAM_PATH);
 
@@ -70,10 +70,10 @@ switch ($action) {
             if ($child->is_directory()) {
                 $fileitem['isdir'] = true;
                 $fileitem['url'] = $url->out(false);
-                $fileitem['icon'] = $OUTPUT->pix_icon('f/folder', get_string('icon'));
+                $fileitem['icon'] = $OUTPUT->pix_icon(file_folder_icon(), get_string('icon'));
             } else {
                 $fileitem['url'] = $child->get_url();
-                $fileitem['icon'] = $OUTPUT->pix_icon('f/'.mimeinfo('icon', $child->get_visible_name()), get_string('icon'));
+                $fileitem['icon'] = $OUTPUT->pix_icon(file_file_icon($child), get_string('icon'));
             }
             $tree[] = $fileitem;
         }

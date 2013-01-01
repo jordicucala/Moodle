@@ -19,8 +19,8 @@ a:hover, a:active {
     text-decoration: none;
 }
 hr {
-    border-bottom:1px dotted gray;
-    border-top:0px;
+    border-bottom: 1px dotted #808080;
+    border-top: 0px;
 }
 h2.headingblock {
     border-bottom: 1px solid #ddd;
@@ -45,12 +45,12 @@ Header and Logo
     width: 100%;
     background: #fff;
 }
-#logo {
-    background: url([[pix:theme|images/light3]]) no-repeat 0 -272px;
-    width: 288px;
-    height: 58px;
+a.logo {
+    background: url([[setting:logo]]) no-repeat 0 0;
+    width: 320px;
+    height: 75px;
     display: block;
-    margin: 20px 15px;
+    margin: 15px 10px 10px;
     float: left;
 }
 .headermenu,
@@ -72,13 +72,13 @@ Page Footer
 #page-footer {
     background: #fff url([[pix:theme|core/h2grad]]) repeat-x left top;
     height: auto;
-    clear:both;
-    float:left;
-    width:98%;
+    clear: both;
+    float: left;
+    width: 98%;
     margin: 0;
     padding: 1%;
     color: #4b4b4b;
-    border-top:1px solid #fff;
+    border-top: 1px solid #fff;
     line-height: 2em;
     font-size: 1em;
 }
@@ -96,6 +96,12 @@ Page Footer
     float: left;
     text-align: left;
     color: #999;
+}
+#page-footer .footer-left p {
+    margin: 0;
+    padding: 0;
+    font-size: 100%;
+    line-height: 1;
 }
 #page-footer .footer-right {
     float: right;
@@ -199,6 +205,10 @@ Button
 select, input, button {
     background-color: #34637f;
     color: #fff;
+}
+.ie7 select { /* fixes compatibility view */
+    background-color: #eee;
+    color: #036;
 }
 #loginbtn, input, button, select {
     cursor: pointer;
@@ -444,4 +454,19 @@ tab styles for ie6 & ie7
 }
 .yui-skin-sam .yui-panel-container {
     z-index: 999999!important;
+}
+body#page-course-view-topics.path-course div.moodle-dialogue-base div.yui3-widget{
+    z-index: 600!important;
+}
+/* Filemanager
+-------------------------*/
+.filemanager select,
+.filemanager input,
+.filemanager button,
+.filemanager textarea,
+.file-picker select,
+.file-picker input,
+.file-picker button,
+.file-picker textarea {
+    background-color: #EEE;
 }

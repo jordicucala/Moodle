@@ -112,7 +112,8 @@ abstract class base_converter implements loggable {
      * @return string the system name of the converter
      */
     public function get_name() {
-        return array_shift(explode('_', get_class($this)));
+        $parts = explode('_', get_class($this));
+        return array_shift($parts);
     }
 
     /**
@@ -147,7 +148,7 @@ abstract class base_converter implements loggable {
     public function get_workdir_path() {
         global $CFG;
 
-        return "$CFG->dataroot/temp/backup/$this->workdir";
+        return "$CFG->tempdir/backup/$this->workdir";
     }
 
     /**
@@ -156,7 +157,7 @@ abstract class base_converter implements loggable {
     public function get_tempdir_path() {
         global $CFG;
 
-        return "$CFG->dataroot/temp/backup/$this->tempdir";
+        return "$CFG->tempdir/backup/$this->tempdir";
     }
 
     /// public static methods //////////////////////////////////////////////////

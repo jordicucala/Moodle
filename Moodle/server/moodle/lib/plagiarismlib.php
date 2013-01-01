@@ -54,6 +54,31 @@ function plagiarism_get_links($linkarray) {
 }
 
 /**
+ * returns array of plagiarism details about specified file
+ *
+ * @param int $cmid
+ * @param int $userid
+ * @param object $file moodle file object
+ * @return array - sets of details about specified file, one array of details per plagiarism plugin
+ *  - each set contains at least 'analyzed', 'score', 'reporturl'
+ */
+function plagiarism_get_file_results($cmid, $userid, $file) {
+    global $CFG;
+    $allresults = array();
+    if (empty($CFG->enableplagiarism)) {
+        return $allresults;
+    }
+    $plagiarismplugins = plagiarism_load_available_plugins();
+    foreach($plagiarismplugins as $plugin => $dir) {
+        require_once($dir.'/lib.php');
+        $plagiarismclass = "plagiarism_plugin_$plugin";
+        $plagiarismplugin = new $plagiarismclass;
+        $allresults[] = $plagiarismplugin->get_file_results($cmid, $userid, $file);
+    }
+    return $allresults;
+}
+
+/**
  * saves/updates plagiarism settings from a modules config page - called by course/modedit.php
  *
  * @param object $data - form data
@@ -96,6 +121,7 @@ function plagiarism_get_form_elements_module($mform, $context) {
  *
  * @param object $course - full Course object
  * @param object $cm - full cm object
+ * @return string
  */
 function plagiarism_update_status($course, $cm) {
     global $CFG;
@@ -103,17 +129,20 @@ function plagiarism_update_status($course, $cm) {
         return '';
     }
     $plagiarismplugins = plagiarism_load_available_plugins();
+    $output = '';
     foreach($plagiarismplugins as $plugin => $dir) {
         require_once($dir.'/lib.php');
         $plagiarismclass = "plagiarism_plugin_$plugin";
         $plagiarismplugin = new $plagiarismclass;
-        $plagiarismplugin->update_status($course, $cm);
+        $output .= $plagiarismplugin->update_status($course, $cm);
     }
+    return $output;
 }
 
 /**
 * Function that prints the student disclosure notifying that the files will be checked for plagiarism
 * @param integer $cmid - the cmid of this module
+* @return string
 */
 function plagiarism_print_disclosure($cmid) {
     global $CFG;
@@ -121,12 +150,14 @@ function plagiarism_print_disclosure($cmid) {
         return '';
     }
     $plagiarismplugins = plagiarism_load_available_plugins();
+    $output = '';
     foreach($plagiarismplugins as $plugin => $dir) {
         require_once($dir.'/lib.php');
         $plagiarismclass = "plagiarism_plugin_$plugin";
         $plagiarismplugin = new $plagiarismclass;
-        $plagiarismplugin->print_disclosure($cmid);
+        $output .= $plagiarismplugin->print_disclosure($cmid);
     }
+    return $output;
 }
 /**
  * used by admin/cron.php to get similarity scores from submitted files.

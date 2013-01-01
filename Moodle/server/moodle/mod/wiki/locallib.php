@@ -145,7 +145,8 @@ function wiki_get_current_version($pageid) {
             FROM {wiki_versions}
             WHERE pageid = ?
             ORDER BY version DESC";
-    return array_pop($DB->get_records_sql($sql, array($pageid), 0, 1));
+    $records = $DB->get_records_sql($sql, array($pageid), 0, 1);
+    return array_pop($records);
 
 }
 
@@ -1302,8 +1303,8 @@ function wiki_print_page_content($page, $context, $subwikiid) {
  */
 function wiki_trim_string($text, $limit = 25) {
 
-    if (strlen($text) > $limit) {
-        $text = substr($text, 0, $limit) . '...';
+    if (textlib::strlen($text) > $limit) {
+        $text = textlib::substr($text, 0, $limit) . '...';
     }
 
     return $text;

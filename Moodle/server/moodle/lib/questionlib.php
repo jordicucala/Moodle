@@ -209,39 +209,44 @@ function get_grade_options() {
 }
 
 /**
- * match grade options
- * if no match return error or match nearest
+ * Check whether a given grade is one of a list of allowed options. If not,
+ * depending on $matchgrades, either return the nearest match, or return false
+ * to signal an error.
  * @param array $gradeoptionsfull list of valid options
  * @param int $grade grade to be tested
  * @param string $matchgrades 'error' or 'nearest'
- * @return mixed either 'fixed' value or false if erro
+ * @return mixed either 'fixed' value or false if error.
  */
-function match_grade_options($gradeoptionsfull, $grade, $matchgrades='error') {
+function match_grade_options($gradeoptionsfull, $grade, $matchgrades = 'error') {
+
     if ($matchgrades == 'error') {
-        // if we just need an error...
+        // (Almost) exact match, or an error.
         foreach ($gradeoptionsfull as $value => $option) {
-            // slightly fuzzy test, never check floats for equality :-)
+            // Slightly fuzzy test, never check floats for equality.
             if (abs($grade - $value) < 0.00001) {
-                return $grade;
+                return $value; // Be sure the return the proper value.
             }
         }
-        // didn't find a match so that's an error
+        // Didn't find a match so that's an error.
         return false;
+
     } else if ($matchgrades == 'nearest') {
-        // work out nearest value
-        $hownear = array();
+        // Work out nearest value
+        $best = false;
+        $bestmismatch = 2;
         foreach ($gradeoptionsfull as $value => $option) {
-            if ($grade==$value) {
-                return $grade;
+            $newmismatch = abs($grade - $value);
+            if ($newmismatch < $bestmismatch) {
+                $best = $value;
+                $bestmismatch = $newmismatch;
             }
-            $hownear[ $value ] = abs( $grade - $value );
         }
-        // reverse sort list of deltas and grab the last (smallest)
-        asort( $hownear, SORT_NUMERIC );
-        reset( $hownear );
-        return key( $hownear );
+        return $best;
+
     } else {
-        return false;
+        // Unknow option passed.
+        throw new coding_exception('Unknown $matchgrades ' . $matchgrades .
+                ' passed to match_grade_options');
     }
 }
 
@@ -343,7 +348,7 @@ function question_delete_question($questionid) {
 /**
  * All question categories and their questions are deleted for this course.
  *
- * @param object $mod an object representing the activity
+ * @param stdClass $course an object representing the activity
  * @param boolean $feedback to specify if the process must output a summary of its work
  * @return boolean
  */
@@ -780,14 +785,22 @@ function question_load_questions($questionids, $extrafields = '', $join = '') {
  */
 function _tidy_question($question, $loadtags = false) {
     global $CFG;
+
+    // Load question-type specific fields.
     if (!question_bank::is_qtype_installed($question->qtype)) {
         $question->questiontext = html_writer::tag('p', get_string('warningmissingtype',
                 'qtype_missingtype')) . $question->questiontext;
     }
     question_bank::get_qtype($question->qtype)->get_question_options($question);
+
+    // Convert numeric fields to float. (Prevents these being displayed as 1.0000000.)
+    $question->defaultmark += 0;
+    $question->penalty += 0;
+
     if (isset($question->_partiallyloaded)) {
         unset($question->_partiallyloaded);
     }
+
     if ($loadtags && !empty($CFG->usetags)) {
         require_once($CFG->dirroot . '/tag/lib.php');
         $question->tags = tag_get_tags_array('question', $question->id);
@@ -843,17 +856,6 @@ function question_hash($question) {
 }
 
 /// FUNCTIONS THAT SIMPLY WRAP QUESTIONTYPE METHODS //////////////////////////////////
-/**
- * Get anything that needs to be included in the head of the question editing page
- * for a particular question type. This function is called by question/question.php.
- *
- * @param $question A question object. Only $question->qtype is used.
- * @return string Deprecated. Some HTML code that can go inside the head tag.
- */
-function question_get_editing_head_contributions($question) {
-    question_bank::get_qtype($question->qtype, false)->get_editing_head_contributions();
-}
-
 /**
  * Saves question options
  *
@@ -1003,7 +1005,7 @@ function question_category_select_menu($contexts, $top = false, $currentcat = 0,
     foreach ($categoriesarray as $group => $opts) {
         $options[] = array($group => $opts);
     }
-
+    echo html_writer::label($selected, 'menucategory', false, array('class' => 'accesshide'));
     echo html_writer::select($options, 'category', $selected, $choose);
 }
 
@@ -1115,16 +1117,18 @@ function question_category_options($contexts, $top = false, $currentcat = 0,
 
     // sort cats out into different contexts
     $categoriesarray = array();
-    foreach ($pcontexts as $pcontext) {
-        $contextstring = print_context_name(
-                get_context_instance_by_id($pcontext), true, true);
+    foreach ($pcontexts as $contextid) {
+        $context = context::instance_by_id($contextid);
+        $contextstring = $context->get_context_name(true, true);
         foreach ($categories as $category) {
-            if ($category->contextid == $pcontext) {
+            if ($category->contextid == $contextid) {
                 $cid = $category->id;
                 if ($currentcat != $cid || $currentcat == 0) {
                     $countstring = !empty($category->questioncount) ?
                             " ($category->questioncount)" : '';
-                    $categoriesarray[$contextstring][$cid] = $category->indentedname.$countstring;
+                    $categoriesarray[$contextstring][$cid] =
+                            format_string($category->indentedname, true,
+                                array('context' => $context)) . $countstring;
                 }
             }
         }
@@ -1197,33 +1201,27 @@ function question_categorylist($categoryid) {
  */
 function get_import_export_formats($type) {
     global $CFG;
+    require_once($CFG->dirroot . '/question/format.php');
 
-    $fileformats = get_plugin_list('qformat');
+    $formatclasses = get_plugin_list_with_class('qformat', '', 'format.php');
 
     $fileformatname = array();
-    require_once($CFG->dirroot . '/question/format.php');
-    foreach ($fileformats as $fileformat => $fdir) {
-        $formatfile = $fdir . '/format.php';
-        if (is_readable($formatfile)) {
-            include_once($formatfile);
-        } else {
-            continue;
-        }
+    foreach ($formatclasses as $component => $formatclass) {
 
-        $classname = 'qformat_' . $fileformat;
-        $formatclass = new $classname();
+        $format = new $formatclass();
         if ($type == 'import') {
-            $provided = $formatclass->provide_import();
+            $provided = $format->provide_import();
         } else {
-            $provided = $formatclass->provide_export();
+            $provided = $format->provide_export();
         }
 
         if ($provided) {
-            $fileformatnames[$fileformat] = get_string($fileformat, 'qformat_' . $fileformat);
+            list($notused, $fileformat) = explode('_', $component, 2);
+            $fileformatnames[$fileformat] = get_string('pluginname', $component);
         }
     }
 
-    textlib_get_instance()->asort($fileformatnames);
+    collatorlib::asort($fileformatnames);
     return $fileformatnames;
 }
 
@@ -1501,6 +1499,14 @@ function question_get_all_capabilities() {
     return $caps;
 }
 
+
+/**
+ * Tracks all the contexts related to the one where we are currently editing
+ * questions, and provides helper methods to check permissions.
+ *
+ * @copyright 2007 Jamie Pratt me@jamiep.org
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class question_edit_contexts {
 
     public static $caps = array(
@@ -1527,28 +1533,27 @@ class question_edit_contexts {
     protected $allcontexts;
 
     /**
-     * @param current context
+     * Constructor
+     * @param context the current context.
      */
-    public function __construct($thiscontext) {
-        $pcontextids = get_parent_contexts($thiscontext);
-        $contexts = array($thiscontext);
-        foreach ($pcontextids as $pcontextid) {
-            $contexts[] = get_context_instance_by_id($pcontextid);
-        }
-        $this->allcontexts = $contexts;
+    public function __construct(context $thiscontext) {
+        $this->allcontexts = array_values($thiscontext->get_parent_contexts(true));
     }
+
     /**
      * @return array all parent contexts
      */
     public function all() {
         return $this->allcontexts;
     }
+
     /**
      * @return object lowest context which must be either the module or course context
      */
     public function lowest() {
         return $this->allcontexts[0];
     }
+
     /**
      * @param string $cap capability
      * @return array parent contexts having capability, zero based index
@@ -1562,6 +1567,7 @@ class question_edit_contexts {
         }
         return $contextswithcap;
     }
+
     /**
      * @param array $caps capabilities
      * @return array parent contexts having at least one of $caps, zero based index
@@ -1578,6 +1584,7 @@ class question_edit_contexts {
         }
         return $contextswithacap;
     }
+
     /**
      * @param string $tabname edit tab name
      * @return array parent contexts having at least one of $caps, zero based index
@@ -1585,6 +1592,7 @@ class question_edit_contexts {
     public function having_one_edit_tab_cap($tabname) {
         return $this->having_one_cap(self::$caps[$tabname]);
     }
+
     /**
      * @return those contexts where a user can add a question and then use it.
      */
@@ -1672,17 +1680,20 @@ class question_edit_contexts {
     }
 }
 
+
 /**
  * Helps call file_rewrite_pluginfile_urls with the right parameters.
  *
+ * @package  core_question
+ * @category files
  * @param string $text text being processed
  * @param string $file the php script used to serve files
- * @param int $contextid
+ * @param int $contextid context ID
  * @param string $component component
  * @param string $filearea filearea
  * @param array $ids other IDs will be used to check file permission
- * @param int $itemid
- * @param array $options
+ * @param int $itemid item ID
+ * @param array $options options
  * @return string
  */
 function question_rewrite_question_urls($text, $file, $contextid, $component,
@@ -1723,8 +1734,9 @@ function question_rewrite_questiontext_preview_urls($questiontext, $contextid,
  * @param int $questionid the question id
  * @param array $args the remaining file arguments (file path).
  * @param bool $forcedownload whether the user must be forced to download the file.
+ * @param array $options additional options affecting the file serving
  */
-function question_send_questiontext_file($questionid, $args, $forcedownload) {
+function question_send_questiontext_file($questionid, $args, $forcedownload, $options) {
     global $DB;
 
     $question = $DB->get_record_sql('
@@ -1739,7 +1751,7 @@ function question_send_questiontext_file($questionid, $args, $forcedownload) {
         send_file_not_found();
     }
 
-    send_stored_file($file, 0, 0, $forcedownload);
+    send_stored_file($file, 0, 0, $forcedownload, $options);
 }
 
 /**
@@ -1755,14 +1767,17 @@ function question_send_questiontext_file($questionid, $args, $forcedownload) {
  *
  * Does not return, either calls send_file_not_found(); or serves the file.
  *
- * @param object $course course settings object
- * @param object $context context object
+ * @package  core_question
+ * @category files
+ * @param stdClass $course course settings object
+ * @param stdClass $context context object
  * @param string $component the name of the component we are serving files for.
  * @param string $filearea the name of the file area.
  * @param array $args the remaining bits of the file path.
  * @param bool $forcedownload whether the user must be forced to download the file.
+ * @param array $options additional options affecting the file serving
  */
-function question_pluginfile($course, $context, $component, $filearea, $args, $forcedownload) {
+function question_pluginfile($course, $context, $component, $filearea, $args, $forcedownload, array $options=array()) {
     global $DB, $CFG;
 
     if ($filearea === 'questiontext_preview') {
@@ -1770,7 +1785,7 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
         $questionid = array_shift($args);
 
         component_callback($component, 'questiontext_preview_pluginfile', array(
-                $context, $questionid, $args, $forcedownload));
+                $context, $questionid, $args, $forcedownload, $options));
 
         send_file_not_found();
     }
@@ -1843,7 +1858,7 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
     if ($module === 'core_question_preview') {
         require_once($CFG->dirroot . '/question/previewlib.php');
         return question_preview_question_pluginfile($course, $context,
-                $component, $filearea, $qubaid, $slot, $args, $forcedownload);
+                $component, $filearea, $qubaid, $slot, $args, $forcedownload, $options);
 
     } else {
         $dir = get_component_directory($module);
@@ -1853,12 +1868,19 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
         include_once("$dir/lib.php");
 
         $filefunction = $module . '_question_pluginfile';
-        if (!function_exists($filefunction)) {
-            send_file_not_found();
+        if (function_exists($filefunction)) {
+            $filefunction($course, $context, $component, $filearea, $qubaid, $slot,
+                $args, $forcedownload, $options);
         }
 
-        $filefunction($course, $context, $component, $filearea, $qubaid, $slot,
-                $args, $forcedownload);
+        // Okay, we're here so lets check for function without 'mod_'.
+        if (strpos($module, 'mod_') === 0) {
+            $filefunctionold  = substr($module, 4) . '_question_pluginfile';
+            if (function_exists($filefunctionold)) {
+                $filefunctionold($course, $context, $component, $filearea, $qubaid, $slot,
+                    $args, $forcedownload, $options);
+            }
+        }
 
         send_file_not_found();
     }
@@ -1866,12 +1888,16 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
 
 /**
  * Serve questiontext files in the question text when they are displayed in this report.
- * @param context $context the context
+ *
+ * @package  core_files
+ * @category files
+ * @param stdClass $context the context
  * @param int $questionid the question id
  * @param array $args remaining file args
  * @param bool $forcedownload
+ * @param array $options additional options affecting the file serving
  */
-function core_question_questiontext_preview_pluginfile($context, $questionid, $args, $forcedownload) {
+function core_question_questiontext_preview_pluginfile($context, $questionid, $args, $forcedownload, array $options=array()) {
     global $DB;
 
     // Verify that contextid matches the question.
@@ -1888,7 +1914,7 @@ function core_question_questiontext_preview_pluginfile($context, $questionid, $a
 
     question_require_capability_on($question, 'use');
 
-    question_send_questiontext_file($questionid, $args, $forcedownload);
+    question_send_questiontext_file($questionid, $args, $forcedownload, $options);
 }
 
 /**

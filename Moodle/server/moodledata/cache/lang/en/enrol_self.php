@@ -1,5 +1,11 @@
 <?php $this->cache['en']['enrol_self'] = array (
   'customwelcomemessage' => 'Custom welcome message',
+  'customwelcomemessage_help' => 'A custom welcome message may be added as plain text or Moodle-auto format, including HTML tags and multi-lang tags.
+
+The following placeholders may be included in the message:
+
+* Course name {$a->coursename}
+* Link to user\'s profile page {$a->profileurl}',
   'defaultrole' => 'Default role assignment',
   'defaultrole_desc' => 'Select role which should be assigned to users during self enrolment',
   'editenrolment' => 'Edit enrolment',
@@ -22,6 +28,7 @@ To use a group enrolment key, an enrolment key must be specified in the course s
   'maxenrolled' => 'Max enrolled users',
   'maxenrolled_help' => 'Specifies the maximum number of users that can self enrol. 0 means no limit.',
   'maxenrolledreached' => 'Maximum number of users allowed to self-enrol was already reached.',
+  'nopassword' => 'No enrolment key required.',
   'password' => 'Enrolment key',
   'password_help' => 'An enrolment key enables access to the course to be restricted to only those who know the key.
 

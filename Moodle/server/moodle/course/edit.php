@@ -65,18 +65,6 @@ if ($id) { // editing course
 // Prepare course and the editor
 $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'noclean'=>true);
 if (!empty($course)) {
-    $allowedmods = array();
-    if ($am = $DB->get_records('course_allowed_modules', array('course'=>$course->id))) {
-        foreach ($am as $m) {
-            $allowedmods[] = $m->module;
-        }
-    } else {
-        // this happens in case we edit course created before enabling module restrictions or somebody disabled everything :-(
-        if (empty($course->restrictmodules) and !empty($CFG->defaultallowedmodules)) {
-            $allowedmods = explode(',', $CFG->defaultallowedmodules);
-        }
-    }
-    $course->allowedmods = $allowedmods;
     //add context for editor
     $editoroptions['context'] = $coursecontext;
     $course = file_prepare_standard_editor($course, 'summary', $editoroptions, $coursecontext, 'course', 'summary', 0);
@@ -85,13 +73,6 @@ if (!empty($course)) {
     //editor should respect category context if course context is not set.
     $editoroptions['context'] = $catcontext;
     $course = file_prepare_standard_editor($course, 'summary', $editoroptions, null, 'course', 'summary', null);
-
-    // Set up the default restricted module list
-    if (!empty($CFG->restrictbydefault)) {
-        if (!empty($CFG->defaultallowedmodules)) {
-            $course->allowedmods = explode(',', $CFG->defaultallowedmodules);
-        }
-    }
 }
 
 // first create the form
@@ -145,6 +126,7 @@ if ($editform->is_cancelled()) {
         // Save any changes to the files used in the editor
         update_course($data, $editoroptions);
     }
+    rebuild_course_cache($course->id);
 
     switch ($returnto) {
         case 'category':

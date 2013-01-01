@@ -39,28 +39,26 @@
   'delete_old_items' => 'Delete old items',
   'delete_template' => 'Delete template',
   'delete_templates' => 'Delete template...',
-  'depending' => 'depending items',
-  'depending_help' => 'Depending items allow you to show items depend on values from other items.<br />
-<strong>Here an build example to use it:</strong><br />
+  'depending' => 'Dependencies',
+  'depending_help' => 'It is possible to show an item depending on the value of another item.<br />
+<strong>Here is an example.</strong><br />
 <ul>
-<li>First create an item on which value other items depends.</li>
-<li>Next add a pagebreak.</li>
-<li>Next add the items depend on the item-value before<br />
-Choose in the item creation-form the item in the list "depend item" and put the needed value into the textbox "depend value".</li>
+<li>First, create an item on which another item will depend on.</li>
+<li>Next, add a pagebreak.</li>
+<li>Then add the items dependant on the value of the item created before. Choose the item from the list labelled "Dependence item" and write the required value in the textbox labelled "Dependence value".</li>
 </ul>
-<strong>The structure should looks like this:</strong>
+<strong>The item structure should look like this.</strong>
 <ol>
-<li>Item Q: do you have a car? A: yes/no</li>
+<li>Item Q: Do you have a car? A: yes/no</li>
 <li>Pagebreak</li>
-<li>Item Q: what color has your car?<br />
+<li>Item Q: What colour is your car?<br />
 (this item depends on item 1 with value = yes)</li>
-<li>Item Q: why you have not a car?<br />
+<li>Item Q: Why don\'t you have a car?<br />
 (this item depends on item 1 with value = no)</li>
 <li> ... other items</li>
-</ol>
-That is all. Have fun!',
-  'dependitem' => 'depend item',
-  'dependvalue' => 'depend value',
+</ol>',
+  'dependitem' => 'Dependence item',
+  'dependvalue' => 'Dependence value',
   'description' => 'Description',
   'do_not_analyse_empty_submits' => 'Do not analyse empty submits',
   'dropdown' => 'Multiple choice - single answer allowed (dropdownlist)',
@@ -73,16 +71,17 @@ That is all. Have fun!',
   'email_notification' => 'Send e-mail notifications',
   'emailnotification' => 'emailnotifications',
   'emailnotification_help' => 'If enabled, administrators receive email notification of feedback submissions.',
-  'emailteachermail' => '{$a->username} has completed feedback activity : \'{$a->feedback}\'                               
-                                       
-You can view it here:                                   
-                                       
+  'emailteachermail' => '{$a->username} has completed feedback activity : \'{$a->feedback}\'
+
+You can view it here:
+
 {$a->url}',
-  'emailteachermailhtml' => '{$a->username} has completed feedback activity : <i>\'{$a->feedback}\'</i><br /><br />                             
+  'emailteachermailhtml' => '{$a->username} has completed feedback activity : <i>\'{$a->feedback}\'</i><br /><br />
 You can view it <a href="{$a->url}">here</a>.',
   'entries_saved' => 'Your answers have been saved. Thank you.',
   'export_questions' => 'Export questions',
   'export_to_excel' => 'Export to Excel',
+  'feedback:addinstance' => 'Add a new feedback',
   'feedbackclose' => 'Close the feedback at',
   'feedbackcloses' => 'Feedback closes',
   'feedback:complete' => 'Complete a feedback',
@@ -141,7 +140,17 @@ you can associate them with this feedback using map course(s). Multiple courses 
   'messageprovider:submission' => 'Feedback notifications',
   'mode' => 'Mode',
   'modulename' => 'Feedback',
-  'modulename_help' => 'The feedback modules enables custom surveys to be created.',
+  'modulename_help' => 'The feedback activity module enables a teacher to create a custom survey for collecting feedback from participants using a variety of question types including multiple choice, yes/no or text input.
+
+Feedback responses may be anonymous if desired, and results may be shown to all participants or restricted to teachers only. Any feedback activities on the site front page may also be completed by non-logged-in users.
+
+Feedback activities may be used
+
+* For course evaluations, helping improve the content for later participants
+* To enable participants to sign up for course modules, events etc.
+* For guest surveys of course choices, school policies etc.
+* For anti-bullying surveys in which students can report incidents anonymously',
+  'modulename_link' => 'mod/feedback/view',
   'modulenameplural' => 'Feedback',
   'movedown_item' => 'Move this question down',
   'move_here' => 'Move here',

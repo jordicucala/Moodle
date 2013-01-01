@@ -96,7 +96,11 @@ M.mod_quiz.timer = {
             Y.one('#quiz-time-left').setContent(M.str.quiz.timesup);
             var input = Y.one('input[name=timeup]');
             input.set('value', 1);
-            input.ancestor('form').submit();
+            var form = input.ancestor('form');
+            if (form.one('input[name=finishattempt]')) {
+                form.one('input[name=finishattempt]').set('value', 0);
+            }
+            form.submit();
             return;
         }
 
@@ -248,13 +252,30 @@ M.mod_quiz.secure_window = {
         e.halt();
     },
 
+    /**
+     * Event handler for the quiz start attempt button.
+     */
+    start_attempt_action: function(e, args) {
+        if (args.startattemptwarning == '') {
+            openpopup(e, args);
+        } else {
+            M.util.show_confirm_dialog(e, {
+                message: args.startattemptwarning,
+                callback: function() {
+                    openpopup(e, args);
+                },
+                continuelabel: M.util.get_string('startattempt', 'quiz')
+            });
+        }
+    },
+
     init_close_button: function(Y, url) {
         Y.on('click', function(e) {
             M.mod_quiz.secure_window.close(url, 0)
         }, '#secureclosebutton');
     },
 
-    close: function(url, delay) {
+    close: function(Y, url, delay) {
         setTimeout(function() {
             if (window.opener) {
                 window.opener.document.location.reload();

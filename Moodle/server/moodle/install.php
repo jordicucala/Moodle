@@ -67,6 +67,13 @@ if (version_compare(phpversion(), "5.2.0") < 0) {
     die;
 }
 
+// make sure iconv is available and actually works
+if (!function_exists('iconv')) {
+    // this should not happen, this must be very borked install
+    echo 'Moodle requires the iconv PHP extension. Please install or enable the iconv extension.';
+    die();
+}
+
 if (PHP_INT_SIZE > 4) {
     // most probably 64bit PHP - we need a lot more memory
     $minrequiredmemory = '70M';
@@ -153,6 +160,8 @@ $CFG->libdir               = "$CFG->dirroot/lib";
 $CFG->wwwroot              = install_guess_wwwroot(); // can not be changed - ppl must use the real address when installing
 $CFG->httpswwwroot         = $CFG->wwwroot;
 $CFG->dataroot             = $config->dataroot;
+$CFG->tempdir              = $CFG->dataroot.'/temp';
+$CFG->cachedir             = $CFG->dataroot.'/cache';
 $CFG->admin                = $config->admin;
 $CFG->docroot              = 'http://docs.moodle.org';
 $CFG->langotherroot        = $CFG->dataroot.'/lang';
@@ -215,11 +224,6 @@ $hint_database = '';
 // Are we in help mode?
 if (isset($_GET['help'])) {
     install_print_help_page($_GET['help']);
-}
-
-// send css?
-if (isset($_GET['css'])) {
-    install_css_styles();
 }
 
 //first time here? find out suitable dataroot

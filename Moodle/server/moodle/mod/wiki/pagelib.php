@@ -771,7 +771,7 @@ class page_wiki_editcomment extends page_wiki {
         }
     }
 
-    protected function setup_tabs() {
+    protected function setup_tabs($options = array()) {
         parent::setup_tabs(array('linkedwhenactive' => 'comments', 'activetab' => 'comments'));
     }
 
@@ -1009,7 +1009,7 @@ class page_wiki_preview extends page_wiki_edit {
         $PAGE->set_url($CFG->wwwroot . '/mod/wiki/edit.php', $params);
     }
 
-    protected function setup_tabs() {
+    protected function setup_tabs($options = array()) {
         parent::setup_tabs(array('linkedwhenactive' => 'view', 'activetab' => 'view'));
     }
 
@@ -1119,7 +1119,7 @@ class page_wiki_diff extends page_wiki {
         $PAGE->navbar->add(get_string('diff', 'wiki'));
     }
 
-    protected function setup_tabs() {
+    protected function setup_tabs($options = array()) {
         parent::setup_tabs(array('linkedwhenactive' => 'history', 'activetab' => 'history'));
     }
 
@@ -1640,9 +1640,11 @@ class page_wiki_map extends page_wiki {
         $strspecial = get_string('special', 'wiki');
 
         foreach ($pages as $page) {
+            // We need to format the title here to account for any filtering
             $letter = format_string($page->title, true, array('context' => $this->modcontext));
-            $letter = strtoupper(substr($letter, 0, 1));
-            if (preg_match('/[A-Z]/', $letter)) {
+            $letter = textlib::substr($letter, 0, 1);
+            if (preg_match('/^[a-zA-Z]$/', $letter)) {
+                $letter = textlib::strtoupper($letter);
                 $stdaux->{$letter}[] = wiki_parser_link($page);
             } else {
                 $stdaux->{$strspecial}[] = wiki_parser_link($page);
@@ -1875,7 +1877,7 @@ class page_wiki_restoreversion extends page_wiki {
         $PAGE->navbar->add(get_string('restoreversion', 'wiki'));
     }
 
-    protected function setup_tabs() {
+    protected function setup_tabs($options = array()) {
         parent::setup_tabs(array('linkedwhenactive' => 'history', 'activetab' => 'history'));
     }
 
@@ -1943,7 +1945,7 @@ class page_wiki_deletecomment extends page_wiki {
         $PAGE->navbar->add(get_string('deletecommentcheck', 'wiki'));
     }
 
-    protected function setup_tabs() {
+    protected function setup_tabs($options = array()) {
         parent::setup_tabs(array('linkedwhenactive' => 'comments', 'activetab' => 'comments'));
     }
 
@@ -2114,7 +2116,7 @@ class page_wiki_viewversion extends page_wiki {
         $PAGE->navbar->add(get_string('versionnum', 'wiki', $this->version->version));
     }
 
-    protected function setup_tabs() {
+    protected function setup_tabs($options = array()) {
         parent::setup_tabs(array('linkedwhenactive' => 'history', 'activetab' => 'history', 'inactivetabs' => array('edit')));
     }
 
@@ -2481,7 +2483,7 @@ class page_wiki_admin extends page_wiki {
     protected function print_delete_content($showorphan = true) {
         $contents = array();
         $table = new html_table();
-        $table->head = array('','Page name');
+        $table->head = array('', get_string('pagename','wiki'));
         $table->attributes['class'] = 'generaltable mdl-align';
         $swid = $this->subwiki->id;
         if ($showorphan) {

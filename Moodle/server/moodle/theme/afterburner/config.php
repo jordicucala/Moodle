@@ -12,6 +12,7 @@ $THEME->sheets = array(
     'afterburner_mod',
     'afterburner_calendar',
     'afterburner_dock',
+    'afterburner_settings',
     'rtl'
 );
 
@@ -33,31 +34,31 @@ $THEME->layouts = array(
     'standard' => array(
         'file' => 'default.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post',
+        'defaultregion' => 'side-pre',
     ),
     // Main course page
     'course' => array(
         'file' => 'default.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post',
+        'defaultregion' => 'side-pre',
         'options' => array('langmenu'=>true),
     ),
     'coursecategory' => array(
         'file' => 'default.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post',
+        'defaultregion' => 'side-pre',
     ),
     // part of course, typical for modules - default page layout if $cm specified in require_login()
     'incourse' => array(
         'file' => 'default.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post',
+        'defaultregion' => 'side-pre',
     ),
     // The site home page.
     'frontpage' => array(
         'file' => 'default.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post',
+        'defaultregion' => 'side-pre',
         'options' => array('langmenu'=>true),
     ),
     // Server administration scripts.
@@ -132,3 +133,5 @@ $THEME->layouts = array(
 $THEME->enable_dock = true;
 
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
+
+$THEME->csspostprocess = 'afterburner_process_css';

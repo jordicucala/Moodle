@@ -27,7 +27,7 @@ require_once("../config.php");
 require_once($CFG->dirroot .'/notes/lib.php');
 
 $id    = required_param('id', PARAM_INT);              // course id
-$users = optional_param('userid', array(), PARAM_INT); // array of user id
+$users = optional_param_array('userid', array(), PARAM_INT); // array of user id
 $content = optional_param('content', '', PARAM_RAW); // note content
 $state = optional_param('state', '', PARAM_ALPHA); // note publish state
 
@@ -45,7 +45,7 @@ if (! $course = $DB->get_record('course', array('id'=>$id))) {
 }
 
 $context = get_context_instance(CONTEXT_COURSE, $id);
-require_login($course->id);
+require_login($course);
 
 // to create notes the current user needs a capability
 require_capability('moodle/notes:manage', $context);
@@ -93,8 +93,8 @@ echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
 $state_names = note_get_state_names();
 
 // the first time list hack
-if (empty($users)) {
-    foreach ($_POST as $k => $v) {
+if (empty($users) and $post = data_submitted()) {
+    foreach ($post as $k => $v) {
         if (preg_match('/^user(\d+)$/',$k,$m)) {
             $users[] = $m[1];
         }
@@ -117,7 +117,7 @@ echo '<p>' . get_string('content', 'notes');
 echo '<br /><textarea name="content" rows="5" cols="50">' . strip_tags(@$content) . '</textarea></p>';
 
 echo '<p>';
-echo get_string('publishstate', 'notes');
+echo html_writer::label(get_string('publishstate', 'notes'), 'menustate');
 echo $OUTPUT->help_icon('publishstate', 'notes');
 echo html_writer::select($state_names, 'state', empty($state) ? NOTES_STATE_PUBLIC : $state, false);
 echo '</p>';

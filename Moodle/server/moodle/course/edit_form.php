@@ -120,6 +120,12 @@ class course_edit_form extends moodleform {
         $mform->addHelpButton('format', 'format');
         $mform->setDefault('format', $courseconfig->format);
 
+        $mform->addElement('select', 'coursedisplay', get_string('coursedisplay'),
+            array(COURSE_DISPLAY_SINGLEPAGE => get_string('coursedisplay_single'),
+                COURSE_DISPLAY_MULTIPAGE => get_string('coursedisplay_multi')));
+        $mform->addHelpButton('coursedisplay', 'coursedisplay');
+        $mform->setDefault('coursedisplay', $courseconfig->coursedisplay);
+
         for ($i = 0; $i <= $courseconfig->maxsections; $i++) {
             $sectionmenu[$i] = "$i";
         }
@@ -150,7 +156,11 @@ class course_edit_form extends moodleform {
         $mform->addHelpButton('showreports', 'showreports');
         $mform->setDefault('showreports', $courseconfig->showreports);
 
-        $choices = get_max_upload_sizes($CFG->maxbytes);
+        // Handle non-existing $course->maxbytes on course creation.
+        $coursemaxbytes = !isset($course->maxbytes) ? null : $course->maxbytes;
+
+        // Let's prepare the maxbytes popup.
+        $choices = get_max_upload_sizes($CFG->maxbytes, 0, 0, $coursemaxbytes);
         $mform->addElement('select', 'maxbytes', get_string('maximumupload'), $choices);
         $mform->addHelpButton('maxbytes', 'maximumupload');
         $mform->setDefault('maxbytes', $courseconfig->maxbytes);
@@ -177,7 +187,7 @@ class course_edit_form extends moodleform {
             $themes[''] = get_string('forceno');
             foreach ($themeobjects as $key=>$theme) {
                 if (empty($theme->hidefromselector)) {
-                    $themes[$key] = $theme->name;
+                    $themes[$key] = get_string('pluginname', 'theme_'.$theme->name);
                 }
             }
             $mform->addElement('select', 'theme', get_string('forcetheme'), $themes);
@@ -223,7 +233,7 @@ class course_edit_form extends moodleform {
             if (!empty($course->id)) {
                 $mform->setConstant('visible', $course->visible);
             } else {
-                $mform->setConstant('visible', $category->visible);
+                $mform->setConstant('visible', $courseconfig->visible);
             }
         }
 
@@ -254,40 +264,6 @@ class course_edit_form extends moodleform {
             $mform->addElement('hidden', 'completionstartonenrol');
             $mform->setType('completionstartonenrol', PARAM_INT);
             $mform->setDefault('completionstartonenrol',0);
-        }
-
-//--------------------------------------------------------------------------------
-        if (has_capability('moodle/site:config', $systemcontext)) {
-            if (((!empty($course->requested) && $CFG->restrictmodulesfor == 'requested') || $CFG->restrictmodulesfor == 'all')) {
-                $mform->addElement('header', '', get_string('restrictmodules'));
-
-                $options = array();
-                $options['0'] = get_string('no');
-                $options['1'] = get_string('yes');
-                $mform->addElement('select', 'restrictmodules', get_string('restrictmodules'), $options);
-                if (!empty($CFG->restrictbydefault)) {
-                    $mform->setDefault('restrictmodules', 1);
-                }
-
-                $mods = array(0=>get_string('allownone'));
-                $mods += $DB->get_records_menu('modules', array('visible'=>1), 'name', 'id, name');
-                $mform->addElement('select', 'allowedmods', get_string('to'), $mods, array('multiple'=>'multiple', 'size'=>'10'));
-                $mform->disabledIf('allowedmods', 'restrictmodules', 'eq', 0);
-                // defaults are already in $course
-            } else {
-                // remove any mod restriction
-                $mform->addElement('hidden', 'restrictmodules', 0);
-                $mform->setType('restrictmodules', PARAM_INT);
-            }
-        } else {
-            $mform->addElement('hidden', 'restrictmodules');
-            $mform->setType('restrictmodules', PARAM_INT);
-            if (empty($course->id)) {
-                $mform->setConstant('restrictmodules', (int)($CFG->restrictmodulesfor == 'all'));
-            } else {
-                // keep previous
-                $mform->setConstant('restrictmodules', $course->restrictmodules);
-            }
         }
 
 /// customizable role names in this course

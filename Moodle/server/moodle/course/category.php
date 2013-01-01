@@ -27,6 +27,7 @@
 
 require_once("../config.php");
 require_once($CFG->dirroot.'/course/lib.php');
+require_once($CFG->libdir.'/textlib.class.php');
 
 $id = required_param('id', PARAM_INT); // Category id
 $page = optional_param('page', 0, PARAM_INT); // which page to show
@@ -75,7 +76,8 @@ $sesskeyprovided = !empty($sesskey) && confirm_sesskey($sesskey);
 // Process any category actions.
 if ($canmanage && $resort && $sesskeyprovided) {
     // Resort the category if requested
-    if ($courses = get_courses($category->id, "fullname ASC", 'c.id,c.fullname,c.sortorder')) {
+    if ($courses = get_courses($category->id, '', 'c.id,c.fullname,c.sortorder')) {
+        collatorlib::asort_objects_by_property($courses, 'fullname', collatorlib::SORT_NATURAL);
         $i = 1;
         foreach ($courses as $course) {
             $DB->set_field('course', 'sortorder', $category->sortorder+$i, array('id'=>$course->id));
@@ -249,23 +251,25 @@ if (has_capability('moodle/category:viewhiddencategories', $context)) {
 }
 // We're going to preload the context for the subcategory as we know that we
 // need it later on for formatting.
-list($ctxselect, $ctxjoin) = context_instance_preload_sql('cc.id', CONTEXT_COURSECAT, 'ctx');
-$sql = "SELECT cc.* $ctxselect
+
+$ctxselect = context_helper::get_preload_record_columns_sql('ctx');
+$sql = "SELECT cc.*, $ctxselect
           FROM {course_categories} cc
-               $ctxjoin
-         WHERE cc.parent = :parentid
+          JOIN {context} ctx ON cc.id = ctx.instanceid
+         WHERE cc.parent = :parentid AND
+               ctx.contextlevel = :contextlevel
                $categorywhere
       ORDER BY cc.sortorder ASC";
-$subcategories = $DB->get_recordset_sql($sql, array('parentid' => $category->id));
+$subcategories = $DB->get_recordset_sql($sql, array('parentid' => $category->id, 'contextlevel' => CONTEXT_COURSECAT));
 // Prepare a table to display the sub categories.
 $table = new html_table;
 $table->attributes = array('border' => '0', 'cellspacing' => '2', 'cellpadding' => '4', 'class' => 'generalbox boxaligncenter category_subcategories');
-$table->head = array(get_string('subcategories'));
+$table->head = array(new lang_string('subcategories'));
 $table->data = array();
 $baseurl = new moodle_url('/course/category.php');
 foreach ($subcategories as $subcategory) {
     // Preload the context we will need it to format the category name shortly.
-    context_instance_preload($subcategory);
+    context_helper::preload_from_record($subcategory);
     $context = get_context_instance(CONTEXT_COURSECAT, $subcategory->id);
     // Prepare the things we need to create a link to the subcategory
     $attributes = $subcategory->visible ? array() : array('class' => 'dimmed');
@@ -338,7 +342,8 @@ if (!$courses) {
 
         $linkcss = $acourse->visible ? '' : ' class="dimmed" ';
         echo '<tr>';
-        echo '<td><a '.$linkcss.' href="view.php?id='.$acourse->id.'">'. format_string($acourse->fullname) .'</a></td>';
+        $coursename = get_course_display_name_for_list($acourse);
+        echo '<td><a '.$linkcss.' href="view.php?id='.$acourse->id.'">'. format_string($coursename) .'</a></td>';
         if ($editingon) {
             echo '<td>';
             if (has_capability('moodle/course:update', $coursecontext)) {
@@ -419,6 +424,7 @@ if (!$courses) {
         make_categories_list($movetocategories, $notused, 'moodle/category:manage');
         $movetocategories[$category->id] = get_string('moveselectedcoursesto');
         echo '<tr><td colspan="3" align="right">';
+        echo html_writer::label(get_string('moveselectedcoursesto'), 'movetoid', false, array('class' => 'accesshide'));
         echo html_writer::select($movetocategories, 'moveto', $category->id, null, array('id'=>'movetoid'));
         $PAGE->requires->js_init_call('M.util.init_select_autosubmit', array('movecourses', 'movetoid', false));
         echo '<input type="hidden" name="id" value="'.$category->id.'" />';

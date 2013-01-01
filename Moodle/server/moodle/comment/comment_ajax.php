@@ -16,6 +16,10 @@
 
 /*
  * Handling all ajax request for comments API
+ *
+ * @package   core
+ * @copyright 2010 Dongsheng Cai {@link http://dongsheng.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define('AJAX_SCRIPT', true);
 
@@ -48,12 +52,12 @@ if (!confirm_sesskey()) {
 }
 
 $client_id = required_param('client_id', PARAM_ALPHANUM);
-$area      = optional_param('area',      '', PARAM_ALPHAEXT);
+$area      = optional_param('area',      '', PARAM_AREA);
 $commentid = optional_param('commentid', -1, PARAM_INT);
 $content   = optional_param('content',   '', PARAM_RAW);
 $itemid    = optional_param('itemid',    '', PARAM_INT);
 $page      = optional_param('page',      0,  PARAM_INT);
-$component = optional_param('component', '',  PARAM_ALPHAEXT);
+$component = optional_param('component', '',  PARAM_COMPONENT);
 
 // initilising comment object
 $args = new stdClass;

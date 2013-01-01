@@ -16,11 +16,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
- * @subpackage backup-moodle2
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Defines backup_root_task class
+ *
+ * @package     core_backup
+ * @subpackage  moodle2
+ * @category    backup
+ * @copyright   2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Start task that provides all the settings common to all backups and some initialization steps
@@ -42,20 +47,45 @@ class backup_root_task extends backup_task {
 
 // Protected API starts here
 
+    protected function converter_deps($main_setting, $converters) {
+        foreach ($this->settings as $setting) {
+            $name = $setting->get_name();
+            if (in_array($name, $converters)) {
+                $setvalue = convert_helper::export_converter_dependencies($name, $main_setting->get_name());
+                if ($setvalue !== false) {
+                    $setting->add_dependency($main_setting, $setvalue, array('value' => $name));
+                }
+            }
+        }
+    }
+
     /**
      * Define the common setting that any backup type will have
      */
     protected function define_settings() {
-
+        global $CFG;
+        require_once($CFG->dirroot . '/backup/util/helper/convert_helper.class.php');
         // Define filename setting
         $filename = new backup_filename_setting('filename', base_setting::IS_FILENAME, 'backup.mbz');
-        $filename->set_ui(get_string('filename', 'backup'), 'backup.mbz', array('size'=>50));
+        $filename->set_ui_filename(get_string('filename', 'backup'), 'backup.mbz', array('size'=>50));
         $this->add_setting($filename);
+
+        // Present converter settings only in type course and mode general backup operations.
+        $converters = array();
+        if ($this->plan->get_type() == backup::TYPE_1COURSE and $this->plan->get_mode() == backup::MODE_GENERAL) {
+            $converters = convert_helper::available_converters(false);
+            foreach ($converters as $cnv) {
+                $formatcnv = new backup_users_setting($cnv, base_setting::IS_BOOLEAN, false);
+                $formatcnv->set_ui(new backup_setting_ui_checkbox($formatcnv, get_string('backupformat'.$cnv, 'backup')));
+                $this->add_setting($formatcnv);
+            }
+        }
 
         // Define users setting (keeping it on hand to define dependencies)
         $users = new backup_users_setting('users', base_setting::IS_BOOLEAN, true);
         $users->set_ui(new backup_setting_ui_checkbox($users, get_string('rootsettingusers', 'backup')));
         $this->add_setting($users);
+        $this->converter_deps($users, $converters);
 
         // Define anonymize (dependent of users)
         $anonymize = new backup_anonymize_setting('anonymize', base_setting::IS_BOOLEAN, false);
@@ -78,11 +108,13 @@ class backup_root_task extends backup_task {
         $blocks = new backup_generic_setting('blocks', base_setting::IS_BOOLEAN, true);
         $blocks->set_ui(new backup_setting_ui_checkbox($blocks, get_string('rootsettingblocks', 'backup')));
         $this->add_setting($blocks);
+        $this->converter_deps($blocks, $converters);
 
         // Define filters
         $filters = new backup_generic_setting('filters', base_setting::IS_BOOLEAN, true);
         $filters->set_ui(new backup_setting_ui_checkbox($filters, get_string('rootsettingfilters', 'backup')));
         $this->add_setting($filters);
+        $this->converter_deps($filters, $converters);
 
         // Define comments (dependent of users)
         $comments = new backup_comments_setting('comments', base_setting::IS_BOOLEAN, true);

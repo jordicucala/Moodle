@@ -610,8 +610,8 @@ class define_role_table_advanced extends capability_table_with_risks {
         $shortname = optional_param('shortname', null, PARAM_RAW);
         if (!is_null($shortname)) {
             $this->role->shortname = $shortname;
-            $this->role->shortname = textlib_get_instance()->specialtoascii($this->role->shortname);
-            $this->role->shortname = moodle_strtolower(clean_param($this->role->shortname, PARAM_ALPHANUMEXT));
+            $this->role->shortname = textlib::specialtoascii($this->role->shortname);
+            $this->role->shortname = textlib::strtolower(clean_param($this->role->shortname, PARAM_ALPHANUMEXT));
             if (empty($this->role->shortname)) {
                 $this->errors['shortname'] = get_string('errorbadroleshortname', 'role');
             }
@@ -996,13 +996,14 @@ abstract class role_assign_user_selector_base extends user_selector_base {
      */
     public function __construct($name, $options) {
         global $CFG;
-        parent::__construct($name, $options);
-        $this->roleid = $options['roleid'];
         if (isset($options['context'])) {
             $this->context = $options['context'];
         } else {
             $this->context = get_context_instance_by_id($options['contextid']);
         }
+        $options['accesscontext'] = $this->context;
+        parent::__construct($name, $options);
+        $this->roleid = $options['roleid'];
         require_once($CFG->dirroot . '/group/lib.php');
     }
 
@@ -1041,13 +1042,10 @@ class potential_assignees_below_course extends role_assign_user_selector_base {
         $countfields = 'SELECT COUNT(u.id)';
 
         $sql   = " FROM {user} u
-                  WHERE u.id IN ($enrolsql) $wherecondition
-                        AND u.id NOT IN (
-                           SELECT u.id
-                             FROM {role_assignments} r, {user} u
-                            WHERE r.contextid = :contextid
-                                  AND u.id = r.userid
-                                  AND r.roleid = :roleid)";
+              LEFT JOIN {role_assignments} ra ON (ra.userid = u.id AND ra.roleid = :roleid AND ra.contextid = :contextid)
+                  WHERE u.id IN ($enrolsql)
+                        $wherecondition
+                        AND ra.id IS NULL";
         $order = ' ORDER BY lastname ASC, firstname ASC';
 
         $params['contextid'] = $this->context->id;
@@ -1095,10 +1093,9 @@ class potential_assignees_course_and_above extends role_assign_user_selector_bas
         $sql = " FROM {user}
                 WHERE $wherecondition
                       AND id NOT IN (
-                         SELECT u.id
-                           FROM {role_assignments} r, {user} u
+                         SELECT r.userid
+                           FROM {role_assignments} r
                           WHERE r.contextid = :contextid
-                                AND u.id = r.userid
                                 AND r.roleid = :roleid)";
         $order = ' ORDER BY lastname ASC, firstname ASC';
 
@@ -1583,13 +1580,31 @@ class admins_existing_selector extends user_selector_base {
             return array();
         }
 
-        if ($search) {
-            $groupname = get_string('extusersmatching', 'role', $search);
-        } else {
-            $groupname = get_string('extusers', 'role');
+        $mainadmin = array();
+        $adminids = explode(',', $CFG->siteadmins);
+        foreach ($adminids as $id) {
+            if (isset($availableusers[$id])) {
+                $mainadmin = array($id=>$availableusers[$id]);
+                unset($availableusers[$id]);
+                break;
+            }
         }
 
-        return array($groupname => $availableusers);
+        $result = array();
+        if ($mainadmin) {
+            $result[get_string('mainadmin', 'role')] = $mainadmin;
+        }
+
+        if ($availableusers) {
+            if ($search) {
+                $groupname = get_string('extusersmatching', 'role', $search);
+            } else {
+                $groupname = get_string('extusers', 'role');
+            }
+            $result[$groupname] = $availableusers;
+        }
+
+        return $result;
     }
 
     protected function get_options() {

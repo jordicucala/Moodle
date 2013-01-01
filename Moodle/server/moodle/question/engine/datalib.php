@@ -108,9 +108,9 @@ class question_engine_data_mapper {
         $record->minfraction = $qa->get_min_fraction();
         $record->flagged = $qa->is_flagged();
         $record->questionsummary = $qa->get_question_summary();
-        if (textlib_get_instance()->strlen($record->questionsummary) > question_bank::MAX_SUMMARY_LENGTH) {
+        if (textlib::strlen($record->questionsummary) > question_bank::MAX_SUMMARY_LENGTH) {
             // It seems some people write very long quesions! MDL-30760
-            $record->questionsummary = textlib_get_instance()->substr($record->questionsummary,
+            $record->questionsummary = textlib::substr($record->questionsummary,
                     0, question_bank::MAX_SUMMARY_LENGTH - 3) . '...';
         }
         $record->rightanswer = $qa->get_right_answer_summary();
@@ -758,6 +758,14 @@ ORDER BY
      * @param qubaid_condition $qubaids identifies which question useages to delete.
      */
     protected function delete_usage_records_for_mysql(qubaid_condition $qubaids) {
+        $qubaidtest = $qubaids->usage_id_in();
+        if (strpos($qubaidtest, 'question_usages') !== false &&
+                strpos($qubaidtest, 'IN (SELECT') === 0) {
+            // This horrible hack is required by MDL-29847. It comes from
+            // http://www.xaprb.com/blog/2006/06/23/how-to-select-from-an-update-target-in-mysql/
+            $qubaidtest = 'IN (SELECT * FROM ' . substr($qubaidtest, 3) . ' AS hack_subquery_alias)';
+        }
+
         // TODO once MDL-29589 is fixed, eliminate this method, and instead use the new $DB API.
         $this->db->execute('
                 DELETE qu, qa, qas, qasd
@@ -765,7 +773,7 @@ ORDER BY
                   JOIN {question_attempts}          qa   ON qa.questionusageid = qu.id
              LEFT JOIN {question_attempt_steps}     qas  ON qas.questionattemptid = qa.id
              LEFT JOIN {question_attempt_step_data} qasd ON qasd.attemptstepid = qas.id
-                 WHERE qu.id ' . $qubaids->usage_id_in(),
+                 WHERE qu.id ' . $qubaidtest,
                 $qubaids->usage_id_in_params());
     }
 
@@ -913,7 +921,7 @@ ORDER BY
     /**
      * Get a subquery that returns the latest step of every qa in some qubas.
      * Currently, this is only used by the quiz reports. See
-     * {@link quiz_attempt_report_table::add_latest_state_join()}.
+     * {@link quiz_attempts_report_table::add_latest_state_join()}.
      * @param string $alias alias to use for this inline-view.
      * @param qubaid_condition $qubaids restriction on which question_usages we
      *      are interested in. This is important for performance.

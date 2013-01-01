@@ -76,13 +76,13 @@ abstract class question_behaviour {
         }
     }
 
-    public static function get_required_behaviours() {
-        return array();
-    }
-
     /**
      * Some behaviours can only work with certing types of question. This method
      * allows the behaviour to verify that a question is compatible.
+     *
+     * This implementation is only provided for backwards-compatibility. You should
+     * override this method if you are implementing a behaviour.
+     *
      * @param question_definition $question the question.
      */
     public function is_compatible_question(question_definition $question) {
@@ -95,6 +95,9 @@ abstract class question_behaviour {
      * of a particular subtype, or that implement a particular interface.
      * This method lets the behaviour document that. The type of
      * question passed to the constructor is then checked against this type.
+     *
+     * @deprecated since 2.2. Please use/override {@link is_compatible_question()} instead.
+     *
      * @return string class/interface name.
      */
     protected function required_question_definition_type() {
@@ -474,9 +477,9 @@ abstract class question_behaviour {
      */
     public static function is_manual_grade_in_range($qubaid, $slot) {
         $prefix = 'q' . $qubaid . ':' . $slot . '_';
-        $mark = optional_param($prefix . '-mark', null, PARAM_NUMBER);
-        $maxmark = optional_param($prefix . '-maxmark', null, PARAM_NUMBER);
-        $minfraction = optional_param($prefix . ':minfraction', null, PARAM_NUMBER);
+        $mark = question_utils::optional_param_mark($prefix . '-mark');
+        $maxmark = optional_param($prefix . '-maxmark', null, PARAM_FLOAT);
+        $minfraction = optional_param($prefix . ':minfraction', null, PARAM_FLOAT);
         return is_null($mark) || ($mark >= $minfraction * $maxmark && $mark <= $maxmark);
     }
 

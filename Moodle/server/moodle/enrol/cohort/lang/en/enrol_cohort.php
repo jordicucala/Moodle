@@ -24,6 +24,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['ajaxmore'] = 'More...';
+$string['cohortsearch'] = 'Search';
 $string['cohort:config'] = 'Configure cohort instances';
+$string['cohort:unenrol'] = 'Unenrol suspended users';
 $string['pluginname'] = 'Cohort sync';
 $string['pluginname_desc'] = 'Cohort enrolment plugin synchronises cohort members with course participants.';

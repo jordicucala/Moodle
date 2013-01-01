@@ -34,6 +34,7 @@ $string['admindirname'] = 'Admin-map';
 $string['availablelangs'] = 'Lijst met beschikbare talen';
 $string['chooselanguagehead'] = 'Kies een taal';
 $string['chooselanguagesub'] = 'Kies een taal voor de installatie. Deze taal zal ook als standaardtaal voor de site gebruikt worden, maar die instelling kun je later nog wijzigen.';
+$string['clialreadyconfigured'] = 'Bestand config.php bestaat al, maak aub gebruik van admin/cli/install_database.php indien je deze site wenst te installeren.';
 $string['clialreadyinstalled'] = 'Bestand config.php bestaat al. Gebruik admin/cil/upgrade.php om je site te upgraden.';
 $string['cliinstallheader'] = 'Moodle {$a} command line installatieprogramma';
 $string['databasehost'] = 'Databank host:';

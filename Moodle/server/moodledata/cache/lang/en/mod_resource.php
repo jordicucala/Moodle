@@ -28,6 +28,7 @@
 * New window - The file is displayed in a new browser window with menus and an address bar',
   'displayselect_link' => 'mod/file/mod',
   'displayselectexplain' => 'Choose display type, unfortunately not all types are suitable for all files.',
+  'dnduploadresource' => 'Create file resource',
   'encryptedcode' => 'Encrypted code',
   'filenotfound' => 'File not found, sorry.',
   'filterfiles' => 'Use filters on file content',
@@ -39,6 +40,16 @@
   'legacyfilesactive' => 'Active',
   'legacyfilesdone' => 'Finished',
   'modulename' => 'File',
+  'modulename_help' => 'The file module enables a teacher to provide a file as a course resource. Where possible, the file will be displayed within the course interface; otherwise students will be prompted to download it. The file may include supporting files, for example an HTML page may have embedded images or Flash objects.
+
+Note that students need to have the appropriate software on their computers in order to open the file.
+
+A file may be used
+
+* To share presentations given in class
+* To include a mini website as a course resource
+* To provide draft files of certain software programs (eg Photoshop .psd) so students can edit and submit them for assessment',
+  'modulename_link' => 'mod/resource/view',
   'modulenameplural' => 'Files',
   'neverseen' => 'Never seen',
   'notmigrated' => 'This legacy resource type ({$a}) was not yet migrated, sorry.',
@@ -56,8 +67,22 @@
   'printheadingexplain' => 'Display resource name above content? Some display types may not display resource name even if enabled.',
   'printintro' => 'Display resource description',
   'printintroexplain' => 'Display resource description below content? Some display types may not display description even if enabled.',
+  'resource:addinstance' => 'Add a new resource',
   'resourcecontent' => 'Files and subfolders',
+  'resourcedetails_sizetype' => '{$a->size} {$a->type}',
   'resource:exportresource' => 'Export resource',
   'resource:view' => 'View resource',
   'selectmainfile' => 'Please select the main file by clicking the icon next to file name.',
+  'showsize' => 'Show size',
+  'showsize_help' => 'Displays the file size, such as \'3.1 MB\', beside links to the file.
+
+If there are multiple files in this resource, the total size of all files is displayed.',
+  'showsize_desc' => 'Display file size on course page?',
+  'showtype' => 'Show type',
+  'showtype_desc' => 'Display file type (e.g. \'Word document\') on course page?',
+  'showtype_help' => 'Displays the type of the file, such as \'Word document\', beside links to the file.
+
+If there are multiple files in this resource, the start file type is displayed.
+
+If the file type is not known to the system, it will not display.',
 );

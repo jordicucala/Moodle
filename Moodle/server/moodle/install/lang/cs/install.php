@@ -34,6 +34,7 @@ $string['admindirname'] = 'Adresář se soubory pro správu serveru';
 $string['availablelangs'] = 'Dostupné jazykové balíčky';
 $string['chooselanguagehead'] = 'Vyberte jazyk';
 $string['chooselanguagesub'] = 'Zvolte si jazyk tohoto průvodce instalací. Vybraný jazyk bude též nastaven jako výchozí jazyk stránek, ale to půjde případně později změnit.';
+$string['clialreadyconfigured'] = 'Soubor config.php již existuje. Spusťte admin/cli/install_database.php, pokud chcete provést instalaci databáze.';
 $string['clialreadyinstalled'] = 'Soubor config.php již existuje. Spusťte admin/cli/upgrade.php, pokud chcete provést upgrade vašich stránek.';
 $string['cliinstallheader'] = 'Moodle {$a} - průvodce instalací z příkazové řádky';
 $string['databasehost'] = 'Databázový server';

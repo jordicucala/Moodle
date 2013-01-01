@@ -107,7 +107,8 @@ foreach ($contexts as $conid => $con) {
 
 /// Put the contexts into a tree structure.
 foreach ($contexts as $conid => $con) {
-    $parentcontextid = get_parent_contextid($con);
+    $context = context::instance_by_id($conid);
+    $parentcontextid = get_parent_contextid($context);
     if ($parentcontextid) {
         $contexts[$parentcontextid]->children[] = $conid;
     }
@@ -162,13 +163,14 @@ function print_report_tree($contextid, $contexts, $systemcontext, $fullname) {
     }
 
     // Pull the current context into an array for convinience.
-    $context = $contexts[$contextid];
+    $context = context::instance_by_id($contextid);
 
     // Print the context name.
-    echo $OUTPUT->heading(print_context_name($contexts[$contextid]), 4, 'contextname');
+    echo $OUTPUT->heading(html_writer::link($context->get_url(), $context->get_context_name()),
+            4, 'contextname');
 
     // If there are any role assignments here, print them.
-    foreach ($context->roleassignments as $ra) {
+    foreach ($contexts[$contextid]->roleassignments as $ra) {
         $value = $ra->contextid . ',' . $ra->roleid;
         $inputid = 'unassign' . $value;
 
@@ -188,7 +190,7 @@ function print_report_tree($contextid, $contexts, $systemcontext, $fullname) {
             }
             $a = new stdClass;
             $a->fullname = $fullname;
-            $a->contextlevel = get_contextlevel_name($context->contextlevel);
+            $a->contextlevel = $context->get_level_name();
             if ($context->contextlevel == CONTEXT_SYSTEM) {
                 $strgoto = get_string('gotoassignsystemroles', 'role');
                 $strcheck = get_string('checksystempermissionsfor', 'role', $a);

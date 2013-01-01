@@ -51,6 +51,8 @@
   'groupinfopeople' => 'Info about selected people',
   'grouping' => 'Grouping',
   'grouping_help' => 'A grouping is a collection of groups within a course. If a grouping is selected, students assigned to groups within the grouping will be able to work together.',
+  'groupingsection' => 'Grouping access',
+  'groupingsection_help' => 'A grouping is a collection of groups within a course. If a grouping is selected here, only students assigned to groups within this grouping will have access to the section.',
   'groupingdescription' => 'Grouping description',
   'groupingname' => 'Grouping name',
   'groupingnameexists' => 'The grouping name \'{$a}\' already exists in this course, please choose another one.',

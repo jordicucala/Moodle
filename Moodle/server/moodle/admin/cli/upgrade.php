@@ -20,7 +20,6 @@
  *
  * This script is not intended for beginners!
  * Potential problems:
- * - environment check is not present yet
  * - su to apache account or sudo before execution
  * - not compatible with Windows platform
  *
@@ -37,7 +36,7 @@ require_once($CFG->libdir.'/adminlib.php');       // various admin-only function
 require_once($CFG->libdir.'/upgradelib.php');     // general upgrade/install related functions
 require_once($CFG->libdir.'/clilib.php');         // cli only functions
 require_once($CFG->libdir.'/environmentlib.php');
-
+require_once($CFG->libdir.'/pluginlib.php');
 
 // now get cli options
 list($options, $unrecognized) = cli_get_params(
@@ -83,7 +82,7 @@ if (empty($CFG->version)) {
     cli_error(get_string('missingconfigversion', 'debug'));
 }
 
-require("$CFG->dirroot/version.php");       // defines $version, $release and $maturity
+require("$CFG->dirroot/version.php");       // defines $version, $release, $branch and $maturity
 $CFG->target_release = $release;            // used during installation and upgrades
 
 if ($version < $CFG->version) {
@@ -97,8 +96,9 @@ if (!moodle_needs_upgrading()) {
     cli_error(get_string('cliupgradenoneed', 'core_admin', $newversion), 0);
 }
 
-// test environment first
-if (!check_moodle_environment(normalize_version($release), $environment_results, false, ENV_SELECT_RELEASE)) {
+// Test environment first.
+list($envstatus, $environment_results) = check_moodle_environment(normalize_version($release), ENV_SELECT_RELEASE);
+if (!$envstatus) {
     $errors = environment_get_errors($environment_results);
     cli_heading(get_string('environment', 'admin'));
     foreach ($errors as $error) {
@@ -106,6 +106,13 @@ if (!check_moodle_environment(normalize_version($release), $environment_results,
         echo "!! $info !!\n$report\n\n";
     }
     exit(1);
+}
+
+// Test plugin dependencies.
+$failed = array();
+if (!plugin_manager::instance()->all_plugins_ok($version, $failed)) {
+    cli_problem(get_string('pluginscheckfailed', 'admin', array('pluginslist' => implode(', ', array_unique($failed)))));
+    cli_error(get_string('pluginschecktodo', 'admin'));
 }
 
 if ($interactive) {
@@ -127,7 +134,8 @@ if (isset($maturity)) {
             echo get_string('morehelp') . ': ' . get_docs_url('admin/versions') . PHP_EOL;
             cli_separator();
         } else {
-            cli_error(get_string('maturitycorewarning', 'admin', $maturitylevel));
+            cli_problem(get_string('maturitycorewarning', 'admin', $maturitylevel));
+            cli_error(get_string('maturityallowunstable', 'admin'));
         }
     }
 }
@@ -145,6 +153,7 @@ if ($version > $CFG->version) {
     upgrade_core($version, true);
 }
 set_config('release', $release);
+set_config('branch', $branch);
 
 // unconditionally upgrade
 upgrade_noncore(true);

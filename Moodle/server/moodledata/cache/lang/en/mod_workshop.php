@@ -7,7 +7,8 @@
   'allocation' => 'Submission allocation',
   'allocationdone' => 'Allocation done',
   'allocationerror' => 'Allocation error',
-  'allsubmissions' => 'All submissions',
+  'allocationconfigured' => 'Allocation configured',
+  'allsubmissions' => 'All submissions ({$a})',
   'alreadygraded' => 'Already graded',
   'areainstructauthors' => 'Instructions for submission',
   'areainstructreviewers' => 'Instructions for assessment',
@@ -24,6 +25,7 @@
   'assessmentbyyourself' => 'Your assessment',
   'assessmentdeleted' => 'Assessment deallocated',
   'assessmentend' => 'Deadline for assessment',
+  'assessmentendbeforestart' => 'Deadline for assessment can not be specified before the open for assessment date',
   'assessmentendevent' => '{$a} (assessment deadline)',
   'assessmentenddatetime' => 'Assessment deadline: {$a->daydatetime} ({$a->distanceday})',
   'assessmentform' => 'Assessment form',
@@ -117,6 +119,7 @@
   'gradinggradeof' => 'Grade for assessment (of {$a})',
   'gradinggradeover' => 'Override grade for assessment',
   'gradingsettings' => 'Grading settings',
+  'groupnoallowed' => 'You are not allowed to access any group in this workshop',
   'chooseuser' => 'Choose user...',
   'iamsure' => 'Yes, I am sure',
   'info' => 'Info',
@@ -129,6 +132,14 @@
   'latesubmissionsallowed' => 'Late submissions are allowed',
   'maxbytes' => 'Maximum file size',
   'modulename' => 'Workshop',
+  'modulename_help' => 'The workshop activity module enables the collection, review and peer assessment of students\' work.
+
+Students can submit any digital content (files), such as word-processed documents or spreadsheets and can also type text directly into a field using the text editor.
+
+Submissions are assessed using a multi-criteria assessment form defined by the teacher. The process of peer assessment and understanding the assessment form can be practised in advance with example submissions provided by the teacher, together with a reference assessment. Students are given the opportunity to assess one or more of their peers\' submissions. Submissions and reviewers may be anonymous if required.
+
+Students obtain two grades in a workshop activity - a grade for their submission and a grade for their assessment of their peers\' submissions. Both grades are recorded in the gradebook.',
+  'modulename_link' => 'mod/workshop/view',
   'modulenameplural' => 'Workshops',
   'mysubmission' => 'My submission',
   'nattachments' => 'Maximum number of submission attachments',
@@ -150,6 +161,7 @@
   'phaseassessment' => 'Assessment phase',
   'phaseclosed' => 'Closed',
   'phaseevaluation' => 'Grading evaluation phase',
+  'phasesoverlap' => 'The submission phase and the assessment phase can not overlap',
   'phasesetup' => 'Setup phase',
   'phasesubmission' => 'Submission phase',
   'pluginadministration' => 'Workshop administration',
@@ -167,6 +179,8 @@
   'saveandcontinue' => 'Save and continue editing',
   'saveandpreview' => 'Save and preview',
   'selfassessmentdisabled' => 'Self-assessment disabled',
+  'showingperpage' => 'Showing {$a} items per page',
+  'showingperpagechange' => 'Change ...',
   'someuserswosubmission' => 'There is at least one author who has not yet submitted their work',
   'sortasc' => 'Ascending sort',
   'sortdesc' => 'Descending sort',
@@ -183,8 +197,13 @@
   'submissionattachment' => 'Attachment',
   'submissioncontent' => 'Submission content',
   'submissionend' => 'Submissions deadline',
+  'submissionendbeforestart' => 'Submissions deadline can not be specified before the open for submissions date',
   'submissionendevent' => '{$a} (submissions deadline)',
   'submissionenddatetime' => 'Submissions deadline: {$a->daydatetime} ({$a->distanceday})',
+  'submissionendswitch' => 'Switch to the next phase after the submissions deadline',
+  'submissionendswitch_help' => 'If the submissions deadline is specified and this box is checked, the workshop will automatically switch to the assessment phase after the submissions deadline.
+
+If you enable this feature, it is recommended to set up the scheduled allocation method, too. If the submissions are not allocated, no assessment can be done even if the workshop itself is in the assessment phase.',
   'submissiongrade' => 'Grade for submission',
   'submissiongrade_help' => 'This setting specifies the maximum grade that may be obtained for submitted work.',
   'submissiongradeof' => 'Grade for submission (of {$a})',
@@ -203,6 +222,7 @@
   'switchphase' => 'Switch phase',
   'switchphase10info' => 'You are about to switch the workshop into the <strong>Setup phase</strong>. In this phase, users cannot modify their submissions or their assessments. Teachers may use this phase to change workshop settings, modify the grading strategy or tweak assessment forms.',
   'switchphase20info' => 'You are about to switch the workshop into the <strong>Submission phase</strong>. Students may submit their work during this phase (within the submission access control dates, if set). Teachers may allocate submissions for peer review.',
+  'switchphase30auto' => 'Workshop will automatically switch into the assessment phase after {$a->daydatetime} ({$a->distanceday})',
   'switchphase30info' => 'You are about to switch the workshop into the <strong>Assessment phase</strong>. In this phase, reviewers may assess the submissions they have been allocated (within the assessment access control dates, if set).',
   'switchphase40info' => 'You are about to switch the workshop into the <strong>Grading evaluation phase</strong>. In this phase, users cannot modify their submissions or their assessments. Teachers may use the grading evaluation tools to calculate final grades and provide feedback for reviewers.',
   'switchphase50info' => 'You are about to close the workshop. This will result in the calculated grades appearing in the gradebook. Students may view their submissions and their submission assessments.',
@@ -230,6 +250,7 @@
   'useselfassessment_desc' => 'Students may assess their own work',
   'weightinfo' => 'Weight: {$a}',
   'withoutsubmission' => 'Reviewer without own submission',
+  'workshop:addinstance' => 'Add a new workshop',
   'workshop:allocate' => 'Allocate submissions for review',
   'workshop:editdimensions' => 'Edit assessment forms',
   'workshopfeatures' => 'Workshop features',

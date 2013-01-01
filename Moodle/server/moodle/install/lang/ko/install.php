@@ -34,12 +34,14 @@ $string['admindirname'] = '관리 디렉토리';
 $string['availablelangs'] = '가능한 언어 목록';
 $string['chooselanguagehead'] = '언어를 선택하시오';
 $string['chooselanguagesub'] = '설치 과정에서 사용할 언어를 선택하십시오. 선택한 언어는 사이트의 기본 언어로 사용할 수 있으며, 추후 다른 언어로 바꿀 수도 있습니다.';
-$string['clialreadyinstalled'] = '이미 config.php 파일이 존재함. 사이트를 업데이트하려면 admin/cli/upgrade.php를 사용하십시오';
+$string['clialreadyconfigured'] = '만일 이 사이트를 설치하고 싶은데 이미 config.php파일이 있다면, admin/cli/install_database.php 를 이용하시기 바랍니다.';
+$string['clialreadyinstalled'] = '이미 config.php 파일이 존재함. 사이트를 업그레이드하려면 admin/cli/upgrade.php를 사용하시기 바랍니다.';
 $string['cliinstallheader'] = '무들 {$a} 명령 입력 설치 프로그램';
 $string['databasehost'] = '데이터베이스 호스트';
 $string['databasename'] = '데이터베이스 명칭';
 $string['databasetypehead'] = '데이터베이스 드라이버 선택';
 $string['dataroot'] = '데이타 경로';
+$string['datarootpermission'] = '데이터 디렉토리 권한';
 $string['dbprefix'] = '테이블 접두어';
 $string['dirroot'] = '무들 디렉토리';
 $string['environmenthead'] = '구동환경을 점검합니다...';
@@ -58,10 +60,9 @@ $string['memorylimithelp'] = '<p>현재 서버의 PHP 메모리 사용량은 {$a
 
 <li>만약 php.ini 파일에 접근 가능하다면 당신은 <b>memory_limit 40M</b> 처럼 값을 바꿀 수 있을것입니다. 만약 여러분이 직접 접근 할 수 없다면 서버 관리자에게 요청하여 처리하실 수 있습니다.</li>
 
-<li>어떤 PHP 서버에서는  .htaccess  파일을 무들 디렉토리에 만들고 다음 내용을 포함하는 줄을 입력하면 됩니다.
-
-<P><blockquote><div>php_value memory_limit 40M</div><blockquote></p>
-<p>그러나 어떤 서버에서는 이러한 기능이 모든 PHP페이지에 적용되지 않을  수 있는데 (페이지에 오류가 나타날 것입니다) .htaccess 를 제거해야만 할 수도 있습니다.</p></li></ol>';
+<li>또 도저히 php.ini 안에 있는 값을 바꿀 수가 없다면 무들 디렉토리에 아래와 같은 내용을 포함하는 .htaccess 를 넣어두면 됩니다.
+<P><blockquote>php_value memory_limit 40M<blockquote></p>
+<p>그러나 어떤 서버에서는 이러한 기능이 모든 PHP페이지에 적용되어 버릴 수도 있게 되는 데 (당신이 페이지를 살펴보았을때 문제를 찾을 것이다) 이 때에는 .htaccess 를 제거해야 하고 다른 방안을 찾아봐야 할 것입니다.</p></li></ol>';
 $string['paths'] = '경로';
 $string['pathserrcreatedataroot'] = '데이터 디렉토리 ({$a->dataroot})가 설치스크립트에 의해 생성될 수 없습니다.';
 $string['pathshead'] = '경로 확인';
@@ -82,7 +83,7 @@ $string['phpversionhelp'] = '<p>무들은 적어도 PHP4.3.0 혹은 5.1.0. 이�
 <p>현재 구동되고 있는 PHP버전은 {$a} 입니다.</p>
 <p>PHP를 업그레이드 하시거나 새버전을 제공하는 웹호스팅 업체로 이전하기를 권합니다!<br />(만일 5.0.x버전을 사용 중이라면 4.4.x 버전으로 다운그레이드 할 수 있습니다)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
-$string['welcomep20'] = '컴퓨터에 <strong>{$a->packname} {$a->packversion}</strong> 패키지를 성공적으로 설치하고 기동하였습니다. 축하합니다!';
+$string['welcomep20'] = '당신의 컴퓨터에 <strong>{$a->packname} {$a->packversion}</strong> 패키지를 성공적으로 설치한 것을 축하합니다!';
 $string['welcomep30'] = '<strong>{$a->installername}</strong> 판본은 <strong>무들</strong>이 동작하는 환경을 생성하기 위한 어플리케이션을 포함하고 있습니다.';
 $string['welcomep40'] = '이 패키지는 <strong>무들 {$a->moodlerelease} ({$a->moodleversion})</strong> 을 포함하고 있습니다.';
 $string['welcomep50'] = '이 패키지에 있는 모든 어플리케이션을 사용하는 것은 각각의 라이센스에의해 지배받습니다. 완전한<strong>{$a->installername}</strong> 패키지는

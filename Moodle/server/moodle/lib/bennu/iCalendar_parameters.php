@@ -9,7 +9,7 @@
  *  See http://bennu.sourceforge.net/ for more information and downloads.
  *
  * @author Ioannis Papaioannou 
- * @version $Id: iCalendar_parameters.php,v 1.4 2010/12/14 17:35:53 moodlerobot Exp $
+ * @version $Id: iCalendar_parameters.php,v 1.5 2011/11/25 10:24:10 moodlerobot Exp $
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
 
@@ -54,9 +54,9 @@ class iCalendar_parameter {
                 return rfc2445_is_valid_value($value, RFC2445_TYPE_CAL_ADDRESS);
             break;
 
-            // These are textual parameters, so the MUST NOT contain double quotes
+            // RFC-2445: can contain quotes.
             case 'CN':
-                return (strpos($value, '"') === false);
+                return true;
             break;
 
             // These have enumerated legal values

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,16 +17,17 @@
 /**
  * Meta course enrolment plugin event handler definition.
  *
- * @package   enrol_meta
+ * @package mod_forum
+ * @category event
  * @copyright 2010 Petr Skoda  {@link http://skodak.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /* List of handlers */
 $handlers = array (
-    'user_enrolled' => array (
+    'role_assigned' => array (
         'handlerfile'      => '/mod/forum/lib.php',
-        'handlerfunction'  => 'forum_user_enrolled',
+        'handlerfunction'  => 'forum_user_role_assigned',
         'schedule'         => 'instant',
         'internal'         => 1,
     ),

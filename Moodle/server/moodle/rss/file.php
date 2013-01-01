@@ -16,21 +16,22 @@
 
 /**
  * rss/file.php - entry point to serve rss streams
- * 
+ *
  * This script simply checks the parameters to construct a $USER
- * then finds and calls a function in the relevant component to 
+ * then finds and calls a function in the relevant component to
  * actually check security and create the RSS stream
  *
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  http://moodle.com
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_rss
+ * @category   rss
+ * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
-// Disable moodle specific debug messages and any errors in output
-define('NO_DEBUG_DISPLAY', true);//comment this out to see any error messages during RSS generation
+/** NO_DEBUG_DISPLAY - bool, Disable moodle specific debug messages and any errors in output. Set to false to see any error messages during RSS generation */
+define('NO_DEBUG_DISPLAY', true);
 
-// Sessions not used here, we recreate $USER every time we are called
+/** NO_MOODLE_COOKIES - bool, Disable the use of sessions/cookies - we recreate $USER for every call. */
 define('NO_MOODLE_COOKIES', true);
 
 require_once('../config.php');
@@ -76,12 +77,12 @@ if ($token==="$inttoken") {
 
     //find the context id
     if ($course = $DB->get_record('course', array('id' => $courseid))) {
-        $modinfo =& get_fast_modinfo($course);
+        $modinfo = get_fast_modinfo($course);
 
         if (!isset($modinfo->instances[$componentname])) {
             $modinfo->instances[$componentname] = array();
         }
-        
+
         foreach ($modinfo->instances[$componentname] as $modinstanceid=>$cm) {
             if ($modinstanceid==$instanceid) {
                 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -122,6 +123,10 @@ if ($token==="$inttoken") {
 }
 
 $user = get_complete_user_data('id', $userid);
+
+// let enrol plugins deal with new enrolments if necessary
+enrol_check_plugins($user);
+
 session_set_user($user); //for login and capability checks
 
 // Check the context actually exists
@@ -174,8 +179,16 @@ if (empty($pathname) || !file_exists($pathname)) {
 send_file($pathname, 'rss.xml', 3600);   // Cached by browsers for 1 hour
 
 
-/*
- * Sends an error formatted as an rss file and then dies
+/**
+ * Sends an error formatted as an rss file and then exits
+ *
+ * @package core_rss
+ * @category rss
+ *
+ * @param string $error the error type, default is rsserror
+ * @param string $filename the name of the file to create (NOT USED)
+ * @param int $lifetime UNSURE (NOT USED)
+ * @uses exit
  */
 function rss_error($error='rsserror', $filename='rss.xml', $lifetime=0) {
     send_file(rss_geterrorxmlfile($error), $filename, $lifetime, false, true);

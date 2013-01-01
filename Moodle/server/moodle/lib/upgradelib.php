@@ -98,6 +98,55 @@ class plugin_defective_exception extends moodle_exception {
 }
 
 /**
+ * Sets maximum expected time needed for upgrade task.
+ * Please always make sure that upgrade will not run longer!
+ *
+ * The script may be automatically aborted if upgrade times out.
+ *
+ * @category upgrade
+ * @param int $max_execution_time in seconds (can not be less than 60 s)
+ */
+function upgrade_set_timeout($max_execution_time=300) {
+    global $CFG;
+
+    if (!isset($CFG->upgraderunning) or $CFG->upgraderunning < time()) {
+        $upgraderunning = get_config(null, 'upgraderunning');
+    } else {
+        $upgraderunning = $CFG->upgraderunning;
+    }
+
+    if (!$upgraderunning) {
+        if (CLI_SCRIPT) {
+            // never stop CLI upgrades
+            $upgraderunning = 0;
+        } else {
+            // web upgrade not running or aborted
+            print_error('upgradetimedout', 'admin', "$CFG->wwwroot/$CFG->admin/");
+        }
+    }
+
+    if ($max_execution_time < 60) {
+        // protection against 0 here
+        $max_execution_time = 60;
+    }
+
+    $expected_end = time() + $max_execution_time;
+
+    if ($expected_end < $upgraderunning + 10 and $expected_end > $upgraderunning - 10) {
+        // no need to store new end, it is nearly the same ;-)
+        return;
+    }
+
+    if (CLI_SCRIPT) {
+        // there is no point in timing out of CLI scripts, admins can stop them if necessary
+        set_time_limit(0);
+    } else {
+        set_time_limit($max_execution_time);
+    }
+    set_config('upgraderunning', $expected_end); // keep upgrade locked until this time
+}
+
+/**
  * Upgrade savepoint, marks end of each upgrade block.
  * It stores new main version, resets upgrade timeout
  * and abort upgrade if user cancels page loading.
@@ -105,7 +154,7 @@ class plugin_defective_exception extends moodle_exception {
  * Please do not make large upgrade blocks with lots of operations,
  * for example when adding tables keep only one table operation per block.
  *
- * @global object
+ * @category upgrade
  * @param bool $result false if upgrade step failed, true if completed
  * @param string or float $version main version
  * @param bool $allowabort allow user to abort script execution here
@@ -146,7 +195,7 @@ function upgrade_main_savepoint($result, $version, $allowabort=true) {
  * It stores module version, resets upgrade timeout
  * and abort upgrade if user cancels page loading.
  *
- * @global object
+ * @category upgrade
  * @param bool $result false if upgrade step failed, true if completed
  * @param string or float $version main version
  * @param string $modname name of module
@@ -186,7 +235,7 @@ function upgrade_mod_savepoint($result, $version, $modname, $allowabort=true) {
  * It stores block version, resets upgrade timeout
  * and abort upgrade if user cancels page loading.
  *
- * @global object
+ * @category upgrade
  * @param bool $result false if upgrade step failed, true if completed
  * @param string or float $version main version
  * @param string $blockname name of block
@@ -226,6 +275,7 @@ function upgrade_block_savepoint($result, $version, $blockname, $allowabort=true
  * It stores plugin version, resets upgrade timeout
  * and abort upgrade if user cancels page loading.
  *
+ * @category upgrade
  * @param bool $result false if upgrade step failed, true if completed
  * @param string or float $version main version
  * @param string $type name of plugin
@@ -257,6 +307,43 @@ function upgrade_plugin_savepoint($result, $version, $type, $plugin, $allowabort
     }
 }
 
+/**
+ * Detect if there are leftovers in PHP source files.
+ *
+ * During main version upgrades administrators MUST move away
+ * old PHP source files and start from scratch (or better
+ * use git).
+ *
+ * @return bool true means borked upgrade, false means previous PHP files were properly removed
+ */
+function upgrade_stale_php_files_present() {
+    global $CFG;
+
+    $someexamplesofremovedfiles = array(
+        // removed in 2.3dev
+        '/lib/minify/builder/',
+        // removed in 2.2dev
+        '/lib/yui/3.4.1pr1/',
+        // removed in 2.2
+        '/search/cron_php5.php',
+        '/course/report/log/indexlive.php',
+        '/admin/report/backups/index.php',
+        '/admin/generator.php',
+        // removed in 2.1
+        '/lib/yui/2.8.0r4/',
+        // removed in 2.0
+        '/blocks/admin/block_admin.php',
+        '/blocks/admin_tree/block_admin_tree.php',
+    );
+
+    foreach ($someexamplesofremovedfiles as $file) {
+        if (file_exists($CFG->dirroot.$file)) {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 /**
  * Upgrade plugins
@@ -276,14 +363,13 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
     $plugs = get_plugin_list($type);
 
     foreach ($plugs as $plug=>$fullplug) {
-        $component = $type.'_'.$plug; // standardised plugin name
+        // Reset time so that it works when installing a large number of plugins
+        set_time_limit(600);
+        $component = clean_param($type.'_'.$plug, PARAM_COMPONENT); // standardised plugin name
 
         // check plugin dir is valid name
-        $cplug = strtolower($plug);
-        $cplug = clean_param($cplug, PARAM_SAFEDIR);
-        $cplug = str_replace('-', '', $cplug);
-        if ($plug !== $cplug) {
-            throw new plugin_defective_exception($component, 'Invalid plugin directory name.');
+        if (empty($component)) {
+            throw new plugin_defective_exception($type.'_'.$plug, 'Invalid plugin directory name.');
         }
 
         if (!is_readable($fullplug.'/version.php')) {
@@ -430,15 +516,11 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
             continue;
         }
 
-        $component = 'mod_'.$mod;
+        $component = clean_param('mod_'.$mod, PARAM_COMPONENT);
 
         // check module dir is valid name
-        $cmod = strtolower($mod);
-        $cmod = clean_param($cmod, PARAM_SAFEDIR);
-        $cmod = str_replace('-', '', $cmod);
-        $cmod = str_replace('_', '', $cmod); // modules MUST not have '_' in name and never will, sorry
-        if ($mod !== $cmod) {
-            throw new plugin_defective_exception($component, 'Invalid plugin directory name.');
+        if (empty($component)) {
+            throw new plugin_defective_exception('mod_'.$mod, 'Invalid plugin directory name.');
         }
 
         if (!is_readable($fullmod.'/version.php')) {
@@ -602,18 +684,15 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
             $first_install = ($DB->count_records('block_instances') == 0);
         }
 
-        if ($blockname == 'NEWBLOCK') {   // Someone has unzipped the template, ignore it
+        if ($blockname === 'NEWBLOCK') {   // Someone has unzipped the template, ignore it
             continue;
         }
 
-        $component = 'block_'.$blockname;
+        $component = clean_param('block_'.$blockname, PARAM_COMPONENT);
 
         // check block dir is valid name
-        $cblockname = strtolower($blockname);
-        $cblockname = clean_param($cblockname, PARAM_SAFEDIR);
-        $cblockname = str_replace('-', '', $cblockname);
-        if ($blockname !== $cblockname) {
-            throw new plugin_defective_exception($component, 'Invalid plugin directory name.');
+        if (empty($component)) {
+            throw new plugin_defective_exception('block_'.$blockname, 'Invalid plugin directory name.');
         }
 
         if (!is_readable($fullblock.'/version.php')) {
@@ -921,6 +1000,7 @@ function external_update_descriptions($component) {
         $service['enabled'] = empty($service['enabled']) ? 0 : $service['enabled'];
         $service['requiredcapability'] = empty($service['requiredcapability']) ? null : $service['requiredcapability'];
         $service['restrictedusers'] = !isset($service['restrictedusers']) ? 1 : $service['restrictedusers'];
+        $service['downloadfiles'] = !isset($service['downloadfiles']) ? 0 : $service['downloadfiles'];
         $service['shortname'] = !isset($service['shortname']) ? null : $service['shortname'];
 
         $update = false;
@@ -930,6 +1010,10 @@ function external_update_descriptions($component) {
         }
         if ($dbservice->restrictedusers != $service['restrictedusers']) {
             $dbservice->restrictedusers = $service['restrictedusers'];
+            $update = true;
+        }
+        if ($dbservice->downloadfiles != $service['downloadfiles']) {
+            $dbservice->downloadfiles = $service['downloadfiles'];
             $update = true;
         }
         //if shortname is not a PARAM_ALPHANUMEXT, fail (tested here for service update and creation)
@@ -985,6 +1069,7 @@ function external_update_descriptions($component) {
         $dbservice->enabled            = empty($service['enabled']) ? 0 : $service['enabled'];
         $dbservice->requiredcapability = empty($service['requiredcapability']) ? null : $service['requiredcapability'];
         $dbservice->restrictedusers    = !isset($service['restrictedusers']) ? 1 : $service['restrictedusers'];
+        $dbservice->downloadfiles      = !isset($service['downloadfiles']) ? 0 : $service['downloadfiles'];
         $dbservice->shortname          = !isset($service['shortname']) ? null : $service['shortname'];
         $dbservice->component          = $component;
         $dbservice->timecreated        = time();
@@ -1203,18 +1288,6 @@ function upgrade_setup_debug($starting) {
     }
 }
 
-/**
- * @global object
- */
-function print_upgrade_reload($url) {
-    global $OUTPUT;
-
-    echo "<br />";
-    echo '<div class="continuebutton">';
-    echo '<a href="'.$url.'" title="'.get_string('reload').'" ><img src="'.$OUTPUT->pix_url('i/reload') . '" alt="" /> '.get_string('reload').'</a>';
-    echo '</div><br />';
-}
-
 function print_upgrade_separator() {
     if (!CLI_SCRIPT) {
         echo '<hr />';
@@ -1298,42 +1371,36 @@ function upgrade_init_javascript() {
  *
  * @param string $lang the code of the language to update, defaults to the current language
  */
-function upgrade_language_pack($lang='') {
-    global $CFG, $OUTPUT;
+function upgrade_language_pack($lang = null) {
+    global $CFG;
 
-    get_string_manager()->reset_caches();
+    if (!empty($CFG->skiplangupgrade)) {
+        return;
+    }
 
-    if (empty($lang)) {
+    if (!file_exists("$CFG->dirroot/$CFG->admin/tool/langimport/lib.php")) {
+        // weird, somebody uninstalled the import utility
+        return;
+    }
+
+    if (!$lang) {
         $lang = current_language();
     }
 
-    if ($lang == 'en') {
-        return true;  // Nothing to do
+    if (!get_string_manager()->translation_exists($lang)) {
+        return;
+    }
+
+    get_string_manager()->reset_caches();
+
+    if ($lang === 'en') {
+        return;  // Nothing to do
     }
 
     upgrade_started(false);
-    echo $OUTPUT->heading(get_string('langimport', 'admin').': '.$lang);
 
-    @mkdir ($CFG->dataroot.'/temp/');    //make it in case it's a fresh install, it might not be there
-    @mkdir ($CFG->dataroot.'/lang/');
-
-    require_once($CFG->libdir.'/componentlib.class.php');
-
-    $installer = new lang_installer($lang);
-    $results = $installer->run();
-    foreach ($results as $langcode => $langstatus) {
-        switch ($langstatus) {
-        case lang_installer::RESULT_DOWNLOADERROR:
-            echo $OUTPUT->notification($langcode . '.zip');
-            break;
-        case lang_installer::RESULT_INSTALLED:
-            echo $OUTPUT->notification(get_string('langpackinstalled', 'admin', $langcode), 'notifysuccess');
-            break;
-        case lang_installer::RESULT_UPTODATE:
-            echo $OUTPUT->notification(get_string('langpackuptodate', 'admin', $langcode), 'notifysuccess');
-            break;
-        }
-    }
+    require_once("$CFG->dirroot/$CFG->admin/tool/langimport/lib.php");
+    tool_langimport_preupgrade_update($lang);
 
     get_string_manager()->reset_caches();
 
@@ -1396,11 +1463,7 @@ function upgrade_core($version, $verbose) {
         purge_all_caches();
 
         // Upgrade current language pack if we can
-        if (empty($CFG->skiplangupgrade)) {
-            if (get_string_manager()->translation_exists(current_language())) {
-                upgrade_language_pack(false);
-            }
-        }
+        upgrade_language_pack();
 
         print_upgrade_part_start('moodle', false, $verbose);
 
@@ -1432,11 +1495,11 @@ function upgrade_core($version, $verbose) {
         purge_all_caches();
 
         // Clean up contexts - more and more stuff depends on existence of paths and contexts
-        cleanup_contexts();
-        create_contexts();
-        build_context_path();
-        $syscontext = get_context_instance(CONTEXT_SYSTEM);
-        mark_context_dirty($syscontext->path);
+        context_helper::cleanup_instances();
+        context_helper::create_instances(null, false);
+        context_helper::build_all_paths(false);
+        $syscontext = context_system::instance();
+        $syscontext->mark_dirty();
 
         print_upgrade_part_end('moodle', false, $verbose);
     } catch (Exception $ex) {
@@ -1682,7 +1745,8 @@ function upgrade_plugin_mnet_functions($component) {
  * @return array
  */
 function admin_mnet_method_profile(Zend_Server_Reflection_Function_Abstract $function) {
-    $proto = array_pop($function->getPrototypes());
+    $protos = $function->getPrototypes();
+    $proto = array_pop($protos);
     $ret = $proto->getReturnValue();
     $profile = array(
         'parameters' =>  array(),
@@ -1700,3 +1764,119 @@ function admin_mnet_method_profile(Zend_Server_Reflection_Function_Abstract $fun
     }
     return $profile;
 }
+
+
+/**
+ * This function finds duplicate records (based on combinations of fields that should be unique)
+ * and then progamatically generated a "most correct" version of the data, update and removing
+ * records as appropriate
+ *
+ * Thanks to Dan Marsden for help
+ *
+ * @param   string  $table      Table name
+ * @param   array   $uniques    Array of field names that should be unique
+ * @param   array   $fieldstocheck  Array of fields to generate "correct" data from (optional)
+ * @return  void
+ */
+function upgrade_course_completion_remove_duplicates($table, $uniques, $fieldstocheck = array()) {
+    global $DB;
+
+    // Find duplicates
+    $sql_cols = implode(', ', $uniques);
+
+    $sql = "SELECT {$sql_cols} FROM {{$table}} GROUP BY {$sql_cols} HAVING (count(id) > 1)";
+    $duplicates = $DB->get_recordset_sql($sql, array());
+
+    // Loop through duplicates
+    foreach ($duplicates as $duplicate) {
+        $pointer = 0;
+
+        // Generate SQL for finding records with these duplicate uniques
+        $sql_select = implode(' = ? AND ', $uniques).' = ?'; // builds "fieldname = ? AND fieldname = ?"
+        $uniq_values = array();
+        foreach ($uniques as $u) {
+            $uniq_values[] = $duplicate->$u;
+        }
+
+        $sql_order = implode(' DESC, ', $uniques).' DESC'; // builds "fieldname DESC, fieldname DESC"
+
+        // Get records with these duplicate uniques
+        $records = $DB->get_records_select(
+            $table,
+            $sql_select,
+            $uniq_values,
+            $sql_order
+        );
+
+        // Loop through and build a "correct" record, deleting the others
+        $needsupdate = false;
+        $origrecord = null;
+        foreach ($records as $record) {
+            $pointer++;
+            if ($pointer === 1) { // keep 1st record but delete all others.
+                $origrecord = $record;
+            } else {
+                // If we have fields to check, update original record
+                if ($fieldstocheck) {
+                    // we need to keep the "oldest" of all these fields as the valid completion record.
+                    // but we want to ignore null values
+                    foreach ($fieldstocheck as $f) {
+                        if ($record->$f && (($origrecord->$f > $record->$f) || !$origrecord->$f)) {
+                            $origrecord->$f = $record->$f;
+                            $needsupdate = true;
+                        }
+                    }
+                }
+                $DB->delete_records($table, array('id' => $record->id));
+            }
+        }
+        if ($needsupdate || isset($origrecord->reaggregate)) {
+            // If this table has a reaggregate field, update to force recheck on next cron run
+            if (isset($origrecord->reaggregate)) {
+                $origrecord->reaggregate = time();
+            }
+            $DB->update_record($table, $origrecord);
+        }
+    }
+}
+
+/**
+ * Find questions missing an existing category and associate them with
+ * a category which purpose is to gather them.
+ *
+ * @return void
+ */
+function upgrade_save_orphaned_questions() {
+    global $DB;
+
+    // Looking for orphaned questions
+    $orphans = $DB->record_exists_select('question',
+            'NOT EXISTS (SELECT 1 FROM {question_categories} WHERE {question_categories}.id = {question}.category)');
+    if (!$orphans) {
+        return;
+    }
+
+    // Generate a unique stamp for the orphaned questions category, easier to identify it later on
+    $uniquestamp = "unknownhost+120719170400+orphan";
+    $systemcontext = context_system::instance();
+
+    // Create the orphaned category at system level
+    $cat = $DB->get_record('question_categories', array('stamp' => $uniquestamp,
+            'contextid' => $systemcontext->id));
+    if (!$cat) {
+        $cat = new stdClass();
+        $cat->parent = 0;
+        $cat->contextid = $systemcontext->id;
+        $cat->name = get_string('orphanedquestionscategory', 'question');
+        $cat->info = get_string('orphanedquestionscategoryinfo', 'question');
+        $cat->sortorder = 999;
+        $cat->stamp = $uniquestamp;
+        $cat->id = $DB->insert_record("question_categories", $cat);
+    }
+
+    // Set a category to those orphans
+    $params = array('catid' => $cat->id);
+    $DB->execute('UPDATE {question} SET category = :catid WHERE NOT EXISTS
+            (SELECT 1 FROM {question_categories} WHERE {question_categories}.id = {question}.category)', $params);
+}
+

@@ -116,7 +116,7 @@ $forums = $DB->get_records('forum', array('course' => $course->id));
 
 $generalforums  = array();
 $learningforums = array();
-$modinfo =& get_fast_modinfo($course);
+$modinfo = get_fast_modinfo($course);
 
 if (!isset($modinfo->instances['forum'])) {
     $modinfo->instances['forum'] = array();
@@ -264,8 +264,14 @@ if ($generalforums) {
                 } else {
                     $tooltiptext = get_string('rsssubscriberssposts', 'forum');
                 }
+
+                if (!isloggedin() && $course->id == SITEID) {
+                    $userid = guest_user()->id;
+                } else {
+                    $userid = $USER->id;
+                }
                 //Get html code for RSS link
-                $row[] = rss_get_link($context->id, $USER->id, 'mod_forum', $forum->id, $tooltiptext);
+                $row[] = rss_get_link($context->id, $userid, 'mod_forum', $forum->id, $tooltiptext);
             } else {
                 $row[] = '&nbsp;';
             }

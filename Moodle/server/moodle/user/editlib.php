@@ -33,22 +33,64 @@ function useredit_update_user_preference($usernew) {
     }
 }
 
-function useredit_update_picture(&$usernew, $userform) {
+/**
+ * Updates the provided users profile picture based upon the expected fields
+ * returned from the edit or edit_advanced forms.
+ *
+ * @global moodle_database $DB
+ * @param stdClass $usernew An object that contains some information about the user being updated
+ * @param moodleform $userform The form that was submitted to edit the form
+ * @return bool True if the user was updated, false if it stayed the same.
+ */
+function useredit_update_picture(stdClass $usernew, moodleform $userform, $filemanageroptions = array()) {
     global $CFG, $DB;
     require_once("$CFG->libdir/gdlib.php");
 
-    $fs = get_file_storage();
     $context = get_context_instance(CONTEXT_USER, $usernew->id, MUST_EXIST);
+    $user = $DB->get_record('user', array('id'=>$usernew->id), 'id, picture', MUST_EXIST);
 
-    if (isset($usernew->deletepicture) and $usernew->deletepicture) {
-        $fs->delete_area_files($context->id, 'user', 'icon'); // drop all areas
-        $DB->set_field('user', 'picture', 0, array('id'=>$usernew->id));
+    $newpicture = $user->picture;
+    // Get file_storage to process files.
+    $fs = get_file_storage();
+    if (!empty($usernew->deletepicture)) {
+        // The user has chosen to delete the selected users picture
+        $fs->delete_area_files($context->id, 'user', 'icon'); // drop all images in area
+        $newpicture = 0;
 
-    } else if ($iconfile = $userform->save_temp_file('imagefile')) {
-        if (process_new_icon($context, 'user', 'icon', 0, $iconfile)) {
-            $DB->set_field('user', 'picture', 1, array('id'=>$usernew->id));
+    } else {
+        // Save newly uploaded file, this will avoid context mismatch for newly created users.
+        file_save_draft_area_files($usernew->imagefile, $context->id, 'user', 'newicon', 0, $filemanageroptions);
+        if (($iconfiles = $fs->get_area_files($context->id, 'user', 'newicon')) && count($iconfiles) == 2) {
+            // Get file which was uploaded in draft area
+            foreach ($iconfiles as $file) {
+                if (!$file->is_directory()) {
+                    break;
+                }
+            }
+            // Copy file to temporary location and the send it for processing icon
+            if ($iconfile = $file->copy_content_to_temp()) {
+                // There is a new image that has been uploaded
+                // Process the new image and set the user to make use of it.
+                // NOTE: Uploaded images always take over Gravatar
+                $newpicture = (int)process_new_icon($context, 'user', 'icon', 0, $iconfile);
+                // Delete temporary file
+                @unlink($iconfile);
+                // Remove uploaded file.
+                $fs->delete_area_files($context->id, 'user', 'newicon');
+            } else {
+                // Something went wrong while creating temp file.
+                // Remove uploaded file.
+                $fs->delete_area_files($context->id, 'user', 'newicon');
+                return false;
+            }
         }
-        @unlink($iconfile);
+    }
+
+    if ($newpicture != $user->picture) {
+        $DB->set_field('user', 'picture', $newpicture, array('id' => $user->id));
+        return true;
+    } else {
+        return false;
     }
 }
 
@@ -79,7 +121,7 @@ function useredit_update_interests($user, $interests) {
     tag_set('user', $user->id, $interests);
 }
 
-function useredit_shared_definition(&$mform, $editoroptions = null) {
+function useredit_shared_definition(&$mform, $editoroptions = null, $filemanageroptions = null) {
     global $CFG, $USER, $DB;
 
     $user = $DB->get_record('user', array('id' => $USER->id));
@@ -174,16 +216,6 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
         $mform->setType('htmleditor', PARAM_INT);
     }
 
-    if (empty($CFG->enableajax)) {
-        $mform->addElement('static', 'ajaxdisabled', get_string('ajaxuse'), get_string('ajaxno'));
-    } else {
-        $choices = array();
-        $choices['0'] = get_string('ajaxno');
-        $choices['1'] = get_string('ajaxyes');
-        $mform->addElement('select', 'ajax', get_string('ajaxuse'), $choices);
-        $mform->setDefault('ajax', 0);
-    }
-
     $choices = array();
     $choices['0'] = get_string('screenreaderno');
     $choices['1'] = get_string('screenreaderyes');
@@ -224,7 +256,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
         $themes = get_list_of_themes();
         foreach ($themes as $key=>$theme) {
             if (empty($theme->hidefromselector)) {
-                $choices[$key] = $theme->name;
+                $choices[$key] = get_string('pluginname', 'theme_'.$theme->name);
             }
         }
         $mform->addElement('select', 'theme', get_string('preferredtheme'), $choices);
@@ -237,12 +269,16 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
     if (!empty($CFG->gdversion) and empty($USER->newadminuser)) {
         $mform->addElement('header', 'moodle_picture', get_string('pictureofuser'));
 
+        if (!empty($CFG->enablegravatar)) {
+            $mform->addElement('html', html_writer::tag('p', get_string('gravatarenabled')));
+        }
+
         $mform->addElement('static', 'currentpicture', get_string('currentpicture'));
 
         $mform->addElement('checkbox', 'deletepicture', get_string('delete'));
         $mform->setDefault('deletepicture', 0);
 
-        $mform->addElement('filepicker', 'imagefile', get_string('newpicture'), '', array('maxbytes'=>get_max_upload_file_size($CFG->maxbytes)));
+        $mform->addElement('filemanager', 'imagefile', get_string('newpicture'), '', $filemanageroptions);
         $mform->addHelpButton('imagefile', 'newpicture');
 
         $mform->addElement('text', 'imagealt', get_string('imagealt'), 'maxlength="100" size="30"');

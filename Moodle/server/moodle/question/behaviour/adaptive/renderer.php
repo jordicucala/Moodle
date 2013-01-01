@@ -100,6 +100,8 @@ class qbehaviour_adaptive_renderer extends qbehaviour_renderer {
             question_display_options $options) {
 
         $currentpenalty = $qa->get_question()->penalty * $qa->get_max_mark();
+        $totalpenalty = $currentpenalty * $qa->get_last_behaviour_var('_try', 0);
+
         if ($currentpenalty == 0) {
             return '';
         }
@@ -114,6 +116,12 @@ class qbehaviour_adaptive_renderer extends qbehaviour_renderer {
         if ($qa->get_behaviour()->is_state_improvable($qa->get_state())) {
             $output .= ' ' . get_string('gradingdetailspenalty', 'qbehaviour_adaptive',
                     format_float($currentpenalty, $options->markdp));
+
+            // Print information about total penalties so far, if larger than current penalty.
+            if ($totalpenalty > $currentpenalty) {
+                $output .= ' ' . get_string('gradingdetailspenaltytotal', 'qbehaviour_adaptive',
+                        format_float($totalpenalty, $options->markdp));
+            }
         }
 
         return $output;

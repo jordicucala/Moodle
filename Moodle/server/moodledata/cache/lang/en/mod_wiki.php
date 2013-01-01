@@ -49,6 +49,7 @@
   'editing' => 'Editing wiki page',
   'editingcomment' => 'Editing comment',
   'editingpage' => 'Editing this page \'{$a}\'',
+  'editsection' => 'edit',
   'files' => 'Files',
   'filenotuploadederror' => 'File \'{$a}\' could not be uploaded correctly.',
   'filtername' => 'Wiki auto-linking',
@@ -99,6 +100,18 @@ To create a new page, type the new page name enclosed in double square brackets,
   'missingpages' => 'Pages without content',
   'modified' => 'Modified',
   'modulename' => 'Wiki',
+  'modulename_help' => 'The wiki activity module enables participants to add and edit a collection of web pages. A wiki can be collaborative, with everyone being able to edit it, or individual, where everyone has their own wiki which only they can edit.
+
+A history of previous versions of each page in the wiki is kept, listing the edits made by each participant.
+
+Wikis have many uses, such as
+
+* For group lecture notes or study guides
+* For members of a faculty to plan a scheme of work or meeting agenda together
+* For students to collaboratively author an online book, creating content on a topic set by their tutor
+* For collaborative storytelling or poetry creation, where each participant writes a line or verse
+* As a personal journal for examination notes or revision (using an individual wiki)',
+  'modulename_link' => 'mod/wiki/view',
   'modulenameplural' => 'Wikis',
   'navigation' => 'Navigation',
   'navigationfrom' => 'This page comes from',
@@ -147,6 +160,7 @@ To create a new page, type the new page name enclosed in double square brackets,
   'pageislocked' => 'Someone is editing this page right now. Try to edit it in a few minutes.',
   'pagelist' => 'Page list',
   'pagelist_help' => 'Page list categorized by alphabetical order',
+  'pagename' => 'Page name',
   'peerreview' => 'Peer review',
   'pluginadministration' => 'Wiki administration',
   'pluginname' => 'Wiki',
@@ -216,6 +230,7 @@ To create a new page, type the new page name enclosed in double square brackets,
   'wikiorderedlist' => 'Ordered list',
   'wikisettings' => 'Wiki settings',
   'wikiunorderedlist' => 'Unordered list',
+  'wiki:addinstance' => 'Add a new wiki',
   'wiki:createpage' => 'Create new wiki pages',
   'wiki:editcomment' => 'Add comments to pages',
   'wiki:editpage' => 'Save wiki pages',

@@ -34,6 +34,7 @@
 * Personal - The note will be visible only to you
 * Course - The note will be visible to teachers in this course
 * Site - The note will be visible to teachers in all courses',
+  'selectnotestate' => 'Select note state',
   'site' => 'site',
   'sitenotes' => 'Site notes',
   'unknown' => 'unknown',

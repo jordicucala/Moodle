@@ -12,7 +12,7 @@
 ::       E.g. for PHP 4.2 C:\phpdev\php-4.2-Win32\php-cli.exe
 ::            for PHP 4.3 C:\phpdev\php-4.3-Win32\cli\php.exe
   
-  SET phpCli=C:\Users\jordi\Desktop\MoodleWindowsInstaller-latest-21\server\php\.\php.exe
+  SET phpCli=C:\Users\Akareshi\Desktop\MOODLE\MoodleWindowsInstaller-latest-23\server\php\.\php.exe
 
 ::---------------------------------------------------------------------------------
 ::---------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ IF EXIST "%phpCli%" (
   SET doNothing=
 ) ELSE GOTO :NoPhpCli
 
-"%phpCli%" -d html_errors=off -qC "C:\Users\jordi\Desktop\MoodleWindowsInstaller-latest-21\server\php\pear\phing.php" %*
+"%phpCli%" -d html_errors=off -qC "C:\Users\Akareshi\Desktop\MOODLE\MoodleWindowsInstaller-latest-23\server\php\pear\phing.php" %*
 GOTO :EOF
 
 ::

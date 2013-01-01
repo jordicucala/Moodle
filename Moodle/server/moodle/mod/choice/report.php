@@ -7,7 +7,7 @@
     $format     = optional_param('format', CHOICE_PUBLISH_NAMES, PARAM_INT);
     $download   = optional_param('download', '', PARAM_ALPHA);
     $action     = optional_param('action', '', PARAM_ALPHA);
-    $attemptids = optional_param('attemptid', array(), PARAM_INT); //get array of responses to delete.
+    $attemptids = optional_param_array('attemptid', array(), PARAM_INT); //get array of responses to delete.
 
     $url = new moodle_url('/mod/choice/report.php', array('id'=>$id));
     if ($format !== CHOICE_PUBLISH_NAMES) {
@@ -29,7 +29,7 @@
         print_error("coursemisconf");
     }
 
-    require_login($course->id, false, $cm);
+    require_login($course, false, $cm);
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -224,7 +224,7 @@
     $results = prepare_choice_show_results($choice, $course, $cm, $users);
     $renderer = $PAGE->get_renderer('mod_choice');
     echo $renderer->display_result($results, has_capability('mod/choice:readresponses', $context));
-    
+
    //now give links for downloading spreadsheets.
     if (!empty($users) && has_capability('mod/choice:downloadresponses',$context)) {
         $downloadoptions = array();

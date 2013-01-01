@@ -6,6 +6,7 @@
   'err_alphanumeric' => 'You must enter only letters or numbers here.',
   'err_email' => 'You must enter a valid email address here.',
   'err_lettersonly' => 'You must enter only letters here.',
+  'err_maxfiles' => 'You must not attach more than {$a} files here.',
   'err_maxlength' => 'You must enter not more than {$a->format} characters here.',
   'err_minlength' => 'You must enter at least {$a->format} characters here.',
   'err_nonzero' => 'You must enter a number not starting with a 0 here.',

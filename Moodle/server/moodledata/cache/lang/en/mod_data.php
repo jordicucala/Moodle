@@ -8,6 +8,7 @@
   'alttext' => 'Alternative text',
   'approve' => 'Approve',
   'approved' => 'Approved',
+  'areacontent' => 'Fields',
   'ascending' => 'Ascending',
   'asearchtemplate' => 'Advanced search template',
   'atmaxentry' => 'You have entered the maximum number of entries allowed!',
@@ -49,6 +50,7 @@ Only the tags that are in the "Available tags" list may be used for the current 
   'csvimport' => 'CSV file import',
   'csvimport_help' => 'Entries may be imported via a plain text file with a list of field names as the first line, then the data, with one record per line.',
   'csvwithselecteddelimiter' => '<acronym title="Comma Separated Values">CSV</acronym> text with selected delimiter:',
+  'data:addinstance' => 'Add a new database',
   'data:approve' => 'Approve unapproved entries',
   'data:comment' => 'Write comments',
   'data:exportallentries' => 'Export all database entries',
@@ -88,6 +90,7 @@ Only the tags that are in the "Available tags" list may be used for the current 
   'editorenable' => 'Enable editor',
   'emptyadd' => 'The Add template is empty, generating a default form...',
   'emptyaddform' => 'You did not fill out any fields!',
+  'fileencoding' => 'Encoding',
   'entries' => 'Entries',
   'entrieslefttoadd' => 'You must add {$a->entriesleft} more entry/entries in order to complete this activity',
   'entrieslefttoaddtoview' => 'You must add {$a->entrieslefttoview} more entry/entries before you can view other participants\' entries.',
@@ -181,7 +184,19 @@ You can only map fields of the same type, so each dropdown will have different f
   'missingdata' => 'Data id or object must be provided to field class',
   'missingfield' => 'Programmer error: You must specify field and/or data when defining field class.',
   'modulename' => 'Database',
-  'modulename_help' => 'The database activity module enables participants to create, maintain and search a bank of record entries. The format and structure of these entries can be almost unlimited, including images, files, URLs, numbers and text amongst other things.',
+  'modulename_help' => 'The database activity module enables participants to create, maintain and search a collection of entries (i.e. records).  The structure of the entries is defined by the teacher as a number of fields. Field types include checkbox, radio buttons, dropdown menu, text area, URL, picture and uploaded file.
+
+The visual layout of information when listing, viewing or editing database entries may be controlled by database templates. Database activities may be shared between courses as presets and a teacher may also import and export database entries.
+
+If the database auto-linking filter is enabled, any entries in a database will be automatically linked where the words or phrases appear within the course.
+
+A teacher can allow comments on entries. Entries can also be rated by teachers or students (peer evaluation). Ratings can be aggregated to form a final grade which is recorded in the gradebook.
+
+Database activities have many uses, such as
+
+* A collaborative collection of web links, books, book reviews, journal references etc
+* For displaying student-created photos, posters, websites or poems for peer comment and review',
+  'modulename_link' => 'mod/data/view',
   'modulenameplural' => 'Databases',
   'more' => 'More',
   'moreurl' => 'More URL',
@@ -257,7 +272,6 @@ Note: If entries are required before viewing, the database auto-linking filter s
   'resizingimages' => 'Resizing image thumbnails...',
   'rows' => 'rows',
   'rssglobaldisabled' => 'Disabled. See site configuration variables.',
-  'rsshowmany' => '(number of latest entries to show, 0 to disable RSS)',
   'rsstemplate' => 'RSS template',
   'rsstitletemplate' => 'RSS title template',
   'save' => 'Save',

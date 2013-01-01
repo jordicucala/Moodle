@@ -35,7 +35,7 @@
   'eventendtime' => 'End time',
   'eventinstanttime' => 'Time',
   'eventkind' => 'Type of event',
-  'eventname' => 'Name',
+  'eventname' => 'Event title',
   'eventnone' => 'No events',
   'eventrepeat' => 'Repeats',
   'eventsall' => 'All events',

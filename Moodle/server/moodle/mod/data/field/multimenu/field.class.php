@@ -38,6 +38,7 @@ class data_field_multimenu extends data_field_base {
 
         $str = '<div title="'.s($this->field->description).'">';
         $str .= '<input name="field_' . $this->field->id . '[xxx]" type="hidden" value="xxx"/>'; // hidden field - needed for empty selection
+        $str .= '<label class="accesshide" for="field_' . $this->field->id . '">' . $this->field->name. '</label>';
         $str .= '<select name="field_' . $this->field->id . '[]" id="field_' . $this->field->id . '" multiple="multiple">';
 
         foreach (explode("\n",$this->field->param1) as $option) {
@@ -71,7 +72,8 @@ class data_field_multimenu extends data_field_base {
 
         static $c = 0;
 
-        $str = '<select name="f_'.$this->field->id.'[]" multiple="multiple">';
+        $str = '<label class="accesshide" for="f_' . $this->field->id . '">' . $this->field->name . '</label>';
+        $str .= '<select id="f_'.$this->field->id.'" name="f_'.$this->field->id.'[]" multiple="multiple">';
 
         // display only used options
         $varcharcontent =  $DB->sql_compare_text('content', 255);
@@ -122,7 +124,7 @@ class data_field_multimenu extends data_field_base {
     }
 
     function parse_search_field() {
-        $selected    = optional_param('f_'.$this->field->id, array(), PARAM_NOTAGS);
+        $selected    = optional_param_array('f_'.$this->field->id, array(), PARAM_NOTAGS);
         $allrequired = optional_param('f_'.$this->field->id.'_allreq', 0, PARAM_BOOL);
         if (empty($selected)) {
             // no searching

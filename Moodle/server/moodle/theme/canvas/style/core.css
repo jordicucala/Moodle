@@ -81,108 +81,8 @@ input[type="radio"] {
     margin-right: 7px;
 }
 
-/* Login
-------------------------*/
-
-.loginbox {
-    margin: 15px 25%;
-}
-
-.loginbox .loginerrors {
-    color: #f00;
-}
-
-.loginbox .loginform {
-    margin: 15px auto 0;
-    width: 175px;
-}
-
-.loginbox .loginform .form-label {
-    float: none;
-    width: 100%;
-    margin: 0 auto;
-    text-align: left;
-}
-.dir-rtl .loginbox .loginform .form-label {
-    text-align: right;
-    direction: rtl;
-}
-
-.loginbox .loginform .form-label {
-    text-align: left;
-    direction: ltr;
-}
-.loginbox .loginform .form-input {
-    float: none;
-    width: 100%;
-    margin: 0 auto;
-}
-
-.loginbox .loginform .form-input #username,
-.loginbox .loginform .form-input #password {
-    width: 97%;
-    padding: 3px;
-    font-size: 1.1em;
-    font-family: Helvetica, Arial, sans-serif;
-    border: 2px solid #ddd;
-    margin: 0 0 5px;
-    color: #333;
-}
-
-.loginbox .loginform .form-input #loginbtn {
-    margin: 0.5em auto;
-}
-
-.loginbox .forgetpass {
-    margin: 1em 0 0;
-    font-size: 0.95em;
-}
-
-.loginbox.twocolumns {
-    width: 90%;
-    margin-left: 5%;
-}
-
-.loginbox .guestsub {
-    border-top: 1px solid #DDDDDD;
-    margin: 5px 20%
-}
-
-.loginbox.twocolumns .loginpanel {
-    border-color: #ddd;
-    padding-right: 0.5%;
-}
-
-.loginbox.twocolumns .signuppanel {
-    padding-left: 1%;
-    width: 48%;
-}
-
-#page-course-loginas #notice {
-    border: none;
-}
-
-#page-login-forgot_password .generalbox {
-    margin: 0 auto 1.5em;
-    width: 75%;
-    padding: 10px;
-}
-
-#page-login-signup .mform {
-    width: 85%;
-    margin: 0 auto;
-}
-
-#page-login-signup .mform .fitem .fitemtitle {
-    width: 20%;
-}
-
-#page-login-signup .mform .fitem .felement {
-    margin-left: 21%;
-}
-
 /* Calendar
------------------------*/
+-------------------------*/
 
 .calendarlayout .sidecalendar {
     padding-left: 15px;
@@ -333,7 +233,7 @@ input[type="radio"] {
 }
 
 /* User
------------------------*/
+-------------------------*/
 
 .userinfobox {
     border-color: #ddd;
@@ -630,6 +530,7 @@ input[type="radio"] {
 .path-grade-report-grader form {
     text-align: left;
 }
+.path-grade-report-grader.dir-rtl form { text-align: right; }
 
 /* Footer
 -----------------------*/
@@ -659,24 +560,26 @@ input[type="radio"] {
     border-left: 2px solid #8a8a8a;
 }
 
-/**
- * Enrol   - TODO: tidy up styles here
- */
+/* Enrol
+-------------------------*/
+
 .userenrolment {
     font-size:90%;
     border:1px solid #999;
 }
 .userenrolment tr.r0 {
-    background-color:#F9F9F9;
+    background-color: #F9F9F9;
 }
 .userenrolment tr.r1 {
-    background-color:#F3F3F3;
+    background-color: #F3F3F3;
 }
 .userenrolment td {
-    border:1px solid #E9E9E9;
-    border-top-color:#F6F6F6;
-    border-right-color:#EEE;
-    border-left-color:#F3F3F3;
+    border-width: 1px;
+    border-style: solid;
+    border-top-color: #F6F6F6;
+    border-right-color: #EEE;
+    border-bottom-color: #E9E9E9;
+    border-left-color: #F3F3F3;
 }
 .userenrolment td.c0 {
     border-left-color:#999;
@@ -692,19 +595,19 @@ input[type="radio"] {
     position:relative;
 }
 .userenrolment .col_role .role {
-    line-height:10px;
-    font-size:10px;
+    line-height: 10px;
+    font-size: 10px;
 }
 .userenrolment .col_role .role a img {
     height:8px;
 }
 .userenrolment .col_role .addrole {
-    background-color:#DDD;
-    border:1px outset #EEE;
-    -moz-border-radius:5px;
+    background-color: #DDD;
+    border: 1px outset #EEE;
+    -moz-border-radius: 5px;
 }
 .userenrolment .col_group {
-    max-width:300px;
+    max-width: 300px;
 }
 .userenrolment .col_group .group {
     line-height:10px;
@@ -737,16 +640,20 @@ input[type="radio"] {
     float:right;
 }
 
-/* Registration */
+/* Registration
+-------------------------*/
+
+
 #page-admin-registration-hubselector .registration_textfield {
     width: 400px;
 }
 
-/**
- * Redirect
- */
+/* Redirect
+-------------------------*/
+
 .pagelayout-redirect #content {
-    text-align:center;
-    margin-top:10%;
-    margin-bottom:10%;
+    text-align: center;
+    margin: 10% auto;
 }
+
+.path-grade-report.dir-rtl #graded_users_selector .singleselect {margin: 0px;}

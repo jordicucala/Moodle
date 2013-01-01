@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -14,6 +13,14 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Import outcomes from a file
+ *
+ * @package   core_grades
+ * @copyright 2008 Moodle Pty Ltd (http://moodle.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once(dirname(__FILE__).'/../../../config.php');
 require_once($CFG->dirroot.'/lib/formslib.php');
@@ -60,8 +67,8 @@ if (!$upload_form->get_data()) {
 }
 print_grade_page_head($courseid, 'outcome', 'import', get_string('importoutcomes', 'grades'));
 
-$imported_file = $CFG->dataroot . '/temp/outcomeimport/importedfile_'.time().'.csv';
-make_upload_directory('temp/outcomeimport');
+$imported_file = $CFG->tempdir . '/outcomeimport/importedfile_'.time().'.csv';
+make_temp_directory('outcomeimport');
 
 // copying imported file
 if (!$upload_form->save_file('userfile', $imported_file, true)) {

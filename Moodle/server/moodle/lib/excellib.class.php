@@ -64,8 +64,8 @@ class MoodleExcelWorkbook {
             $this->latin_output = true;
         }
     /// Choose our temporary directory - see MDL-7176, found by paulo.matos
-        make_upload_directory('temp/excel');
-        $this->pear_excel_workbook->setTempDir($CFG->dataroot.'/temp/excel');
+        make_temp_directory('excel');
+        $this->pear_excel_workbook->setTempDir($CFG->tempdir.'/excel');
     }
 
     /**
@@ -143,8 +143,7 @@ class MoodleExcelWorksheet {
             // With $latin_output = false, it does not cope at all.
             // With $latin_output = true it is supposed to work, but in our experience,
             // it doesn't. Therefore, truncate in all circumstances.
-            $textlib = textlib_get_instance();
-            $name = $textlib->substr($name, 0, 31);
+            $name = textlib::substr($name, 0, 31);
         }
 
     /// Internally, add one sheet to the workbook
@@ -167,13 +166,11 @@ class MoodleExcelWorksheet {
     function write_string($row, $col, $str, $format=null) {
     /// Calculate the internal PEAR format
         $format = $this->MoodleExcelFormat2PearExcelFormat($format);
-    /// Loading the textlib singleton instance. We are going to need it.
-        $textlib = textlib_get_instance();
     /// Convert the text from its original encoding to UTF-16LE
         if (!$this->latin_output) { /// Only if don't want to use latin (win1252) stronger output
-            $str = $textlib->convert($str, 'utf-8', 'utf-16le');
+            $str = textlib::convert($str, 'utf-8', 'utf-16le');
         } else { /// else, convert to latin (win1252)
-            $str = $textlib->convert($str, 'utf-8', 'windows-1252');
+            $str = textlib::convert($str, 'utf-8', 'windows-1252');
         }
     /// Add the string safely to the PEAR Worksheet
         $this->pear_excel_worksheet->writeString($row, $col, $str, $format);

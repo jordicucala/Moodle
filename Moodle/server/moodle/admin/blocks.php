@@ -98,33 +98,7 @@
             exit;
 
         } else {
-            // Inform block it's about to be deleted
-            if (file_exists("$CFG->dirroot/blocks/$block->name/block_$block->name.php")) {
-                $blockobject = block_instance($block->name);
-                if ($blockobject) {
-                    $blockobject->before_delete();  //only if we can create instance, block might have been already removed
-                }
-            }
-
-            // First delete instances and then block
-            $instances = $DB->get_records('block_instances', array('blockname' => $block->name));
-            if(!empty($instances)) {
-                foreach($instances as $instance) {
-                    blocks_delete_instance($instance);
-                }
-            }
-
-            // Delete block
-            $DB->delete_records('block', array('id'=>$block->id));
-
-            drop_plugin_tables($block->name, "$CFG->dirroot/blocks/$block->name/db/install.xml", false); // old obsoleted table names
-            drop_plugin_tables('block_'.$block->name, "$CFG->dirroot/blocks/$block->name/db/install.xml", false);
-
-            // Delete the capabilities that were defined by this block
-            capabilities_cleanup('block/'.$block->name);
-
-            // Remove event handlers and dequeue pending events
-            events_uninstall('block/'.$block->name);
+            uninstall_plugin('block', $block->name);
 
             $a = new stdClass();
             $a->block = $strblockname;
@@ -157,12 +131,25 @@
     $table->setup();
     $tablerows = array();
 
+    // Sort blocks using current locale.
+    $blocknames = array();
     foreach ($blocks as $blockid=>$block) {
+        $blockname = $block->name;
+        if (file_exists("$CFG->dirroot/blocks/$blockname/block_$blockname.php")) {
+            $blocknames[$blockid] = get_string('pluginname', 'block_'.$blockname);
+        } else {
+            $blocknames[$blockid] = $blockname;
+        }
+    }
+    collatorlib::asort($blocknames);
+
+    foreach ($blocknames as $blockid=>$strblockname) {
+        $block = $blocks[$blockid];
         $blockname = $block->name;
 
         if (!file_exists("$CFG->dirroot/blocks/$blockname/block_$blockname.php")) {
             $blockobject  = false;
-            $strblockname = '<span class="notifyproblem">'.$blockname.' ('.get_string('missingfromdisk').')</span>';
+            $strblockname = '<span class="notifyproblem">'.$strblockname.' ('.get_string('missingfromdisk').')</span>';
             $plugin = new stdClass();
             $plugin->version = $block->version;
 
@@ -177,7 +164,6 @@
                 $incompatible[] = $block;
                 continue;
             }
-            $strblockname = get_string('pluginname', 'block_'.$blockname);
         }
 
         $delete = '<a href="blocks.php?delete='.$blockid.'&amp;sesskey='.sesskey().'">'.$strdelete.'</a>';
@@ -248,12 +234,7 @@
             $delete,
             $settings
         );
-        $tablerows[] = array(strip_tags($strblockname), $row); // first element will be used for sorting
-    }
-
-    textlib_get_instance()->asort($tablerows);
-    foreach ($tablerows as $row) {
-        $table->add_data($row[1]);
+        $table->add_data($row);
     }
 
     $table->print_html();

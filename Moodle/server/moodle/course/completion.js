@@ -87,7 +87,7 @@ M.core_completion.init = function(Y) {
             arguments: {state: state, image: image, ajax: ajax, modulename: modulename}
         };
 
-        Y.use('io', function(Y) {
+        Y.use('io-base', function(Y) {
             Y.io(M.cfg.wwwroot+'/course/togglecompletion.php', cfg);
         });
     };

@@ -33,14 +33,15 @@ M.str = M.str || {};
  * @return {String}
  */
 M.util.image_url = function(imagename, component) {
-    var url = M.cfg.wwwroot + '/theme/image.php?theme=' + M.cfg.theme + '&image=' + imagename;
 
-    if (M.cfg.themerev > 0) {
-        url = url + '&rev=' + M.cfg.themerev;
+    if (!component || component == '' || component == 'moodle' || component == 'core') {
+        component = 'core';
     }
 
-    if (component && component != '' && component != 'moodle' && component != 'core') {
-        url = url + '&component=' + component;
+    if (M.cfg.themerev > 0 && M.cfg.slasharguments == 1) {
+        var url = M.cfg.wwwroot + '/theme/image.php/' + M.cfg.theme + '/' + component + '/' + M.cfg.themerev + '/' + imagename;
+    } else {
+        var url = M.cfg.wwwroot + '/theme/image.php?theme=' + M.cfg.theme + '&component=' + component + '&rev=' + M.cfg.themerev + '&image=' + imagename;
     }
 
     return url;
@@ -87,24 +88,30 @@ M.util.CollapsibleRegion = function(Y, id, userpref, strtooltip) {
 
     // Get the caption for the collapsible region
     var caption = this.div.one('#'+id + '_caption');
-    caption.setAttribute('title', strtooltip);
 
     // Create a link
     var a = Y.Node.create('<a href="#"></a>');
-    // Create a local scoped lamba function to move nodes to a new link
-    var movenode = function(node){
-        node.remove();
-        a.append(node);
-    };
-    // Apply the lamba function on each of the captions child nodes
-    caption.get('children').each(movenode, this);
+    a.setAttribute('title', strtooltip);
+
+    // Get all the nodes from caption, remove them and append them to <a>
+    while (caption.hasChildNodes()) {
+        child = caption.get('firstChild');
+        child.remove();
+        a.append(child);
+    }
     caption.append(a);
 
     // Get the height of the div at this point before we shrink it if required
     var height = this.div.get('offsetHeight');
+    var collapsedimage = 't/collapsed'; // ltr mode
+    if ( Y.one(document.body).hasClass('dir-rtl') ) {
+        collapsedimage = 't/collapsed_rtl';
+    } else {
+        collapsedimage = 't/collapsed';
+    }
     if (this.div.hasClass('collapsed')) {
         // Add the correct image and record the YUI node created in the process
-        this.icon = Y.Node.create('<img src="'+M.util.image_url('t/collapsed', 'moodle')+'" alt="" />');
+        this.icon = Y.Node.create('<img src="'+M.util.image_url(collapsedimage, 'moodle')+'" alt="" />');
         // Shrink the div as it is collapsed by default
         this.div.setStyle('height', caption.get('offsetHeight')+'px');
     } else {
@@ -125,8 +132,14 @@ M.util.CollapsibleRegion = function(Y, id, userpref, strtooltip) {
     // Handler for the animation finishing.
     animation.on('end', function() {
         this.div.toggleClass('collapsed');
+        var collapsedimage = 't/collapsed'; // ltr mode
+        if ( Y.one(document.body).hasClass('dir-rtl') ) {
+            collapsedimage = 't/collapsed_rtl';
+            } else {
+            collapsedimage = 't/collapsed';
+            }
         if (this.div.hasClass('collapsed')) {
-            this.icon.set('src', M.util.image_url('t/collapsed', 'moodle'));
+            this.icon.set('src', M.util.image_url(collapsedimage, 'moodle'));
         } else {
             this.icon.set('src', M.util.image_url('t/expanded', 'moodle'));
         }
@@ -286,7 +299,7 @@ M.util.show_confirm_dialog = function(e, args) {
                 target.submit();
 
             } else if (M.cfg.developerdebug) {
-                alert("Element of type " + target.get('tagName') + " is not supported by the M.util.show_confirm_dialog function. Use A, INPUT or FORM");
+                alert("Element of type " + target.get('tagName') + " is not supported by the M.util.show_confirm_dialog function. Use A, INPUT, or FORM");
             }
         };
 
@@ -715,7 +728,13 @@ M.util.get_string = function(identifier, component, a) {
         // creating new instance if YUI is not optimal but it seems to be better way then
         // require the instance via the function API - note that it is used in rare cases
         // for debugging only anyway
-        var Y = new YUI({ debug : true });
+        // To ensure we don't kill browser performance if hundreds of get_string requests
+        // are made we cache the instance we generate within the M.util namespace.
+        // We don't publicly define the variable so that it doesn't get abused.
+        if (typeof M.util.get_string_yui_instance === 'undefined') {
+            M.util.get_string_yui_instance = new YUI({ debug : true });
+        }
+        var Y = M.util.get_string_yui_instance;
     }
 
     if (!M.str.hasOwnProperty(component) || !M.str[component].hasOwnProperty(identifier)) {
@@ -789,6 +808,74 @@ M.util.focus_login_form = function(Y) {
     }
 }
 
+/**
+ * Adds lightbox hidden element that covers the whole node.
+ *
+ * @param {YUI} Y
+ * @param {Node} the node lightbox should be added to
+ * @retun {Node} created lightbox node
+ */
+M.util.add_lightbox = function(Y, node) {
+    var WAITICON = {'pix':"i/loading_small",'component':'moodle'};
+
+    // Check if lightbox is already there
+    if (node.one('.lightbox')) {
+        return node.one('.lightbox');
+    }
+
+    node.setStyle('position', 'relative');
+    var waiticon = Y.Node.create('<img />')
+    .setAttrs({
+        'src' : M.util.image_url(WAITICON.pix, WAITICON.component)
+    })
+    .setStyles({
+        'position' : 'relative',
+        'top' : '50%'
+    });
+
+    var lightbox = Y.Node.create('<div></div>')
+    .setStyles({
+        'opacity' : '.75',
+        'position' : 'absolute',
+        'width' : '100%',
+        'height' : '100%',
+        'top' : 0,
+        'left' : 0,
+        'backgroundColor' : 'white',
+        'text-align' : 'center'
+    })
+    .setAttribute('class', 'lightbox')
+    .hide();
+
+    lightbox.appendChild(waiticon);
+    node.append(lightbox);
+    return lightbox;
+}
+
+/**
+ * Appends a hidden spinner element to the specified node.
+ *
+ * @param {YUI} Y
+ * @param {Node} the node the spinner should be added to
+ * @return {Node} created spinner node
+ */
+M.util.add_spinner = function(Y, node) {
+    var WAITICON = {'pix':"i/loading_small",'component':'moodle'};
+
+    // Check if spinner is already there
+    if (node.one('.spinner')) {
+        return node.one('.spinner');
+    }
+
+    var spinner = Y.Node.create('<img />')
+        .setAttribute('src', M.util.image_url(WAITICON.pix, WAITICON.component))
+        .addClass('spinner')
+        .addClass('iconsmall')
+        .hide();
+
+    node.append(spinner);
+    return spinner;
+}
 
 //=== old legacy JS code, hopefully to be replaced soon by M.xx.yy and YUI3 code ===
 
@@ -1103,17 +1190,55 @@ function openpopup(event, args) {
         }
     }
 
+    // Cleans window name because IE does not support funky ones.
+    var nameregex = /[^a-z0-9_]/i;
+    if (args.name.match(nameregex)) {
+        args.name = args.name.replace(nameregex, '_');
+        if (M.cfg.developerdebug) {
+            alert('DEVELOPER NOTICE: Invalid \'name\' passed to openpopup()');
+        }
+    }
+
     var fullurl = args.url;
     if (!args.url.match(/https?:\/\//)) {
         fullurl = M.cfg.wwwroot + args.url;
+    }
+    if (args.fullscreen) {
+        args.options = args.options.
+                replace(/top=\d+/, 'top=0').
+                replace(/left=\d+/, 'left=0').
+                replace(/width=\d+/, 'width=' + screen.availWidth).
+                replace(/height=\d+/, 'height=' + screen.availHeight);
     }
     var windowobj = window.open(fullurl,args.name,args.options);
     if (!windowobj) {
         return true;
     }
+
     if (args.fullscreen) {
-        windowobj.moveTo(0,0);
-        windowobj.resizeTo(screen.availWidth,screen.availHeight);
+        // In some browser / OS combinations (E.g. Chrome on Windows), the
+        // window initially opens slighly too big. The width and heigh options
+        // seem to control the area inside the browser window, so what with
+        // scroll-bars, etc. the actual window is bigger than the screen.
+        // Therefore, we need to fix things up after the window is open.
+        var hackcount = 100;
+        var get_size_exactly_right = function() {
+            windowobj.moveTo(0, 0);
+            windowobj.resizeTo(screen.availWidth, screen.availHeight);
+
+            // Unfortunately, it seems that in Chrome on Ubuntu, if you call
+            // something like windowobj.resizeTo(1280, 1024) too soon (up to
+            // about 50ms) after the window is open, then it actually behaves
+            // as if you called windowobj.resizeTo(0, 0). Therefore, we need to
+            // check that the resize actually worked, and if not, repeatedly try
+            // again after a short delay until it works (but with a limit of
+            // hackcount repeats.
+            if (hackcount > 0 && (windowobj.innerHeight < 10 || windowobj.innerWidth < 10)) {
+                hackcount -= 1;
+                setTimeout(get_size_exactly_right, 10);
+            }
+        }
+        setTimeout(get_size_exactly_right, 0);
     }
     windowobj.focus();
 
@@ -1230,10 +1355,6 @@ function update_progress_bar (id, width, pt, msg, es){
 
 }
 
-function frame_breakout(e, properties) {
-    this.setAttribute('target', properties.framename);
-}
-
 
 // ===== Deprecated core Javascript functions for Moodle ====
 //       DO NOT USE!!!!!!!
@@ -1264,7 +1385,7 @@ M.util.help_icon = {
         event.preventDefault();
         if (M.util.help_icon.instance === null) {
             var Y = M.util.help_icon.Y;
-            Y.use('overlay', 'io', 'event-mouseenter', 'node', 'event-key', function(Y) {
+            Y.use('overlay', 'io-base', 'event-mouseenter', 'node', 'event-key', function(Y) {
                 var help_content_overlay = {
                     helplink : null,
                     overlay : null,
@@ -1345,6 +1466,7 @@ M.util.help_icon = {
                     },
 
                     display_callback : function(content) {
+                        content = '<div role="alert">' + content + '</div>';
                         this.overlay.set('bodyContent', content);
                     },
 
@@ -1654,9 +1776,9 @@ M.util.load_flowplayer = function() {
             for(var i=0; i<M.util.video_players.length; i++) {
                 var video = M.util.video_players[i];
                 if (video.width > 0 && video.height > 0) {
-                    var src = {src: M.cfg.wwwroot + '/lib/flowplayer/flowplayer-3.2.7.swf', width: video.width, height: video.height};
+                    var src = {src: M.cfg.wwwroot + '/lib/flowplayer/flowplayer-3.2.9.swf', width: video.width, height: video.height};
                 } else {
-                    var src = M.cfg.wwwroot + '/lib/flowplayer/flowplayer-3.2.7.swf';
+                    var src = M.cfg.wwwroot + '/lib/flowplayer/flowplayer-3.2.9.swf';
                 }
                 flowplayer(video.id, src, {
                     plugins: {controls: controls},
@@ -1706,14 +1828,27 @@ M.util.load_flowplayer = function() {
 
             var rule;
             for (var j=0; j < document.styleSheets.length; j++) {
-                if (typeof (document.styleSheets[j].rules) != 'undefined') {
-                    var allrules = document.styleSheets[j].rules;
-                } else if (typeof (document.styleSheets[j].cssRules) != 'undefined') {
-                    var allrules = document.styleSheets[j].cssRules;
-                } else {
-                    // why??
+
+                // To avoid javascript security violation accessing cross domain stylesheets
+                var allrules = false;
+                try {
+                    if (typeof (document.styleSheets[j].rules) != 'undefined') {
+                        allrules = document.styleSheets[j].rules;
+                    } else if (typeof (document.styleSheets[j].cssRules) != 'undefined') {
+                        allrules = document.styleSheets[j].cssRules;
+                    } else {
+                        // why??
+                        continue;
+                    }
+                } catch (e) {
                     continue;
                 }
+
+                // On cross domain style sheets Chrome V8 allows access to rules but returns null
+                if (!allrules) {
+                    continue;
+                }
+
                 for(var i=0; i<allrules.length; i++) {
                     rule = '';
                     if (/^\.mp3flowplayer_.*Color$/.test(allrules[i].selectorText)) {
@@ -1743,17 +1878,17 @@ M.util.load_flowplayer = function() {
                     controls.height = 25;
                     controls.time = true;
                 }
-                flowplayer(audio.id, M.cfg.wwwroot + '/lib/flowplayer/flowplayer-3.2.7.swf', {
-                    plugins: {controls: controls, audio: {url: M.cfg.wwwroot + '/lib/flowplayer/flowplayer.audio-3.2.2.swf'}},
+                flowplayer(audio.id, M.cfg.wwwroot + '/lib/flowplayer/flowplayer-3.2.9.swf', {
+                    plugins: {controls: controls, audio: {url: M.cfg.wwwroot + '/lib/flowplayer/flowplayer.audio-3.2.8.swf'}},
                     clip: {url: audio.fileurl, provider: "audio", autoPlay: false}
                 });
             }
         }
 
         if (M.cfg.jsrev == -10) {
-            var jsurl = M.cfg.wwwroot + '/lib/flowplayer/flowplayer-3.2.6.js';
+            var jsurl = M.cfg.wwwroot + '/lib/flowplayer/flowplayer-3.2.8.min.js';
         } else {
-            var jsurl = M.cfg.wwwroot + '/lib/javascript.php?file=/lib/flowplayer/flowplayer-3.2.6.js&rev=' + M.cfg.jsrev;
+            var jsurl = M.cfg.wwwroot + '/lib/javascript.php?jsfile=/lib/flowplayer/flowplayer-3.2.8.min.js&rev=' + M.cfg.jsrev;
         }
         var fileref = document.createElement('script');
         fileref.setAttribute('type','text/javascript');
@@ -1762,4 +1897,4 @@ M.util.load_flowplayer = function() {
         fileref.onreadystatechange = embed_function;
         document.getElementsByTagName('head')[0].appendChild(fileref);
     }
-}
+};

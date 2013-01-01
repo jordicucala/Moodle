@@ -127,7 +127,7 @@ border-style:solid;
 border-width:0 0 1px;
 }
 
-table#user-grades th.useridnumber {
+table#user-grades th.userfield {
 border-style:solid;
 border-width:0 0 1px 1px;
 }
@@ -185,7 +185,7 @@ margin-right:10px;
 }
 
 table#user-grades .quickfeedback {
-border:#000 1px dashed;
+border:1px dashed #000;
 }
 
 .path-grade-report-grader #siteconfiglink {
@@ -262,7 +262,7 @@ border-width:0 1px 1px;
 }
 
 .path-grade-report-grader table td.topleft {
-border-bottom:none;
+border-bottom:0;
 }
 
 table#user-grades td.topleft {
@@ -325,12 +325,12 @@ margin: 10px 10px 0px 10px;
 }
 
 .path-grade-report-grader table#quick_edit td.fullname {
-border-left:none;
+border-left:0;
 padding-left:5px;
 }
 
 .path-grade-report-grader table#quick_edit td.picture {
-border-right:none;
+border-right:0;
 }
 
 .path-grade-report-grader table#quick_edit td.finalgrade input {
@@ -463,6 +463,8 @@ width:2000px;
 float:right;
 }
 
+.path-grade-report-grader .action-icon {margin-left:0.3em;}
+
 .path-grade-report-grader .gradestable th.user,
 .path-grade-report-grader .gradestable th.range,
 .path-grade-report-grader .flexible th,
@@ -521,12 +523,20 @@ border-style:solid;
 border-width:0;
 }
 
-table#user-grades td.useridnumber,
+table#user-grades td.userfield,
 table#user-grades th,
 .path-grade-report-grader div.gradeparent,
 .path-grade-report-grader .ie6 form,
 table#user-grades td.ajax {
 text-align:left;
+}
+
+.dir-rtl table#user-grades td.userfield,
+.dir-rtl table#user-grades th,
+.path-grade-report-grader.dir-rtl  div.gradeparent,
+.path-grade-report-grader.dir-rtl  .ie6 form,
+.dir-rtl table#user-grades td.ajax {
+text-align:right;
 }
 
 .path-grade-report-grader .gradeparent {
@@ -552,7 +562,7 @@ background-color:#f3ead8;
 }
 
 .path-grade-report-grader table th.user,
-.path-grade-report-grader table td.useridnumber {
+.path-grade-report-grader table td.userfield {
     text-align:left;
     vertical-align:middle;
 }

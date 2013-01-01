@@ -134,8 +134,20 @@ if ($user->id !== -1) {
     );
 }
 
+// Prepare filemanager draft area.
+$draftitemid = 0;
+$filemanagercontext = $editoroptions['context'];
+$filemanageroptions = array('maxbytes'       => $CFG->maxbytes,
+                             'subdirs'        => 0,
+                             'maxfiles'       => 1,
+                             'accepted_types' => 'web_image');
+file_prepare_draft_area($draftitemid, $filemanagercontext->id, 'user', 'newicon', 0, $filemanageroptions);
+$user->imagefile = $draftitemid;
 //create form
-$userform = new user_editadvanced_form(null, array('editoroptions'=>$editoroptions));
+$userform = new user_editadvanced_form(null, array(
+    'editoroptions' => $editoroptions,
+    'filemanageroptions' => $filemanageroptions,
+    'userid' => $user->id));
 $userform->set_data($user);
 
 if ($usernew = $userform->get_data()) {
@@ -182,6 +194,12 @@ if ($usernew = $userform->get_data()) {
                 unset_user_preference('create_password', $usernew); // prevent cron from generating the password
             }
         }
+
+        // force logout if user just suspended
+        if (isset($usernew->suspended) and $usernew->suspended and !$user->suspended) {
+            session_kill_user($user->id);
+        }
+
         $usercreated = false;
     }
 
@@ -197,7 +215,7 @@ if ($usernew = $userform->get_data()) {
 
     //update user picture
     if (!empty($CFG->gdversion) and empty($USER->newadminuser)) {
-        useredit_update_picture($usernew, $userform);
+        useredit_update_picture($usernew, $userform, $filemanageroptions);
     }
 
     // update mail bounces

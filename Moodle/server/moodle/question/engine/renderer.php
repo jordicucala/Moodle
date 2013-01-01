@@ -263,16 +263,25 @@ class core_question_renderer extends plugin_renderer_base {
      * @return string the img tag.
      */
     protected function get_flag_html($flagged, $id = '') {
-        if ($id) {
-            $id = 'id="' . $id . '" ';
-        }
         if ($flagged) {
-            $img = 'flagged';
+            $icon = 'i/flagged';
+            $alt = get_string('flagged', 'question');
         } else {
-            $img = 'unflagged';
+            $icon = 'i/unflagged';
+            $alt = get_string('notflagged', 'question');
         }
-        return '<img ' . $id . 'src="' . $this->pix_url('/i/' . $img) .
-                '" alt="' . get_string('flagthisquestion', 'question') . '" />';
+        $attributes = array(
+            'src' => $this->pix_url($icon),
+            'alt' => $alt,
+        );
+        if ($id) {
+            $attributes['id'] = $id;
+        }
+        $img = html_writer::empty_tag('img', $attributes);
+        if ($flagged) {
+            $img .= ' ' . get_string('flagged', 'question');
+        }
+        return $img;
     }
 
     protected function edit_question_link(question_attempt $qa,
@@ -285,8 +294,7 @@ class core_question_renderer extends plugin_renderer_base {
 
         $params = $options->editquestionparams;
         if ($params['returnurl'] instanceof moodle_url) {
-            $params['returnurl'] = str_replace($CFG->wwwroot, '',
-                    $params['returnurl']->out(false));
+            $params['returnurl'] = $params['returnurl']->out_as_local_url(false);
         }
         $params['id'] = $qa->get_question()->id;
         $editurl = new moodle_url('/question/question.php', $params);

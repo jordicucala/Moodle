@@ -3,7 +3,7 @@
  *  base include file for SimpleTest
  *  @package    SimpleTest
  *  @subpackage UnitTester
- *  @version    $Id: reflection_php4.php,v 1.4 2010/12/14 17:35:44 moodlerobot Exp $
+ *  @version    $Id: reflection_php4.php,v 1.5 2012/04/06 12:15:44 moodlerobot Exp $
  */
 
 /**
@@ -112,7 +112,7 @@ class SimpleReflection {
     function isInterface() {
         return false;
     }
-        
+
     /**
      *    Scans for final methods, but as it's PHP 4 there
      *    aren't any.

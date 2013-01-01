@@ -42,6 +42,7 @@ function url_supports($feature) {
         case FEATURE_GRADE_HAS_GRADE:         return false;
         case FEATURE_GRADE_OUTCOMES:          return false;
         case FEATURE_BACKUP_MOODLE2:          return true;
+        case FEATURE_SHOW_DESCRIPTION:        return true;
 
         default: return null;
     }
@@ -235,18 +236,6 @@ function url_user_complete($course, $user, $mod, $url) {
 }
 
 /**
- * Returns the users with data in one url
- *
- * @todo: deprecated - to be deleted in 2.2
- *
- * @param int $urlid
- * @return bool false
- */
-function url_get_participants($urlid) {
-    return false;
-}
-
-/**
  * Given a course_module object, this function returns any
  * "extra" information that may be needed when printing
  * this activity in a course listing.
@@ -260,11 +249,12 @@ function url_get_coursemodule_info($coursemodule) {
     global $CFG, $DB;
     require_once("$CFG->dirroot/mod/url/locallib.php");
 
-    if (!$url = $DB->get_record('url', array('id'=>$coursemodule->instance), 'id, name, display, displayoptions, externalurl, parameters')) {
+    if (!$url = $DB->get_record('url', array('id'=>$coursemodule->instance),
+            'id, name, display, displayoptions, externalurl, parameters, intro, introformat')) {
         return NULL;
     }
 
-    $info = new stdClass();
+    $info = new cached_cm_info();
     $info->name = $url->name;
 
     //note: there should be a way to differentiate links from normal resources
@@ -278,35 +268,20 @@ function url_get_coursemodule_info($coursemodule) {
         $width  = empty($options['popupwidth'])  ? 620 : $options['popupwidth'];
         $height = empty($options['popupheight']) ? 450 : $options['popupheight'];
         $wh = "width=$width,height=$height,toolbar=no,location=no,menubar=no,copyhistory=no,status=no,directories=no,scrollbars=yes,resizable=yes";
-        $info->extra = "onclick=\"window.open('$fullurl', '', '$wh'); return false;\"";
+        $info->onclick = "window.open('$fullurl', '', '$wh'); return false;";
 
     } else if ($display == RESOURCELIB_DISPLAY_NEW) {
         $fullurl = "$CFG->wwwroot/mod/url/view.php?id=$coursemodule->id&amp;redirect=1";
-        $info->extra = "onclick=\"window.open('$fullurl'); return false;\"";
+        $info->onclick = "window.open('$fullurl'); return false;";
 
     }
 
-    return $info;
-}
+    if ($coursemodule->showdescription) {
+        // Convert intro to html. Do not filter cached version, filters run at display time.
+        $info->content = format_module_intro('url', $url, $coursemodule->id, false);
+    }
 
-/**
- * This function extends the global navigation for the site.
- * It is important to note that you should not rely on PAGE objects within this
- * body of code as there is no guarantee that during an AJAX request they are
- * available
- *
- * @param navigation_node $navigation The url node within the global navigation
- * @param stdClass $course The course object returned from the DB
- * @param stdClass $module The module object returned from the DB
- * @param stdClass $cm The course module instance returned from the DB
- */
-function url_extend_navigation($navigation, $course, $module, $cm) {
-    /**
-     * This is currently just a stub so that it can be easily expanded upon.
-     * When expanding just remove this comment and the line below and then add
-     * you content.
-     */
-    $navigation->nodetype = navigation_node::NODETYPE_LEAF;
+    return $info;
 }
 
 /**
@@ -318,4 +293,77 @@ function url_extend_navigation($navigation, $course, $module, $cm) {
 function url_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array('mod-url-*'=>get_string('page-mod-url-x', 'url'));
     return $module_pagetype;
+}
+
+/**
+ * Export URL resource contents
+ *
+ * @return array of file content
+ */
+function url_export_contents($cm, $baseurl) {
+    global $CFG, $DB;
+    require_once("$CFG->dirroot/mod/url/locallib.php");
+    $contents = array();
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+    $url = $DB->get_record('url', array('id'=>$cm->instance), '*', MUST_EXIST);
+
+    $fullurl = str_replace('&amp;', '&', url_get_full_url($url, $cm, $course));
+    $isurl = clean_param($fullurl, PARAM_URL);
+    if (empty($isurl)) {
+        return null;
+    }
+
+    $url = array();
+    $url['type'] = 'url';
+    $url['filename']     = $url->name;
+    $url['filepath']     = null;
+    $url['filesize']     = 0;
+    $url['fileurl']      = $fullurl;
+    $url['timecreated']  = null;
+    $url['timemodified'] = $url->timemodified;
+    $url['sortorder']    = null;
+    $url['userid']       = null;
+    $url['author']       = null;
+    $url['license']      = null;
+    $contents[] = $url;
+
+    return $contents;
+}
+
+/**
+ * Register the ability to handle drag and drop file uploads
+ * @return array containing details of the files / types the mod can handle
+ */
+function url_dndupload_register() {
+    return array('types' => array(
+                     array('identifier' => 'url', 'message' => get_string('createurl', 'url'))
+                 ));
+}
+
+/**
+ * Handle a file that has been uploaded
+ * @param object $uploadinfo details of the file / content that has been uploaded
+ * @return int instance id of the newly created mod
+ */
+function url_dndupload_handle($uploadinfo) {
+    // Gather all the required data.
+    $data = new stdClass();
+    $data->course = $uploadinfo->course->id;
+    $data->name = $uploadinfo->displayname;
+    $data->intro = '<p>'.$uploadinfo->displayname.'</p>';
+    $data->introformat = FORMAT_HTML;
+    $data->externalurl = clean_param($uploadinfo->content, PARAM_URL);
+    $data->timemodified = time();
+
+    // Set the display options to the site defaults.
+    $config = get_config('url');
+    $data->display = $config->display;
+    $data->popupwidth = $config->popupwidth;
+    $data->popupheight = $config->popupheight;
+    $data->printheading = $config->printheading;
+    $data->printintro = $config->printintro;
+
+    return url_add_instance($data, null);
 }

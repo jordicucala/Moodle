@@ -281,13 +281,13 @@ class component_installer {
             return COMPONENT_UPTODATE;
         }
     /// Create temp directory if necesary
-        if (!make_upload_directory('temp', false)) {
+        if (!make_temp_directory('', false)) {
              $this->errorstring='cannotcreatetempdir';
              return COMPONENT_ERROR;
         }
     /// Download zip file and save it to temp
         $source = $this->sourcebase.'/'.$this->zippath.'/'.$this->zipfilename;
-        $zipfile= $CFG->dataroot.'/temp/'.$this->zipfilename;
+        $zipfile= $CFG->tempdir.'/'.$this->zipfilename;
 
         if($contents = download_file_content($source)) {
             if ($file = fopen($zipfile, 'w')) {
@@ -585,14 +585,13 @@ class lang_installer {
     /**
      * Prepare the installer
      *
-     * @todo Moodle major version is hardcoded here, should be obtained from version.php or so
      * @param string|array $langcode a code of the language to install
      */
     public function __construct($langcode = '') {
         global $CFG;
 
         $this->set_queue($langcode);
-        $this->version = '2.1';
+        $this->version = moodle_major_version(true);
 
         if (!empty($CFG->langotherroot) and $CFG->langotherroot !== $CFG->dataroot . '/lang') {
             debugging('The in-built language pack installer does not support alternative location ' .

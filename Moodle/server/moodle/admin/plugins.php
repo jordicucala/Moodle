@@ -30,12 +30,17 @@ require_once($CFG->libdir . '/pluginlib.php');
 
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 admin_externalpage_setup('pluginsoverview');
-$output = $PAGE->get_renderer('core', 'admin');
-$pluginman = plugin_manager::instance();
 
-echo $output->header();
-echo $output->heading(get_string('pluginsoverview', 'core_admin'));
-echo $output->box_start('generalbox');
-echo $output->plugins_control_panel($pluginman->get_plugins());
-echo $output->box_end();
-echo $output->footer();
+$fetchremote = optional_param('fetchremote', false, PARAM_BOOL);
+
+$pluginman = plugin_manager::instance();
+$checker = available_update_checker::instance();
+
+if ($fetchremote) {
+    require_sesskey();
+    $checker->fetch();
+    redirect($PAGE->url);
+}
+
+$output = $PAGE->get_renderer('core', 'admin');
+echo $output->plugin_management_page($pluginman, $checker);
