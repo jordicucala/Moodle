@@ -33,9 +33,86 @@
     }
     $course = $DB->get_record('course', $params, '*', MUST_EXIST);
    
- 
+  
+    $array2 = $course->modinfo; //getting the structure of the course
+    $array2 = unserialize($array2); //we need to unserialize the structure
+    $arrayLength = count($array2); 
+    
+
+?>
+<!--//    var course =  echo $SESSION->wantsurl = $CFG->wwwroot.'/course/view.php?id='.$_GET['courseid']; ;-->
+
+<!--SCRIPT SE PONE AQUI PORQUE AQUI YA SE HA CARGADO UNA PARTE Y SE PUEDE USAR EL $course-->
+
+<script type="text/javascript" src="jquery-1.8.3.js"></script>
+<script type="text/javascript">
+    
+var name;
+var st;
 
 
+if(!window.Kolich){
+        Kolich = {};
+}
+
+Kolich.Selector = {};
+// getSelected() was borrowed from CodeToad at
+// http://www.codetoad.com/javascript_get_selected_text.asp
+Kolich.Selector.getSelected = function(){
+        var t = '';
+        if(window.getSelection){
+                t = window.getSelection();
+        }else if(document.getSelection){
+                t = document.getSelection();
+        }else if(document.selection){
+                t = document.selection.createRange().text;
+        }
+        return t;
+}
+
+Kolich.Selector.mouseup = function(){
+        st = Kolich.Selector.getSelected();
+        if(st!=''){
+
+               name = prompt("Selected text: "+ st,"New text"); //Poup-Up with Accept/Close
+              document.cookie ='newValue=' + name; //saving the newValue in a Cookie
+              document.cookie ='oldValue=' + st; //saving the old value in a Cookie
+              id = <?php echo $_GET['id'];?>; //getting the id of the course
+              window.location.href = "http://localhost/course/view.php?id="+id;
+           
+
+        }
+}
+
+$(document).ready(function(){
+        $(document).bind("mouseup", Kolich.Selector.mouseup);
+});
+
+</script>
+    
+<?
+//we get the values taht we saved in Javascript
+    $newValue = $_COOKIE['newValue'];
+    $oldValue = $_COOKIE['oldValue'];
+
+    foreach($array2 as &$valor)
+    {
+        if($valor->mod == "label"){//if is type label  
+              if($valor->name == $oldValue)//If is the same value (the old one)
+          {
+            //changing the old values for noew ones
+            $valor->name = $newValue;
+            $valor->extra = $newValue;
+          }
+        }
+    }
+   
+    //SOBREESCRIBIMOS PARA QUE CAMBIE
+    $array3 = serialize($array2);
+    $course->modinfo = $array3;
+    $DB->update_record('course',$course,false); //Actualizamos la base de datos
+
+        
     $urlparams = array('id' => $course->id);
 
     // Sectionid should get priority over section number
